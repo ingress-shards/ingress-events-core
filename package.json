@@ -1,0 +1,43 @@
+{
+    "name": "@ingress-shards/shards-core",
+    "version": "0.0.0-semantically-released",
+    "description": "Core logic for Ingress applications which interact with shards",
+    "homepage": "https://github.com/ingress-shards/shards-core#readme",
+    "bugs": {
+        "url": "https://github.com/ingress-shards/shards-core/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ingress-shards/shards-core.git"
+    },
+    "license": "MIT",
+    "author": "Nick Young",
+    "contributors": [
+        "Lewis Keen"
+    ],
+    "packageManager": "yarn@4.12.0",
+    "type": "module",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc --build tsconfig.json",
+        "build:watch": "tsc --build tsconfig.json --watch",
+        "test": "echo \"Error: run tests from root\" && exit 1"
+    },
+    "dependencies": {
+        "luxon": "^3.7.2"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.9",
+        "conventional-changelog-conventionalcommits": "^9.1.0",
+        "semantic-release": "^25.0.2",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    },
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+    }
+}
