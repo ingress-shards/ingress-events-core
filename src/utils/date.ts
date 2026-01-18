@@ -1,9 +1,7 @@
-import { DateTime } from "luxon";
+import { Temporal } from "temporal-polyfill";
 
-// Default locale, safely checking for navigator object which only exists in browsers.
-// We cast to any to avoid TS errors if the DOM lib isn't fully loaded in your environment.
-const nav = (typeof navigator !== "undefined" ? navigator : undefined) as any;
-const DEFAULT_LOCALE = nav ? nav.language : "en-GB";
+// Default locale, safely checking for the browser's navigator object.
+const DEFAULT_LOCALE = typeof navigator !== "undefined" ? navigator.language : "en-GB";
 
 const MS_PER_SECOND = 1000;
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -24,16 +22,23 @@ export function convertMsEpochToSecEpoch(epochMs: number | string): number {
  * This is the standard format required for the geocode storage date field.
  */
 export function formatEpochToSerializationString(epochTimeMs: number | string): string {
-    const dateObject = new Date(Number(epochTimeMs));
-    return dateObject.toISOString().replace(/\.\d{3}Z$/, "");
+    return Temporal.Instant.fromEpochMilliseconds(Number(epochTimeMs))
+        .toZonedDateTimeISO("UTC")
+        .toPlainDateTime()
+        .toString({ smallestUnit: "second" });
 }
 
 /**
  * Formats the serialized ISO 8601 string (YYYY-MM-DDTHH:mm:ss) into a locale-specific short date string (e.g., 3/15/2023).
  */
 export function formatIsoToShortDate(isoString: string, timeZone: string, locale: string = DEFAULT_LOCALE): string {
-    const dateObject = new Date(isoString);
-    return dateObject.toLocaleDateString(locale, { timeZone, dateStyle: "short" });
+    let instant: Temporal.Instant;
+    try {
+        instant = Temporal.Instant.from(isoString);
+    } catch {
+        instant = Temporal.Instant.from(isoString + "Z");
+    }
+    return instant.toZonedDateTimeISO(timeZone).toLocaleString(locale, { dateStyle: "short" });
 }
 
 /**
@@ -44,8 +49,7 @@ export function formatEpochToLocalTime(
     timeZone: string,
     locale: string = DEFAULT_LOCALE
 ): string {
-    return new Date(Number(epochMs)).toLocaleTimeString(locale, {
-        timeZone,
+    return Temporal.Instant.fromEpochMilliseconds(Number(epochMs)).toZonedDateTimeISO(timeZone).toLocaleString(locale, {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
@@ -61,8 +65,7 @@ export function formatEpochToLocalDateTime(
     timeZone: string,
     locale: string = DEFAULT_LOCALE
 ): string {
-    return new Date(Number(epochMs)).toLocaleString(locale, {
-        timeZone,
+    return Temporal.Instant.fromEpochMilliseconds(Number(epochMs)).toZonedDateTimeISO(timeZone).toLocaleString(locale, {
         year: "numeric",
         month: "numeric",
         day: "numeric",
@@ -95,12 +98,17 @@ export function isWithin24Hours(targetTimeMs: number | string, referenceTimeMs: 
 export function createWaveDate(siteDateIso: string, siteTimezone: string, timeStr: string): Date {
     const [hour, minute] = timeStr.split(":").map(Number);
 
-    // 1. Create a Luxon DateTime object from the ISO string, ensuring it's in the correct IANA timezone.
-    const siteDateTime = DateTime.fromISO(siteDateIso, { zone: siteTimezone });
+    // 1. Parse the ISO string to an Instant, then convert to ZonedDateTime in the target timezone.
+    const zonedDateTime = Temporal.Instant.from(siteDateIso).toZonedDateTimeISO(siteTimezone);
 
-    // 2. Create a new DateTime by setting the desired time. Luxon handles all timezone and DST logic.
-    const waveDateTime = siteDateTime.set({ hour, minute, second: 0, millisecond: 0 });
+    // 2. Set the desired time. Temporal handles timezone/DST disambiguation (default is 'compatible').
+    const waveDateTime = zonedDateTime.with({
+        ...(typeof hour === "number" && !isNaN(hour) && { hour }),
+        ...(typeof minute === "number" && !isNaN(minute) && { minute }),
+        second: 0,
+        millisecond: 0,
+    });
 
-    // 3. Convert back to a native Date object for use in the rest of your application.
-    return waveDateTime.toJSDate();
+    // 3. Convert back to a native Date object (epoch milliseconds).
+    return new Date(waveDateTime.epochMilliseconds);
 }

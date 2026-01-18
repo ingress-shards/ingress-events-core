@@ -3,6 +3,7 @@
         "module": "nodenext",
         "target": "esnext",
         "outDir": "./dist",
+        "rootDir": "./src",
         "types": [],
         "sourceMap": true,
         "declaration": true,
@@ -28,5 +29,5 @@
         "skipLibCheck": true
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "dist"]
 }

@@ -10,7 +10,7 @@
         [
             "@semantic-release/commit-analyzer",
             {
-                "preset": "angular",
+                "preset": "conventionalcommits",
                 "parserOpts": {
                     "noteKeywords": [
                         "BREAKING CHANGE",
@@ -81,6 +81,12 @@
                     ],
                     "linkCompare": false
                 }
+            }
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                "verifyConditionsCmd": "yarn test:unit"
             }
         ],
         [
