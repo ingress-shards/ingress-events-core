@@ -1,2 +1,3 @@
-export * from "./utils/date.js";
-export * from "./utils/math.js";
+export * from "./utils/Date.js";
+export * from "./utils/Math.js";
+export * from "./types/index.js";
