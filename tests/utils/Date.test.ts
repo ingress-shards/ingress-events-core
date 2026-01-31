@@ -4,7 +4,7 @@ import {
     formatEpochToSerializationString,
     createWaveDate,
     isWithin24Hours,
-} from "../../src/utils/date.js";
+} from "../../src/utils/Date.js";
 
 describe("date utils", () => {
     describe("convertMsEpochToSecEpoch", () => {

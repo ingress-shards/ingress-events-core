@@ -1,17 +1,14 @@
-export interface Coordinates {
-    latitude: number;
-    longitude: number;
-}
+import type { Coordinates } from "../types/Geo.js";
 
-export function haversineDistance(coords1: Coordinates, coords2: Coordinates): number {
+export const haversineDistance = (coords1: Coordinates, coords2: Coordinates): number => {
     // Mean Earth Radius in meters
     const R = 6371000;
     const TO_RADIANS = Math.PI / 180;
 
-    const lat1 = coords1.latitude;
-    const lon1 = coords1.longitude;
-    const lat2 = coords2.latitude;
-    const lon2 = coords2.longitude;
+    const lat1 = coords1.lat;
+    const lon1 = coords1.lng;
+    const lat2 = coords2.lat;
+    const lon2 = coords2.lng;
 
     // Convert degrees to radians
     const dLat = (lat2 - lat1) * TO_RADIANS;
@@ -26,20 +23,20 @@ export function haversineDistance(coords1: Coordinates, coords2: Coordinates): n
     const distance = R * c;
 
     return roundToDecimalPlaces(distance, 2);
-}
+};
 
-export function roundToDecimalPlaces(num: number, decimals: number): number {
+export const roundToDecimalPlaces = (num: number, decimals: number): number => {
     if (decimals <= 0) {
         return Math.round(num);
     }
     const powerOfTen = 10 ** decimals;
     return Math.round(num * powerOfTen) / powerOfTen;
-}
+};
 
-export function truncateToDecimalPlaces(num: number, decimals: number): number {
+export const truncateToDecimalPlaces = (num: number, decimals: number): number => {
     if (decimals <= 0) {
         return Math.trunc(num);
     }
     const powerOfTen = 10 ** decimals;
     return Math.trunc(num * powerOfTen) / powerOfTen;
-}
+};
