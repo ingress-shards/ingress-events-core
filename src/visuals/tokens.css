@@ -1,0 +1,33 @@
+/**
+ * Design System Tokens for Shards Project.
+ * Centralizes variables for colors, typography, and spacing.
+ */
+
+:root {
+    /* Branding Colors */
+    --shards-res-color: #0088ff;
+    --shards-enl-color: #03dc03;
+    --shards-mac-color: #FF0028;
+    --shards-neu-color: #ff6600;
+    --shards-signal-color: #ffcc00;
+    --shards-nodata-color: #777777;
+    --shards-tie-color: #AF00FF;
+
+    /* Semantic Text Colors */
+    --shards-text-primary: #eeeeee;
+    --shards-text-secondary: #bbbbbb;
+    --shards-text-muted: #888888;
+    --shards-border-color: #444444;
+
+    /* Typography Scale */
+    --shards-font-size-xs: 0.65rem;
+    --shards-font-size-sm: 0.8rem;
+    --shards-font-size-md: 1rem;
+    --shards-font-size-lg: 1.2rem;
+
+    /* Spacing */
+    --shards-spacing-xs: 4px;
+    --shards-spacing-sm: 8px;
+    --shards-spacing-md: 12px;
+    --shards-spacing-lg: 20px;
+}

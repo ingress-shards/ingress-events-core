@@ -1,0 +1,119 @@
+/**
+ * Core Visual Patterns for Shards Project.
+ * Standardizes UI components like Markers, Highlighting, and Typography.
+ */
+
+/* Import design tokens to ensure variables are resolved in the same context */
+@import "./tokens.css";
+
+/* --- Interaction Patterns --- */
+
+/* Standardized row highlight with non-shifting visual accent */
+/* Note: We apply this to td because tr rendering of box-shadow is inconsistent across browsers */
+.shards-row-highlight td {
+    background-color: rgba(255, 204, 0, 0.05) !important;
+    transition: background-color 0.2s ease;
+}
+
+.shards-row-highlight td:first-child {
+    /* Inset shadow creates the left accent bar without shifting table layout */
+    box-shadow: inset 2px 0 0 0 var(--shards-signal-color);
+}
+
+/* Row Hover Interaction */
+.shards-row-hover:hover td {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* --- Typography Standards --- */
+
+.shards-header-primary {
+    font-size: var(--shards-font-size-md);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--shards-text-primary);
+    margin: 0;
+}
+
+.shards-header-secondary {
+    font-size: var(--shards-font-size-sm);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--shards-text-secondary);
+}
+
+.shards-label-pair {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--shards-font-size-sm);
+}
+
+.shards-label-key {
+    color: var(--shards-text-secondary);
+}
+
+.shards-label-value {
+    color: var(--shards-text-primary);
+    font-weight: 600;
+}
+
+/* --- Tactical Marker Styling --- */
+.marker-svg-pin {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    display: block;
+}
+
+.marker-pin-body {
+    stroke: rgba(0, 0, 0, 0.2);
+    stroke-width: 1;
+    transition: fill 0.3s ease;
+}
+
+.marker-pin-inner {
+    /* Inner bead color - usually white/pearl but overridable */
+    fill: var(--pin-inner-color, #ffffff);
+    transition: fill 0.3s ease;
+}
+
+/* --- Radar Animation --- */
+@keyframes shards-radar-sweep {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.marker-radar-beam {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    background: conic-gradient(from 0deg,
+            rgba(255, 102, 0, 0.7) 0deg,
+            rgba(255, 102, 0, 0.3) 15deg,
+            transparent 25deg);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+    transform-origin: center;
+    animation: shards-radar-sweep var(--radar-speed, 2s) infinite linear;
+}
+
+/* Export Icon Styling */
+.shards-svg-export {
+    display: block;
+}
+
+.shards-export-arrow {
+    fill: var(--export-arrow-color, var(--shards-signal-color));
+    transition: fill 0.3s ease;
+}
+
+.shards-export-box {
+    fill: var(--export-box-color, var(--shards-neu-color));
+    transition: fill 0.3s ease;
+}
