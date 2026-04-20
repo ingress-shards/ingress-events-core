@@ -1,0 +1,2349 @@
+{
+  "artifact": [
+    {
+      "id": "abaddon1",
+      "name": "Abaddon 1",
+      "fragment": [
+        {
+          "id": "abaddon1_16",
+          "history": [
+            {
+              "moveTimeMs": "1773471693200",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Vintage Playground",
+                "latE6": 22379248,
+                "lngE6": 114195468,
+                "team": "NEUTRAL"
+              },
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471601745",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471001721",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470402514",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Beijing 08 Notice",
+                "latE6": 22382584,
+                "lngE6": 114191888,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "Vintage Playground",
+                "latE6": 22379248,
+                "lngE6": 114195468,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773470142885",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773469938785",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Beijing 08 Notice",
+                "latE6": 22382584,
+                "lngE6": 114191888,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_19",
+          "history": [
+            {
+              "moveTimeMs": "1773471695536",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌7-望夫石",
+                "description": "望夫石的型態有如一位母親背著嬰孩，配合一個望著遠洋盼望丈夫的傳說，是沙田的名物。展示牌的位置其實會給遠方的高樓遮蓋，最佳觀賞位置在大圍區內",
+                "latE6": 22379068,
+                "lngE6": 114192133,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471603153",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌8-沙燕少棒隊",
+                "description": "80年代成立的沙燕少棒隊創造傳奇。沙燕橋以它命名，事蹟更於2014年搬上大銀幕。",
+                "latE6": 22379462,
+                "lngE6": 114192636,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌7-望夫石",
+                "description": "望夫石的型態有如一位母親背著嬰孩，配合一個望著遠洋盼望丈夫的傳說，是沙田的名物。展示牌的位置其實會給遠方的高樓遮蓋，最佳觀賞位置在大圍區內",
+                "latE6": 22379068,
+                "lngE6": 114192133,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773471573639",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773471003342",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "沙角社區會堂",
+                "latE6": 22377849,
+                "lngE6": 114195142,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌8-沙燕少棒隊",
+                "description": "80年代成立的沙燕少棒隊創造傳奇。沙燕橋以它命名，事蹟更於2014年搬上大銀幕。",
+                "latE6": 22379462,
+                "lngE6": 114192636,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470389574",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773470404906",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "瀝源橋 Lek Yuen Bridge",
+                "latE6": 22379279,
+                "lngE6": 114191324,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "沙角社區會堂",
+                "latE6": 22377849,
+                "lngE6": 114195142,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470283817",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773469935596",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "瀝源橋 Lek Yuen Bridge",
+                "latE6": 22379279,
+                "lngE6": 114191324,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_08",
+          "history": [
+            {
+              "moveTimeMs": "1773469894918",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Spirited Away painting in HK",
+                "description": "A Spirited Away painting located in Shatin",
+                "latE6": 22380923,
+                "lngE6": 114200023,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469806709",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "圓州角公園地圖",
+                "description": "一個設於圓州角公園入口的地圖。",
+                "latE6": 22381196,
+                "lngE6": 114200141,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "Spirited Away painting in HK",
+                "description": "A Spirited Away painting located in Shatin",
+                "latE6": 22380923,
+                "lngE6": 114200023,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469351148",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469203731",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "北城牆遺址",
+                "latE6": 22381045,
+                "lngE6": 114191003,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "圓州角公園地圖",
+                "description": "一個設於圓州角公園入口的地圖。",
+                "latE6": 22381196,
+                "lngE6": 114200141,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469180007",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773468602983",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468133632",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "北城牆遺址",
+                "latE6": 22381045,
+                "lngE6": 114191003,
+                "team": "NEUTRAL"
+              },
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_38",
+          "currentPortalInfo": {
+            "title": "河邊木方特色 涼亭",
+            "description": "涼亭，很涼快唷。Pavilion, very cool",
+            "latE6": 22383464,
+            "lngE6": 114194030,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471737257",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "河邊木方特色 涼亭",
+                "description": "涼亭，很涼快唷。Pavilion, very cool",
+                "latE6": 22383464,
+                "lngE6": 114194030,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_01",
+          "history": [
+            {
+              "moveTimeMs": "1773469890586",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Shatin Baptist Chrch",
+                "description": "沙田浸信會",
+                "latE6": 22385540,
+                "lngE6": 114193348,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773469802296",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Sha Tin Park Wall Painting",
+                "latE6": 22381325,
+                "lngE6": 114190709,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "Shatin Baptist Chrch",
+                "description": "沙田浸信會",
+                "latE6": 22385540,
+                "lngE6": 114193348,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773469751440",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469200179",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468600058",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468128652",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Sha Tin Park Wall Painting",
+                "latE6": 22381325,
+                "lngE6": 114190709,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_04",
+          "history": [
+            {
+              "moveTimeMs": "1773469892416",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "波浪型長凳",
+                "description": "街頭裝置藝術品",
+                "latE6": 22381549,
+                "lngE6": 114191004,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773469803862",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469200936",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468600255",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468138594",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "波浪型長凳",
+                "description": "街頭裝置藝術品",
+                "latE6": 22381549,
+                "lngE6": 114191004,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_28",
+          "currentPortalInfo": {
+            "title": "金銀魚",
+            "description": "超現代金銀晶藝術品",
+            "latE6": 22379951,
+            "lngE6": 114195892,
+            "team": "RESISTANCE"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471720752",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "金銀魚",
+                "description": "超現代金銀晶藝術品",
+                "latE6": 22379951,
+                "lngE6": 114195892,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_20",
+          "history": [
+            {
+              "moveTimeMs": "1773471696225",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Little Climbing Wall",
+                "latE6": 22386038,
+                "lngE6": 114192887,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471603290",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471004828",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌9-沙田龍舟競賽",
+                "description": "自1984年起舉辦，每年都吸引各區巿民參與及觀",
+                "latE6": 22382642,
+                "lngE6": 114193324,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "Little Climbing Wall",
+                "latE6": 22386038,
+                "lngE6": 114192887,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470833788",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773470405560",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469923721",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌9-沙田龍舟競賽",
+                "description": "自1984年起舉辦，每年都吸引各區巿民參與及觀",
+                "latE6": 22382642,
+                "lngE6": 114193324,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_31",
+          "currentPortalInfo": {
+            "title": "富豪軒",
+            "latE6": 22382475,
+            "lngE6": 114196036,
+            "team": "NEUTRAL"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471732262",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "富豪軒",
+                "latE6": 22382475,
+                "lngE6": 114196036,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_11",
+          "history": [
+            {
+              "moveTimeMs": "1773469896934",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Shing Mun River Jogging Track",
+                "latE6": 22378042,
+                "lngE6": 114191158,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469800041",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469201094",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468601104",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468120703",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Shing Mun River Jogging Track",
+                "latE6": 22378042,
+                "lngE6": 114191158,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_35",
+          "currentPortalInfo": {
+            "title": "Resting Cover",
+            "latE6": 22378069,
+            "lngE6": 114191896,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471738235",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Resting Cover",
+                "latE6": 22378069,
+                "lngE6": 114191896,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_33",
+          "currentPortalInfo": {
+            "title": "Temple",
+            "latE6": 22381283,
+            "lngE6": 114190970,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471731220",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Temple",
+                "latE6": 22381283,
+                "lngE6": 114190970,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_10",
+          "history": [
+            {
+              "moveTimeMs": "1773469896267",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "The Fountain",
+                "latE6": 22381739,
+                "lngE6": 114196022,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469806887",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469205115",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468603107",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468123585",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "The Fountain",
+                "latE6": 22381739,
+                "lngE6": 114196022,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_25",
+          "history": [
+            {
+              "moveTimeMs": "1773471699932",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "乙明邨公園",
+                "description": "乙明邨心靈休息地",
+                "latE6": 22376675,
+                "lngE6": 114191320,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773471603345",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "明耀樓 · 滾軸溜冰場",
+                "description": "位於近明耀樓一側，沙田乙明邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22377212,
+                "lngE6": 114192222,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "乙明邨公園",
+                "description": "乙明邨心靈休息地",
+                "latE6": 22376675,
+                "lngE6": 114191320,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470376766",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773471002395",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "太極推手器",
+                "description": "Tai Chi Wheel is good to be set in the park.",
+                "latE6": 22377695,
+                "lngE6": 114192016,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "明耀樓 · 滾軸溜冰場",
+                "description": "位於近明耀樓一側，沙田乙明邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22377212,
+                "lngE6": 114192222,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470633594",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773470402146",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "兔兔",
+                "description": "位於乙明邨明耀樓低座，由壁畫師Wiki與中小學師生創作和繪畫。",
+                "latE6": 22376995,
+                "lngE6": 114192712,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "太極推手器",
+                "description": "Tai Chi Wheel is good to be set in the park.",
+                "latE6": 22377695,
+                "lngE6": 114192016,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470208696",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773469940662",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "兔兔",
+                "description": "位於乙明邨明耀樓低座，由壁畫師Wiki與中小學師生創作和繪畫。",
+                "latE6": 22376995,
+                "lngE6": 114192712,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_03",
+          "history": [
+            {
+              "moveTimeMs": "1773469891799",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌3-大涌橋和曾大屋圍村",
+                "description": "曾大屋圍村，原名山廈圍，是沙田唯一現存的完整大型圍牆村落。\n二十世紀初，村民建議由左岸的白鶴汀連接右岸的吳園大涌兩岸。於1915年以石塊鋪成，是第一條連接沙田兩岸的行人橋。",
+                "latE6": 22376662,
+                "lngE6": 114188524,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469803721",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "結客場",
+                "latE6": 22380216,
+                "lngE6": 114190402,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌3-大涌橋和曾大屋圍村",
+                "description": "曾大屋圍村，原名山廈圍，是沙田唯一現存的完整大型圍牆村落。\n二十世紀初，村民建議由左岸的白鶴汀連接右岸的吳園大涌兩岸。於1915年以石塊鋪成，是第一條連接沙田兩岸的行人橋。",
+                "latE6": 22376662,
+                "lngE6": 114188524,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469664207",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469200879",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468600192",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468131626",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "結客場",
+                "latE6": 22380216,
+                "lngE6": 114190402,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_26",
+          "history": [
+            {
+              "moveTimeMs": "1773471700670",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "太極推手器",
+                "description": "Tai Chi Wheel is good to be set in the park.",
+                "latE6": 22377695,
+                "lngE6": 114192016,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773471604534",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "巨型波子算盤",
+                "description": "儿童乐园的游乐套装，可以算珠算",
+                "latE6": 22377850,
+                "lngE6": 114192838,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "太極推手器",
+                "description": "Tai Chi Wheel is good to be set in the park.",
+                "latE6": 22377695,
+                "lngE6": 114192016,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773471064537",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773471002530",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470402280",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469921647",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "巨型波子算盤",
+                "description": "儿童乐园的游乐套装，可以算珠算",
+                "latE6": 22377850,
+                "lngE6": 114192838,
+                "team": "NEUTRAL"
+              },
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_30",
+          "currentPortalInfo": {
+            "title": "Quali Walk Marker 14",
+            "latE6": 22379106,
+            "lngE6": 114189866,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471735347",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Quali Walk Marker 14",
+                "latE6": 22379106,
+                "lngE6": 114189866,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_29",
+          "currentPortalInfo": {
+            "title": "城門河畔展示牌6-首次動力飛行",
+            "description": "香港首次動力飛行於1911年3月18日在沙田火車站旁，向吐露港方向順利完成。",
+            "latE6": 22379285,
+            "lngE6": 114190103,
+            "team": "NEUTRAL"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471736122",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌6-首次動力飛行",
+                "description": "香港首次動力飛行於1911年3月18日在沙田火車站旁，向吐露港方向順利完成。",
+                "latE6": 22379285,
+                "lngE6": 114190103,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_17",
+          "history": [
+            {
+              "moveTimeMs": "1773471693920",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "禦帝王",
+                "latE6": 22379996,
+                "lngE6": 114196081,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471601805",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471001802",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470402634",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469934717",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "禦帝王",
+                "latE6": 22379996,
+                "lngE6": 114196081,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_05",
+          "history": [
+            {
+              "moveTimeMs": "1773469893065",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "博智樓 · 舊式鐵柱涼亭",
+                "description": "此涼亭位於沙田博康邨內，近博智樓一側，頂部為80年代公屋舊式鐵柱涼亭設計，並只配合石壆作簡易座座，提供了一個休憩空間可以讓附近嘅市民在此乘涼歇息，但非平頂下市民不能避雨，只好離開。",
+                "latE6": 22375537,
+                "lngE6": 114195991,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469805160",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "沙角四亭",
+                "latE6": 22378474,
+                "lngE6": 114195409,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "博智樓 · 舊式鐵柱涼亭",
+                "description": "此涼亭位於沙田博康邨內，近博智樓一側，頂部為80年代公屋舊式鐵柱涼亭設計，並只配合石壆作簡易座座，提供了一個休憩空間可以讓附近嘅市民在此乘涼歇息，但非平頂下市民不能避雨，只好離開。",
+                "latE6": 22375537,
+                "lngE6": 114195991,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469529690",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469201000",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468600322",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468139638",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "沙角四亭",
+                "latE6": 22378474,
+                "lngE6": 114195409,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_22",
+          "history": [
+            {
+              "moveTimeMs": "1773471697655",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "沙角籃球場",
+                "description": "位於沙角香港資優教學苑旁",
+                "latE6": 22379232,
+                "lngE6": 114193320,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471605178",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471007778",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "888taxi",
+                "description": "Thai version taxi.",
+                "latE6": 22382788,
+                "lngE6": 114196439,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "沙角籃球場",
+                "description": "位於沙角香港資優教學苑旁",
+                "latE6": 22379232,
+                "lngE6": 114193320,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470840647",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773470407929",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "沙角兒童遊樂場",
+                "description": "小時候的堡壘，小朋友的基地",
+                "latE6": 22378815,
+                "lngE6": 114195671,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "888taxi",
+                "description": "Thai version taxi.",
+                "latE6": 22382788,
+                "lngE6": 114196439,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773470134240",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469932679",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "沙角兒童遊樂場",
+                "description": "小時候的堡壘，小朋友的基地",
+                "latE6": 22378815,
+                "lngE6": 114195671,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_15",
+          "history": [
+            {
+              "moveTimeMs": "1773471692367",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Erythrina Indica Picta",
+                "latE6": 22380475,
+                "lngE6": 114195902,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773471601681",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471001638",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470401393",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469928596",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Erythrina Indica Picta",
+                "latE6": 22380475,
+                "lngE6": 114195902,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_14",
+          "history": [
+            {
+              "moveTimeMs": "1773471691648",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌8-沙燕少棒隊",
+                "description": "80年代成立的沙燕少棒隊創造傳奇。沙燕橋以它命名，事蹟更於2014年搬上大銀幕。",
+                "latE6": 22379462,
+                "lngE6": 114192636,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471601554",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌7-望夫石",
+                "description": "望夫石的型態有如一位母親背著嬰孩，配合一個望著遠洋盼望丈夫的傳說，是沙田的名物。展示牌的位置其實會給遠方的高樓遮蓋，最佳觀賞位置在大圍區內",
+                "latE6": 22379068,
+                "lngE6": 114192133,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌8-沙燕少棒隊",
+                "description": "80年代成立的沙燕少棒隊創造傳奇。沙燕橋以它命名，事蹟更於2014年搬上大銀幕。",
+                "latE6": 22379462,
+                "lngE6": 114192636,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773471573639",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773471001503",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "瀝源橋 Lek Yuen Bridge",
+                "latE6": 22379279,
+                "lngE6": 114191324,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌7-望夫石",
+                "description": "望夫石的型態有如一位母親背著嬰孩，配合一個望著遠洋盼望丈夫的傳說，是沙田的名物。展示牌的位置其實會給遠方的高樓遮蓋，最佳觀賞位置在大圍區內",
+                "latE6": 22379068,
+                "lngE6": 114192133,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470544902",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773470401222",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Lek Yuen Bridge",
+                "latE6": 22378804,
+                "lngE6": 114191932,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "瀝源橋 Lek Yuen Bridge",
+                "latE6": 22379279,
+                "lngE6": 114191324,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470095990",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469933572",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Lek Yuen Bridge",
+                "latE6": 22378804,
+                "lngE6": 114191932,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_32",
+          "currentPortalInfo": {
+            "title": "Bicycle Workout Facility",
+            "latE6": 22379848,
+            "lngE6": 114195152,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471722236",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Bicycle Workout Facility",
+                "latE6": 22379848,
+                "lngE6": 114195152,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_37",
+          "currentPortalInfo": {
+            "title": "Kong Pui Street Rest Garden",
+            "latE6": 22381625,
+            "lngE6": 114196534,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471734210",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Kong Pui Street Rest Garden",
+                "latE6": 22381625,
+                "lngE6": 114196534,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_13",
+          "history": [
+            {
+              "moveTimeMs": "1773469898284",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門河畔展示牌3-大涌橋和曾大屋圍村",
+                "description": "曾大屋圍村，原名山廈圍，是沙田唯一現存的完整大型圍牆村落。\n二十世紀初，村民建議由左岸的白鶴汀連接右岸的吳園大涌兩岸。於1915年以石塊鋪成，是第一條連接沙田兩岸的行人橋。",
+                "latE6": 22376662,
+                "lngE6": 114188524,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469801599",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Waterfall Fountain",
+                "latE6": 22380595,
+                "lngE6": 114190715,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "城門河畔展示牌3-大涌橋和曾大屋圍村",
+                "description": "曾大屋圍村，原名山廈圍，是沙田唯一現存的完整大型圍牆村落。\n二十世紀初，村民建議由左岸的白鶴汀連接右岸的吳園大涌兩岸。於1915年以石塊鋪成，是第一條連接沙田兩岸的行人橋。",
+                "latE6": 22376662,
+                "lngE6": 114188524,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469531193",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469201236",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468601305",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468130622",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Waterfall Fountain",
+                "latE6": 22380595,
+                "lngE6": 114190715,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_18",
+          "history": [
+            {
+              "moveTimeMs": "1773471694683",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Little Climbing Wall",
+                "latE6": 22386038,
+                "lngE6": 114192887,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471601864",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471001863",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470403711",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "連理亭",
+                "description": "祝福天下有情人",
+                "latE6": 22380895,
+                "lngE6": 114190539,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "Little Climbing Wall",
+                "latE6": 22386038,
+                "lngE6": 114192887,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470228956",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773469936586",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "連理亭",
+                "description": "祝福天下有情人",
+                "latE6": 22380895,
+                "lngE6": 114190539,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_34",
+          "currentPortalInfo": {
+            "title": "Beijing 2008 Wall Paint",
+            "latE6": 22381165,
+            "lngE6": 114190747,
+            "team": "RESISTANCE"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471728203",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Beijing 2008 Wall Paint",
+                "latE6": 22381165,
+                "lngE6": 114190747,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_09",
+          "history": [
+            {
+              "moveTimeMs": "1773469895616",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Kong Pui Street Rest Garden Braille and Tactile Floor Plan",
+                "latE6": 22379599,
+                "lngE6": 114198608,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773469806826",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469204980",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "播道會康福堂",
+                "description": "有25年為邨內供居民發展全人健康歷史。",
+                "latE6": 22378817,
+                "lngE6": 114194138,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "Kong Pui Street Rest Garden Braille and Tactile Floor Plan",
+                "latE6": 22379599,
+                "lngE6": 114198608,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773469010313",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773468603044",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468127581",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "播道會康福堂",
+                "description": "有25年為邨內供居民發展全人健康歷史。",
+                "latE6": 22378817,
+                "lngE6": 114194138,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_07",
+          "history": [
+            {
+              "moveTimeMs": "1773469894335",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "曾大屋遊樂場",
+                "description": "Tsang Tai Uk Recreation Ground.\n\n沙田沙角街2號",
+                "latE6": 22375301,
+                "lngE6": 114190677,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469805383",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469202482",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468602836",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "輪迴",
+                "latE6": 22377793,
+                "lngE6": 114193559,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "曾大屋遊樂場",
+                "description": "Tsang Tai Uk Recreation Ground.\n\n沙田沙角街2號",
+                "latE6": 22375301,
+                "lngE6": 114190677,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773468466549",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773468136661",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "輪迴",
+                "latE6": 22377793,
+                "lngE6": 114193559,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_12",
+          "history": [
+            {
+              "moveTimeMs": "1773469897571",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門跑步徑",
+                "description": "木棉樹介紹",
+                "latE6": 22382256,
+                "lngE6": 114195262,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469800094",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469201182",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468601203",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468121644",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "城門跑步徑",
+                "description": "木棉樹介紹",
+                "latE6": 22382256,
+                "lngE6": 114195262,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_23",
+          "history": [
+            {
+              "moveTimeMs": "1773471698433",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "喜尚嘉喜宴會廳",
+                "description": "Their signature dish is BBQ pork with sticky rice",
+                "latE6": 22381129,
+                "lngE6": 114195694,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773471605249",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471007908",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470408056",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469939771",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "喜尚嘉喜宴會廳",
+                "description": "Their signature dish is BBQ pork with sticky rice",
+                "latE6": 22381129,
+                "lngE6": 114195694,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_39",
+          "currentPortalInfo": {
+            "title": "Sha Tin Road Safety Park",
+            "latE6": 22380577,
+            "lngE6": 114196295,
+            "team": "RESISTANCE"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471725222",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Sha Tin Road Safety Park",
+                "latE6": 22380577,
+                "lngE6": 114196295,
+                "team": "NEUTRAL"
+              },
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_27",
+          "currentPortalInfo": {
+            "title": "新型井字過三關",
+            "description": "位於兒童遊樂場的設施",
+            "latE6": 22377478,
+            "lngE6": 114191521,
+            "team": "ENLIGHTENED"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471740131",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "新型井字過三關",
+                "description": "位於兒童遊樂場的設施",
+                "latE6": 22377478,
+                "lngE6": 114191521,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_21",
+          "history": [
+            {
+              "moveTimeMs": "1773471696990",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "博康邨 · 滾軸溜冰場",
+                "description": "位於博康社區會堂旁，沙田博康邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22375524,
+                "lngE6": 114194618,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773471604464",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "博泰樓 · 羽毛球場",
+                "description": "位於近博泰樓一側，博康邨其中一個嘅羽毛球場，為附近嘅市民提供一個打羽毛球嘅地方，可以強身健體。",
+                "latE6": 22376601,
+                "lngE6": 114196124,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "博康邨 · 滾軸溜冰場",
+                "description": "位於博康社區會堂旁，沙田博康邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22375524,
+                "lngE6": 114194618,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773471224187",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773471006304",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "博智樓 · 舊式鐵柱涼亭",
+                "description": "此涼亭位於沙田博康邨內，近博智樓一側，頂部為80年代公屋舊式鐵柱涼亭設計，並只配合石壆作簡易座座，提供了一個休憩空間可以讓附近嘅市民在此乘涼歇息，但非平頂下市民不能避雨，只好離開。",
+                "latE6": 22375537,
+                "lngE6": 114195991,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "博泰樓 · 羽毛球場",
+                "description": "位於近博泰樓一側，博康邨其中一個嘅羽毛球場，為附近嘅市民提供一個打羽毛球嘅地方，可以強身健體。",
+                "latE6": 22376601,
+                "lngE6": 114196124,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773470855044",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773470406730",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Braille and Tactile Floor Plan of Rock Garden",
+                "latE6": 22376920,
+                "lngE6": 114193244,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "博智樓 · 舊式鐵柱涼亭",
+                "description": "此涼亭位於沙田博康邨內，近博智樓一側，頂部為80年代公屋舊式鐵柱涼亭設計，並只配合石壆作簡易座座，提供了一個休憩空間可以讓附近嘅市民在此乘涼歇息，但非平頂下市民不能避雨，只好離開。",
+                "latE6": 22375537,
+                "lngE6": 114195991,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773469990567",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773469929689",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "Braille and Tactile Floor Plan of Rock Garden",
+                "latE6": 22376920,
+                "lngE6": 114193244,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_36",
+          "currentPortalInfo": {
+            "title": "轉轉盤",
+            "latE6": 22378503,
+            "lngE6": 114194504,
+            "team": "RESISTANCE"
+          },
+          "history": [
+            {
+              "moveTimeMs": "1773471739241",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "轉轉盤",
+                "latE6": 22378503,
+                "lngE6": 114194504,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_02",
+          "history": [
+            {
+              "moveTimeMs": "1773469891226",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "城門河畔緩跑徑 沙燕橋（起點）",
+                "description": "Shing Mun Riverside Jogging Trail Sha Yan Bridge (starting point)",
+                "latE6": 22381866,
+                "lngE6": 114192597,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "ENLIGHTENED"
+            },
+            {
+              "moveTimeMs": "1773469802437",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469200818",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468600129",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773468140693",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "城門河畔緩跑徑 沙燕橋（起點）",
+                "description": "Shing Mun Riverside Jogging Trail Sha Yan Bridge (starting point)",
+                "latE6": 22381866,
+                "lngE6": 114192597,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_24",
+          "history": [
+            {
+              "moveTimeMs": "1773471699122",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Vintage Playground",
+                "latE6": 22379248,
+                "lngE6": 114195468,
+                "team": "NEUTRAL"
+              },
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773471602169",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "雲雀樓涼亭",
+                "description": "沙角邨雲雀樓旁邊，為邨民提供休憩地方",
+                "latE6": 22379215,
+                "lngE6": 114194679,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "Vintage Playground",
+                "latE6": 22379248,
+                "lngE6": 114195468,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773471407994",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773471001049",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773470401057",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469922614",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "雲雀樓涼亭",
+                "description": "沙角邨雲雀樓旁邊，為邨民提供休憩地方",
+                "latE6": 22379215,
+                "lngE6": 114194679,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        },
+        {
+          "id": "abaddon1_06",
+          "history": [
+            {
+              "moveTimeMs": "1773469893708",
+              "reason": "despawn",
+              "originPortalInfo": {
+                "title": "Kong Pui Street Rest Garden Braille and Tactile Floor Plan",
+                "latE6": 22379599,
+                "lngE6": 114198608,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "RESISTANCE"
+            },
+            {
+              "moveTimeMs": "1773469805312",
+              "reason": "no move",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationCapturerTeam": "NEUTRAL",
+              "linkCreatorTeam": "NEUTRAL"
+            },
+            {
+              "moveTimeMs": "1773469202228",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "Lek Yuen Bridge",
+                "latE6": 22378804,
+                "lngE6": 114191932,
+                "team": "RESISTANCE"
+              },
+              "originCapturerTeam": "RESISTANCE",
+              "destinationPortalInfo": {
+                "title": "Kong Pui Street Rest Garden Braille and Tactile Floor Plan",
+                "latE6": 22379599,
+                "lngE6": 114198608,
+                "team": "RESISTANCE"
+              },
+              "destinationCapturerTeam": "RESISTANCE",
+              "linkCreationTimeMs": "1773469192642",
+              "linkCreatorTeam": "RESISTANCE",
+              "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+            },
+            {
+              "moveTimeMs": "1773468601638",
+              "reason": "link",
+              "originPortalInfo": {
+                "title": "明耀樓 · 滾軸溜冰場",
+                "description": "位於近明耀樓一側，沙田乙明邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22377212,
+                "lngE6": 114192222,
+                "team": "ENLIGHTENED"
+              },
+              "originCapturerTeam": "ENLIGHTENED",
+              "destinationPortalInfo": {
+                "title": "Lek Yuen Bridge",
+                "latE6": 22378804,
+                "lngE6": 114191932,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreationTimeMs": "1773468570165",
+              "linkCreatorTeam": "ENLIGHTENED",
+              "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+            },
+            {
+              "moveTimeMs": "1773468137610",
+              "reason": "spawn",
+              "originCapturerTeam": "NEUTRAL",
+              "destinationPortalInfo": {
+                "title": "明耀樓 · 滾軸溜冰場",
+                "description": "位於近明耀樓一側，沙田乙明邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+                "latE6": 22377212,
+                "lngE6": 114192222,
+                "team": "ENLIGHTENED"
+              },
+              "destinationCapturerTeam": "ENLIGHTENED",
+              "linkCreatorTeam": "NEUTRAL"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "juliet",
+      "name": "Juliet"
+    },
+    {
+      "id": "foxtrot",
+      "name": "Foxtrot"
+    },
+    {
+      "id": "hotel",
+      "name": "Hotel"
+    },
+    {
+      "id": "uniform",
+      "name": "Uniform"
+    },
+    {
+      "id": "yankee",
+      "name": "Yankee"
+    },
+    {
+      "id": "papa",
+      "name": "Papa"
+    },
+    {
+      "id": "abaddon2",
+      "name": "Abaddon 2"
+    },
+    {
+      "id": "quebec",
+      "name": "Quebec"
+    },
+    {
+      "id": "tango",
+      "name": "Tango"
+    },
+    {
+      "id": "whiskey",
+      "name": "Whiskey"
+    },
+    {
+      "id": "golf",
+      "name": "Golf"
+    },
+    {
+      "id": "victor",
+      "name": "Victor"
+    },
+    {
+      "id": "november",
+      "name": "November"
+    },
+    {
+      "id": "targetres",
+      "name": "Target RES",
+      "target": [
+        {
+          "portalInfo": {
+            "title": "Tai Chi Wheel",
+            "latE6": 22382351,
+            "lngE6": 114200465,
+            "team": "RESISTANCE"
+          },
+          "targetAlignment": "RESISTANCE"
+        },
+        {
+          "portalInfo": {
+            "title": "過河橋",
+            "description": "城門河Brige",
+            "latE6": 22377098,
+            "lngE6": 114188418,
+            "team": "NEUTRAL"
+          },
+          "targetAlignment": "RESISTANCE"
+        },
+        {
+          "portalInfo": {
+            "title": "博康邨 · 滾軸溜冰場",
+            "description": "位於博康社區會堂旁，沙田博康邨其中一個滾軸溜冰場，為附近嘅市民提供一個玩滾軸溜冰嘅地方，可以強身健體；多做運動更可紓緩神經緊張，也可改善睡眠質素。",
+            "latE6": 22375524,
+            "lngE6": 114194618,
+            "team": "RESISTANCE"
+          },
+          "targetAlignment": "RESISTANCE"
+        },
+        {
+          "portalInfo": {
+            "title": "Lek Yuen Public Library",
+            "latE6": 22384520,
+            "lngE6": 114190453,
+            "team": "NEUTRAL"
+          },
+          "targetAlignment": "RESISTANCE"
+        }
+      ]
+    },
+    {
+      "id": "zulu",
+      "name": "Zulu"
+    },
+    {
+      "id": "xray",
+      "name": "Xray"
+    },
+    {
+      "id": "targetenl",
+      "name": "Target ENL",
+      "target": [
+        {
+          "portalInfo": {
+            "title": "圓州角公園入口",
+            "latE6": 22381010,
+            "lngE6": 114200284,
+            "team": "RESISTANCE"
+          },
+          "targetAlignment": "ALIENS"
+        },
+        {
+          "portalInfo": {
+            "title": "石片千層椅",
+            "description": "使用石头片堆起来的艺术座椅",
+            "latE6": 22380300,
+            "lngE6": 114188679,
+            "team": "ENLIGHTENED"
+          },
+          "targetAlignment": "ALIENS"
+        },
+        {
+          "portalInfo": {
+            "title": "Shatin Football Court",
+            "description": "Mini sport place",
+            "latE6": 22385993,
+            "lngE6": 114191048,
+            "team": "RESISTANCE"
+          },
+          "targetAlignment": "ALIENS"
+        },
+        {
+          "portalInfo": {
+            "title": "綠悠悠滑梯",
+            "description": "博康博達樓",
+            "latE6": 22374440,
+            "lngE6": 114193408,
+            "team": "RESISTANCE"
+          },
+          "targetAlignment": "ALIENS"
+        }
+      ]
+    },
+    {
+      "id": "romeo",
+      "name": "Romeo"
+    },
+    {
+      "id": "mike",
+      "name": "Mike"
+    },
+    {
+      "id": "delta",
+      "name": "Delta"
+    },
+    {
+      "id": "charlie",
+      "name": "Charlie"
+    },
+    {
+      "id": "kilo",
+      "name": "Kilo"
+    },
+    {
+      "id": "oscar",
+      "name": "Oscar"
+    },
+    {
+      "id": "alpha",
+      "name": "Alpha"
+    },
+    {
+      "id": "lima",
+      "name": "Lima"
+    },
+    {
+      "id": "india",
+      "name": "India"
+    },
+    {
+      "id": "bravo",
+      "name": "Bravo"
+    },
+    {
+      "id": "sierra",
+      "name": "Sierra"
+    },
+    {
+      "id": "echo",
+      "name": "Echo"
+    }
+  ]
+}
