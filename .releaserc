@@ -3,12 +3,12 @@
         "main",
         {
             "name": "feat/*",
-            "prerelease": "alpha",
+            "prerelease": true,
             "channel": "alpha"
         },
         {
             "name": "fix/*",
-            "prerelease": "alpha",
+            "prerelease": true,
             "channel": "alpha"
         }
     ],
