@@ -28,6 +28,7 @@ const config = tseslint.config(
         ignores: [
             ".yarn/",
             "eslint.config.js",
+            "release.config.cjs",
             "ts-to-zod.config.mjs",
             "config/",
             "dist/",
