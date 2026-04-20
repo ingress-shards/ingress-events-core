@@ -28,8 +28,10 @@ const config = tseslint.config(
         ignores: [
             ".yarn/",
             "eslint.config.js",
+            "ts-to-zod.config.mjs",
             "config/",
             "dist/",
+            "gen/types/**/*.zod.ts",
         ],
     },
     {
@@ -77,7 +79,7 @@ const config = tseslint.config(
                 "error",
                 {
                     case: "pascalCase",
-                    ignore: [".*\\.d\\.ts$", "^index(\\.d)?\\.ts$", "^API.*", "\\.schema(\\.ts)?", "\\.spec\\.ts$"],
+                    ignore: [".*\\.d\\.ts$", "^index(\\.d)?\\.ts$", "^API.*", "\\.schema(\\.ts)?", "\\.spec\\.ts$", ".*\\.config\\.ts$"],
                 },
             ],
             "unicorn/prevent-abbreviations": [

@@ -1,45 +1,55 @@
 {
-    "name": "@ingress-shards/shards-core",
+    "name": "@ingress-shards/ingress-events-core",
     "version": "0.0.0-semantically-released",
-    "description": "Core logic for Ingress applications which interact with shards",
-    "homepage": "https://github.com/ingress-shards/shards-core#readme",
+    "description": "Core logic for Ingress applications which interact with events",
+    "homepage": "https://github.com/ingress-shards/ingress-events-core#readme",
     "bugs": {
-        "url": "https://github.com/ingress-shards/shards-core/issues"
+        "url": "https://github.com/ingress-shards/ingress-events-core/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ingress-shards/shards-core.git"
+        "url": "git+https://github.com/ingress-shards/ingress-events-core.git"
     },
     "license": "MIT",
-    "author": "Nick Young",
+    "sideEffects": [
+        "**/*.css"
+    ],
+    "author": "Lewis Keen",
     "contributors": [
-        "Lewis Keen"
+        "Nick Young"
     ],
     "type": "module",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./dist/index.mjs",
+    "types": "./dist/index.d.mts",
+    "style": "./dist/visuals/index.css",
     "exports": {
         ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        }
+            "types": "./dist/index.d.mts",
+            "import": "./dist/index.mjs",
+            "style": "./dist/visuals/index.css"
+        },
+        "./visuals/*": "./dist/visuals/*",
+        "./conf/*": "./dist/conf/*"
     },
     "files": [
-        "dist",
-        "assets"
+        "dist"
     ],
     "directories": {
         "lib": "src",
-        "test": "tests"
+        "test": "src"
     },
     "scripts": {
-        "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
-        "build": "tsc --build tsconfig.build.json",
-        "build:watch": "tsc --build tsconfig.build.json --watch",
+        "clean": "node -e \"['dist', 'gen'].forEach(d => require('fs').rmSync(d, { recursive: true, force: true }))\"",
+        "build": "tsdown",
+        "build:watch": "tsdown --watch",
         "prepare": "yarn build",
-        "test:unit": "yarn vitest run",
-        "lint": "eslint src tests",
-        "validate": "yarn clean && yarn lint && yarn build && yarn test:unit"
+        "geocode": "python scripts/geocode.py",
+        "zod-schemas": "node -e \"require('fs').mkdirSync('gen/zod-schemas', { recursive: true })\" && ts-to-zod --all --skipValidation",
+        "generate": "yarn zod-schemas && yarn geocode",
+        "test:unit": "yarn generate && vitest run",
+        "test:coverage": "yarn generate && vitest run --coverage",
+        "lint": "eslint src",
+        "validate": "yarn clean && yarn generate && yarn lint && yarn build && vitest run --coverage"
     },
     "dependencies": {
         "temporal-polyfill": "^0.3.0"
@@ -48,6 +58,7 @@
         "@eslint/js": "^9.39.2",
         "@semantic-release/exec": "^7.1.0",
         "@types/node": "^25.0.9",
+        "@vitest/coverage-v8": "^4.1.4",
         "conventional-changelog-conventionalcommits": "^9.1.0",
         "eslint": "^9.39.2",
         "eslint-plugin-prefer-arrow-functions": "^3.9.1",
@@ -55,9 +66,11 @@
         "globals": "^17.1.0",
         "semantic-release": "^25.0.2",
         "ts-node": "^10.9.2",
+        "ts-to-zod": "^5.1.0",
+        "tsdown": "^0.21.4",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.54.0",
-        "vitest": "^4.0.18"
+        "vitest": "4.1.4"
     },
     "packageManager": "yarn@4.12.0",
     "publishConfig": {

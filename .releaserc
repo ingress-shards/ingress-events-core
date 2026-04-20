@@ -3,7 +3,13 @@
         "main",
         {
             "name": "feat/*",
-            "prerelease": "alpha"
+            "prerelease": "alpha",
+            "channel": "alpha"
+        },
+        {
+            "name": "fix/*",
+            "prerelease": "alpha",
+            "channel": "alpha"
         }
     ],
     "plugins": [

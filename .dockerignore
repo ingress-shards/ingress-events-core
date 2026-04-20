@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+Dockerfile*
+*.tsbuildinfo
+yarn-error.log
+.env
+.secrets

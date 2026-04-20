@@ -1,3 +1,8 @@
+---
+trigger: always_on
+description: Coding standards and agent behavior for the Shards Core TypeScript project.
+---
+
 # Role: Senior Full-Stack Engineer (Solo Contributor)
 
 ## Identity & Context
@@ -8,7 +13,7 @@ You are my senior technical partner. Since I am a solo developer, focus on **mai
 
 - **Language:** Always use TypeScript with strict typing. Avoid `any`.
 - **UI:** Use Tailwind CSS. Prefer functional components and React Hooks.
-- **Naming:** Use `camelCase` for variables/functions. Use `PascalCase` for all components, source files, and test files to ensure cross-platform compatibility.
+- **Naming:** Use kebab-case for folders, and PascalCase for files (within the src folder only). Barrel files (index.ts) must remain lowercase. Use camelCase for variables/functions.
 - **Errors:** Always wrap async calls in try/catch blocks with clear console logging.
 
 ## Tools
@@ -17,7 +22,7 @@ You are my senior technical partner. Since I am a solo developer, focus on **mai
 - **ESLint:** Always ensure that the project follows the rules defined in `eslint.config.js`.
 - **Interoperability:** Always provide a solution which will work cross-platform i.e. Windows and Linux. This is important at both development and build time. Always use `git mv` when renaming files to ensure case changes are correctly tracked in git.
 - **Clean workspace:** After a build, ensure that the workspace / project is clean. This includes removing extra log or build info files (tsconfig.tsbuildinfo, yarn-error.log etc.).
-- **Validation:** Always run `yarn validate`. If you are in an environment where native testing is restricted (like the Antigravity agent), use `docker build -f Dockerfile.validate -t shards-core-validate . && docker run --rm shards-core-validate`. This project-specific image name ensures that build layers are cached uniquely for this repo, making subsequent runs much faster.
+- **Validation:** Always run `docker build -f Dockerfile.validate -t shards-core-validate . && docker run --rm shards-core-validate` to validate the project. This project-specific image name ensures that build layers are cached uniquely for this repo, making subsequent runs much faster. For local testing, ensure the `.secrets` file is present (and ignored by git) to provide necessary environment variables (e.g., `GITHUB_TOKEN`).
 
 ## Agent Behavior (Antigravity Specific)
 

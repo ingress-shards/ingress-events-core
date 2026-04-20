@@ -11,11 +11,19 @@
 
 # Dependencies
 node_modules/
+/venv
+
+cache.sqlite
 
 # OS
 .DS_Store
 Thumbs.db
 dist/
+gen/
 
 # Act secrets
 .secrets
+
+# Logs and Build Artifacts
+*.log
+*.tgz
