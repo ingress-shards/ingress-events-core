@@ -2,7 +2,7 @@ import type { FactionId } from "../common/Factions.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId } from "../common/Identifiers.js";
 import type { SiteGeocode } from "../contracts/Geocode.js";
-import type { Portal, PortalObservation } from "./Portal.js";
+import type { Portal, PortalFeature } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
 
 /**
@@ -47,7 +47,10 @@ export interface SiteRecordMetadata {
 export interface SiteObservation {
     portals: Record<PortalId, Portal>;
     shards: Record<ShardId, Shard>;
-    featureObservations: PortalObservation[];
+    /** Unified observation time for all features in this state */
+    observedAt: number;
+    /** Consolidated map of portal features (Ornaments, Targets, etc.) */
+    features: Record<PortalId, PortalFeature[]>;
 }
 
 export interface SiteAnalysis {

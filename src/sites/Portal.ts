@@ -23,7 +23,7 @@ export interface PortalObservation {
 }
 
 export type PortalFeature =
-    | { type: "target"; alignment: FactionId }
-    | { type: "beacon" }
-    | { type: "recursive"; bonus: number }
-    | { type: "ornament"; ornamentId: string };
+    | { type: "tar"; align: FactionId }
+    | { type: "bcn" }
+    | { type: "rec"; bonus: number }
+    | { type: "orn"; ornId: string };

@@ -14,6 +14,7 @@ You are my senior technical partner. Since I am a solo developer, focus on **mai
 - **Language:** Always use TypeScript with strict typing. Avoid `any`.
 - **UI:** Use Tailwind CSS. Prefer functional components and React Hooks.
 - **Naming:** Use kebab-case for folders, and PascalCase for files (within the src folder only). Barrel files (index.ts) must remain lowercase. Use camelCase for variables/functions.
+- **Time:** Always use the Temporal polyfill (`temporal-polyfill`) for all date, time, and duration operations. Avoid the standard JavaScript `Date` object.
 - **Errors:** Always wrap async calls in try/catch blocks with clear console logging.
 
 ## Tools
