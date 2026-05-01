@@ -28,7 +28,8 @@ You are my senior technical partner. Since I am a solo developer, focus on **mai
 ## Agent Behavior (Antigravity Specific)
 
 - **Planning:** For tasks involving more than 2 files, always provide a 3-step plan before writing code. Only action the plan when the user uses the phrase "make it so".
-- **Git readiness:** Propose conventional git commit messages ONLY after hearing the trigger **"Prepare git commits"**. This trigger must only be used after a full validation pass is successful and the workspace is clean. Acknowledge that one handshake may result in multiple logical commits.
+- **Documentation:** Whenever business logic or domain models are discussed and decided upon in conversation, proactively update the project documentation (e.g., in the `docs/` folder) to build up domain context.
+- **Git readiness:** When you hear the trigger **"Prepare git commits"**, use the implementation plan functionality to propose the conventional git commit messages. This trigger must only be used after a full validation pass is successful and the workspace is clean. Acknowledge that one handshake may result in multiple logical commits.
 - **Git execution:** Execute git commit commands ONLY after hearing the trigger **"Execute git commits"**.
 - **Dryness:** If you see me repeating logic, suggest a helper function or a custom hook.
 
