@@ -1,5 +1,5 @@
 import type { Coordinates } from "../common/Geo.js";
-import type { PortalGuid, PortalId } from "../common/Identifiers.js";
+import type { PortalGuid } from "../common/Identifiers.js";
 import type { FactionId } from "../common/Factions.js";
 
 /**
@@ -12,18 +12,58 @@ export interface Portal extends Coordinates {
      * Ingress portal GUID - mandatory for identifiable portals, optional for others.
      */
     guid?: PortalGuid;
+    /** 
+     * Chronological history of observations for this portal.
+     */
+    history: PortalHistoryEntry[];
 }
 
-export interface PortalObservation {
-    portalId: PortalId;
+export type PortalHistoryType = "target" | "beacon" | "recursive" | "ornament";
+
+/**
+ * Base historical entry for a portal.
+ */
+export interface BasePortalHistoryEntry {
     /** Epoch time in milliseconds */
-    observedAt: number;
-    /** The specific characteristic observed (Target, Beacon, etc.) */
-    feature: PortalFeature;
+    timestamp: number;
+    /** The specific characteristic observed */
+    type: PortalHistoryType;
 }
 
-export type PortalFeature =
-    | { type: "tar"; align: FactionId }
-    | { type: "bcn" }
-    | { type: "rec"; bonus: number }
-    | { type: "orn"; ornId: string };
+export interface TargetHistoryEntry extends BasePortalHistoryEntry {
+    type: "target";
+    /** Faction alignment */
+    team: FactionId;
+}
+
+export type BeaconOrnament = 
+    | "peBB_BATTLE_RARE" 
+    | "ap1" 
+    | "ap1_v" 
+    | "peBN_ENL_WINNER" 
+    | "peBN_RES_WINNER" 
+    | "peBN_TIED_WINNER";
+
+export interface BeaconHistoryEntry extends BasePortalHistoryEntry {
+    type: "beacon";
+    /** The specific ornament ID for the beacon */
+    beaconOrnament: BeaconOrnament;
+}
+
+export interface RecursiveHistoryEntry extends BasePortalHistoryEntry {
+    type: "recursive";
+    /** Bonus multiplier */
+    bonus: number;
+}
+
+export interface OrnamentHistoryEntry extends BasePortalHistoryEntry {
+    type: "ornament";
+    /** Internal ornament identifier */
+    ornamentId: string;
+}
+
+export type PortalHistoryEntry = 
+    | TargetHistoryEntry 
+    | BeaconHistoryEntry 
+    | RecursiveHistoryEntry 
+    | OrnamentHistoryEntry;
