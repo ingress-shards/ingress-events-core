@@ -4,6 +4,11 @@
 export const EARTH_RADIUS_METERS = 6371000;
 
 /**
+ * Distance in meters for aggregating portals into a site.
+ */
+const SITE_AGGREGATION_DISTANCE_METERS = 10000;
+
+/**
  * Opaque type for coordinates multiplied by 1,000,000.
  * In JS, this is a number, but branding ensures it is treated as an E6 integer.
  */
@@ -48,4 +53,11 @@ export const haversineDistance = (coords1: Coordinates, coords2: Coordinates): n
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return EARTH_RADIUS_METERS * c;
+};
+
+/**
+ * Checks if a target location is within the site aggregation distance from a site centroid.
+ */
+export const isWithinSiteRange = (siteCoords: Coordinates, targetCoords: Coordinates): boolean => {
+    return haversineDistance(siteCoords, targetCoords) <= SITE_AGGREGATION_DISTANCE_METERS;
 };
