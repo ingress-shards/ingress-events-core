@@ -25,12 +25,12 @@ Because of the differences in the incoming data streams, the observation layer h
 - **Point-in-Time Snapshots (Wipe-and-Replace)**: Since IITC Map Scans represent the absolute state of the map at the moment of capture, the system supports a manual "wipe-and-replace" feature via the observer plugin. Rather than automatically tracking removals, users can manually clear all pre-event ornaments for a site and replace them entirely with a fresh scan. This prevents the need for complex state-diffing or calculating "removed" events.
 - **Historical Event Stream (Immutable Append)**: Since Shard Jumps are chronological events, they are immutably appended to the shard's history log.
 
-**Note on Battle Beacons:**
-Battle beacons are represented by several concurrent explicit ornaments on the map, rather than abstract states. These include:
-- `peBB_BATTLE_RARE` (Niantic deployed event beacon)
-- `ap1` (Standard duration indicator)
-- `ap1_v` (Volatile duration indicator)
-- `peBN_ENL_WINNER` / `peBN_RES_WINNER` / `peBN_TIED_WINNER` (Post-battle victory state markers)
+**Note on Ornaments & Beacons:**
+The system uses a data-driven approach for identifying portal features. Rather than hardcoding specific ornament IDs, the system filters ornaments based on **tags** defined in `event_blueprints.json`. Common categories include:
+- `target`: Ornaments representing shard targets (RES/ENL).
+- `battle-beacon`: Ornaments related to active or completed Battle Beacons (e.g., `peBB_BATTLE_RARE`).
+- `pre-event`: Ornaments used for site identification before an event goes live.
+- `recursive`: Bonus multipliers or other special modifiers.
 
 ## Entity Relationship Flow
 The data models map to the [Classic Data Lifecycle](./Architecture.md#classic-data-lifecycle) and are unified within the **SiteRecord** container.
@@ -47,17 +47,26 @@ erDiagram
     Shard_Jumps_Endpoint ||--o{ Shard_Jumps_Capture : "Provides"
     
     %% Stage 3: Processing
-    Portals ||--o{ OrnamentedPortal : "Yields"
+    Portals ||--o{ PortalHistoryEntry : "Yields"
     Shard_Jumps_Capture ||--o{ ShardJumpObservation : "Parsed Into"
     
     %% Stage 4: Storage (within SiteObservation)
     SiteObservation ||--o{ ShardJumpObservation : "Stores History"
-    SiteObservation ||--o{ OrnamentedPortal : "Stores State"
+    SiteObservation ||--o{ PortalHistoryEntry : "Stores State"
     
     %% Stage 5: Analysis (within SiteState)
     SiteState ||--|| Points : "Calculates"
     SiteState ||--|| Scores : "Determines"
 ```
+
+## Temporal Data Standards
+
+To maintain consistency across the plugin and core analysis tools, all timestamps in the domain models use **Epoch Seconds** (Unix timestamps) rather than milliseconds.
+
+- **`SiteRecord.lastUpdated`**: The 10-digit timestamp of when the record was last persisted.
+- **`PortalHistoryEntry.timestamp`**: The timestamp of the specific observation.
+
+This precision is sufficient for the minute-scale resolution of Ingress events and makes manual verification of data exports significantly easier.
 
 ## Layer Definitions
 
@@ -72,7 +81,7 @@ The `SiteRecord` is the primary domain entity representing the complete lifecycl
 The storage layer defines the "Document Persistence Model" (JSON representations) of what has been seen on the map.
 
 - **ShardJumpObservation**: A simplified record of a shard movement, stripped of wire-protocol artifacts.
-- **OrnamentedPortal**: Captures indicators like `BattleBeacon` and `Volatile` elements exactly as rendered on the portal network.
+- **PortalHistoryEntry**: Captures chronological indicators like `battle-beacon`, `target`, and `pre-event` ornaments exactly as rendered on the portal network.
 
 ### 3. Analysis Layer (SiteState)
 The analysis layer enriches the stored observation data to produce rule-based standings.

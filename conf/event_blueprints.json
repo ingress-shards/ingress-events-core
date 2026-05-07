@@ -28,24 +28,29 @@
     "ornaments": {
         "ap1": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event", "battle-beacon"],
             "style": { "color": "#F58634" }
         },
         "ap2": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event"],
             "style": { "color": "#FF32F7" }
         },
         "ap3": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event"],
             "style": { "color": "#7E14FF" }
         },
         "nl-1331-2026": {
             "label": "Virtual NL-1331 Tour 2026",
+            "tags": ["pre-event"],
             "style": {
                 "icon": "images/ornament-icons/nl_1331_2026.png"
             }
         },
         "targetres": {
             "label": "RES Target Portal",
+            "tags": ["target"],
             "style": {
                 "icon": "images/ornament-icons/target-res.png",
                 "size": { "width": 40, "height": 40 }
@@ -53,6 +58,7 @@
         },
         "targetenl": {
             "label": "ENL Target Portal",
+            "tags": ["target"],
             "style": {
                 "icon": "images/ornament-icons/target-enl.png",
                 "size": { "width": 40, "height": 40 }
