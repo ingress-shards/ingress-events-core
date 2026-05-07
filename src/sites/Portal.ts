@@ -17,20 +17,7 @@ export interface Portal extends Coordinates {
     history: PortalHistoryEntry[];
 }
 
-export type PortalHistoryType = "target" | "beacon" | "recursive" | "pre-event";
-
-export type TargetOrnament = "targetres" | "targetenl";
-
-export type BeaconOrnament = 
-    | "peBB_BATTLE_RARE" 
-    | "ap1" 
-    | "ap1_v" 
-    | "peBN_ENL_WINNER" 
-    | "peBN_RES_WINNER" 
-    | "peBN_TIED_WINNER";
-
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-export type PreEventOrnament = "nl-1331-2026" | "ap1" | "ap2" | "ap3" | string;
+export type PortalHistoryType = "target" | "battle-beacon" | "recursive" | "pre-event";
 
 /**
  * Base historical entry for a portal.
@@ -44,14 +31,14 @@ export interface BasePortalHistoryEntry {
 
 export interface TargetHistoryEntry extends BasePortalHistoryEntry {
     type: "target";
-    /** Target portal identifier */
-    ornId: TargetOrnament;
+    /** Target portal identifier (driven by blueprint keys) */
+    ornId: string;
 }
 
-export interface BeaconHistoryEntry extends BasePortalHistoryEntry {
-    type: "beacon";
-    /** The specific ornament ID for the beacon */
-    ornId: BeaconOrnament;
+export interface BattleBeaconHistoryEntry extends BasePortalHistoryEntry {
+    type: "battle-beacon";
+    /** The specific ornament ID for the beacon (driven by blueprint keys) */
+    ornId: string;
 }
 
 export interface RecursiveHistoryEntry extends BasePortalHistoryEntry {
@@ -62,12 +49,12 @@ export interface RecursiveHistoryEntry extends BasePortalHistoryEntry {
 
 export interface PreEventHistoryEntry extends BasePortalHistoryEntry {
     type: "pre-event";
-    /** Internal ornament identifier for pre-event ornaments */
-    ornId: PreEventOrnament;
+    /** Internal ornament identifier for pre-event ornaments (driven by blueprint keys) */
+    ornId: string;
 }
 
 export type PortalHistoryEntry = 
     | TargetHistoryEntry 
-    | BeaconHistoryEntry 
+    | BattleBeaconHistoryEntry 
     | RecursiveHistoryEntry 
     | PreEventHistoryEntry;
