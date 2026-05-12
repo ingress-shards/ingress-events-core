@@ -61,3 +61,31 @@ export const haversineDistance = (coords1: Coordinates, coords2: Coordinates): n
 export const isWithinSiteRange = (siteCoords: Coordinates, targetCoords: Coordinates): boolean => {
     return haversineDistance(siteCoords, targetCoords) <= SITE_AGGREGATION_DISTANCE_METERS;
 };
+
+/**
+ * Calculates the bounding box dimensions (width and height) for a set of coordinates.
+ * @returns {Object} Width and height in meters.
+ */
+export const calculateBoundingBoxDimensions = (coords: Coordinates[]): { width: number; height: number } => {
+    if (coords.length === 0) return { width: 0, height: 0 };
+
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+
+    for (const p of coords) {
+        if (p.latE6 < minLat) minLat = p.latE6;
+        if (p.latE6 > maxLat) maxLat = p.latE6;
+        if (p.lngE6 < minLng) minLng = p.lngE6;
+        if (p.lngE6 > maxLng) maxLng = p.lngE6;
+    }
+
+    const avgLat = (minLat + maxLat) / 2;
+    const avgLng = (minLng + maxLng) / 2;
+
+    const width = haversineDistance({ latE6: avgLat, lngE6: minLng }, { latE6: avgLat, lngE6: maxLng });
+    const height = haversineDistance({ latE6: minLat, lngE6: avgLng }, { latE6: maxLat, lngE6: avgLng });
+
+    return { width, height };
+};
