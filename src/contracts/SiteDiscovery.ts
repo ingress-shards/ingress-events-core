@@ -1,5 +1,4 @@
 import type { SiteId } from "../common/Identifiers.js";
-import type { Portal } from "../sites/Portal.js";
 
 /**
  * Standardized snapshot from the IITC plugin.
@@ -7,13 +6,16 @@ import type { Portal } from "../sites/Portal.js";
  */
 export interface SiteDiscovery {
     siteId: SiteId;
-    /** The timestamp of the export action itself (epoch ms) */
+    /** The timestamp of the export action itself (epoch seconds) */
     exportedAt: number;
     /** Array of detected portals and their observed state */
     portals: PortalDiscovery[];
 }
 
-export interface PortalDiscovery extends Portal {
+export interface PortalDiscovery {
+    title: string;
+    lat: number;
+    lng: number;
     /** The mandatory ornament found during discovery (e.g., "ap1") */
     ornamentId: string;
 }
