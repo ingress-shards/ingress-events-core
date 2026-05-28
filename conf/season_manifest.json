@@ -67,7 +67,7 @@
                     "eventType": "ANOMALY",
                     "startTime": "14:00",
                     "shardMechanics": "6w_30m_3j",
-                    "targetMechanics": "6w_30m"
+                    "targetMechanics": "6w_30m_4t"
                 },
                 {
                     "eventType": "SKIRMISH",

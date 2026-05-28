@@ -83,6 +83,24 @@
                 { "action": "despawn", "time": 29 }
             ]
         },
+        "6w_30m_4j": {
+            "waves": [
+                { "startOffset": 2, "endOffset": 31, "quantity": 23 },
+                { "startOffset": 32, "endOffset": 61, "quantity": 23 },
+                { "startOffset": 62, "endOffset": 91, "quantity": 23 },
+                { "startOffset": 92, "endOffset": 121, "quantity": 23 },
+                { "startOffset": 122, "endOffset": 151, "quantity": 23 },
+                { "startOffset": 152, "endOffset": 181, "quantity": 23 }
+            ],
+            "waveActions": [
+                { "action": "spawn", "time": 0 },
+                { "action": "jump", "time": 10 },
+                { "action": "jump", "time": 15 },
+                { "action": "jump", "time": 20 },
+                { "action": "jump", "time": 25 },
+                { "action": "despawn", "time": 28 }
+            ]
+        },
         "5w_20m_1j": {
             "waves": [
                 { "startOffset": 0, "endOffset": 19, "quantity": 3 },
@@ -145,7 +163,7 @@
                 { "action": "despawn", "time": 241 }
             ]
         },
-        "6w_30m": {
+        "6w_30m_4t": {
             "waves": [
                 { "startOffset": 2, "endOffset": 31, "factionQuantity": { "RES": 4, "ENL": 4 } },
                 { "startOffset": 32, "endOffset": 61, "factionQuantity": { "RES": 4, "ENL": 4 } },
@@ -157,6 +175,20 @@
             "waveActions": [
                 { "action": "spawn", "time": 0 },
                 { "action": "despawn", "time": 29 }
+            ]
+        },
+        "6w_30m_6t": {
+            "waves": [
+                { "startOffset": 2, "endOffset": 31, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 32, "endOffset": 61, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 62, "endOffset": 91, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 92, "endOffset": 121, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 122, "endOffset": 151, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 152, "endOffset": 181, "factionQuantity": { "RES": 6, "ENL": 6 } }
+            ],
+            "waveActions": [
+                { "action": "spawn", "time": 0 },
+                { "action": "despawn", "time": 28 }
             ]
         }
     },
