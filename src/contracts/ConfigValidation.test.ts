@@ -10,6 +10,7 @@ import recentManifestJson from "../../dist/conf/recent/season_manifest.json" wit
 import { seasonManifestSchema } from "../../gen/zod-schemas/Manifest.zod.js";
 import { eventBlueprintsSchema } from "../../gen/zod-schemas/EventBlueprints.zod.js";
 import { seasonGeocodeSchema } from "../../gen/zod-schemas/Geocode.zod.js";
+import type { EventBlueprints } from "./EventBlueprints.js";
 
 describe("Strict Configuration Validation", () => {
     test("season_manifest.json matches exactly", () => {
@@ -21,7 +22,36 @@ describe("Strict Configuration Validation", () => {
     });
 
     test("event_blueprints.json matches exactly", () => {
-        const result = eventBlueprintsSchema.strict().safeParse(blueprintsJson);
+        const result = eventBlueprintsSchema
+            .strict()
+            // Every ornament must have at least one tag
+            .refine(
+                (data) => {
+                    const blueprints = data as EventBlueprints;
+                    return Object.values(blueprints.ornaments).every((o) => o.tags.length > 0);
+                },
+                {
+                    message: "Every ornament must have at least one categorization tag.",
+                },
+            )
+            // We must have coverage for the core mechanics
+            .refine(
+                (data) => {
+                    const blueprints = data as EventBlueprints;
+                    const activeTags = new Set<string>();
+                    Object.values(blueprints.ornaments).forEach((o) => {
+                        o.tags.forEach((tag) => activeTags.add(tag));
+                    });
+
+                    const required = ["target", "battle-beacon", "pre-event"];
+                    return required.every((tag) => activeTags.has(tag));
+                },
+                {
+                    message: "Blueprints must provide coverage for target, battle-beacon, and pre-event tags.",
+                },
+            )
+            .safeParse(blueprintsJson);
+
         if (!result.success) {
             console.error(JSON.stringify(z.treeifyError(result.error), undefined, 2));
         }

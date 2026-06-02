@@ -1,3 +1,4 @@
+import type { PortalHistoryType } from "../sites/Portal.js";
 import type { SeasonEvent } from "../seasons/Season.js";
 import type { ShardAction } from "../sites/Shard.js";
 
@@ -25,6 +26,8 @@ export interface EventMetadata {
 export interface Ornament {
     /** Human-readable label for the ornament */
     label: string;
+    /** Logic tags to categorize the ornament (e.g. ["pre-event"]) */
+    tags: PortalHistoryType[];
     /** Visual styling for the ornament */
     style: {
         /** Hex color for vector markers */

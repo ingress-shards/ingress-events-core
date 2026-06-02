@@ -234,8 +234,8 @@ def main():
 
     season_geocode_full = { "seasons": [] }
     total_sites_full = 0
-    for series_id, site_data in results:
-        season_geocode_full["seasons"].append({ "id": series_id, "sites": site_data })
+    for season_id, site_data in results:
+        season_geocode_full["seasons"].append({ "id": season_id, "sites": site_data })
         total_sites_full += len(site_data)
 
     print(f'Geocoded {total_sites_full} sites, {len(season_geocode_full["seasons"])} seasons.')

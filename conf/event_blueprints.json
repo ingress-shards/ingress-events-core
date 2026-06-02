@@ -28,24 +28,29 @@
     "ornaments": {
         "ap1": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event", "battle-beacon"],
             "style": { "color": "#F58634" }
         },
         "ap2": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event"],
             "style": { "color": "#FF32F7" }
         },
         "ap3": {
             "label": "Anomaly Portal",
+            "tags": ["pre-event"],
             "style": { "color": "#7E14FF" }
         },
         "nl-1331-2026": {
             "label": "Virtual NL-1331 Tour 2026",
+            "tags": ["pre-event"],
             "style": {
                 "icon": "images/ornament-icons/nl_1331_2026.png"
             }
         },
         "targetres": {
             "label": "RES Target Portal",
+            "tags": ["target"],
             "style": {
                 "icon": "images/ornament-icons/target-res.png",
                 "size": { "width": 40, "height": 40 }
@@ -53,6 +58,7 @@
         },
         "targetenl": {
             "label": "ENL Target Portal",
+            "tags": ["target"],
             "style": {
                 "icon": "images/ornament-icons/target-enl.png",
                 "size": { "width": 40, "height": 40 }
@@ -75,6 +81,24 @@
                 { "action": "jump", "time": 18 },
                 { "action": "jump", "time": 28 },
                 { "action": "despawn", "time": 29 }
+            ]
+        },
+        "6w_30m_4j": {
+            "waves": [
+                { "startOffset": 2, "endOffset": 31, "quantity": 23 },
+                { "startOffset": 32, "endOffset": 61, "quantity": 23 },
+                { "startOffset": 62, "endOffset": 91, "quantity": 23 },
+                { "startOffset": 92, "endOffset": 121, "quantity": 23 },
+                { "startOffset": 122, "endOffset": 151, "quantity": 23 },
+                { "startOffset": 152, "endOffset": 181, "quantity": 23 }
+            ],
+            "waveActions": [
+                { "action": "spawn", "time": 0 },
+                { "action": "jump", "time": 10 },
+                { "action": "jump", "time": 15 },
+                { "action": "jump", "time": 20 },
+                { "action": "jump", "time": 25 },
+                { "action": "despawn", "time": 28 }
             ]
         },
         "5w_20m_1j": {
@@ -139,7 +163,7 @@
                 { "action": "despawn", "time": 241 }
             ]
         },
-        "6w_30m": {
+        "6w_30m_4t": {
             "waves": [
                 { "startOffset": 2, "endOffset": 31, "factionQuantity": { "RES": 4, "ENL": 4 } },
                 { "startOffset": 32, "endOffset": 61, "factionQuantity": { "RES": 4, "ENL": 4 } },
@@ -151,6 +175,20 @@
             "waveActions": [
                 { "action": "spawn", "time": 0 },
                 { "action": "despawn", "time": 29 }
+            ]
+        },
+        "6w_30m_6t": {
+            "waves": [
+                { "startOffset": 2, "endOffset": 31, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 32, "endOffset": 61, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 62, "endOffset": 91, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 92, "endOffset": 121, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 122, "endOffset": 151, "factionQuantity": { "RES": 6, "ENL": 6 } },
+                { "startOffset": 152, "endOffset": 181, "factionQuantity": { "RES": 6, "ENL": 6 } }
+            ],
+            "waveActions": [
+                { "action": "spawn", "time": 0 },
+                { "action": "despawn", "time": 28 }
             ]
         }
     },

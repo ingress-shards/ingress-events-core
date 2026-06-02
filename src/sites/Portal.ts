@@ -1,6 +1,5 @@
 import type { Coordinates } from "../common/Geo.js";
-import type { PortalGuid, PortalId } from "../common/Identifiers.js";
-import type { FactionId } from "../common/Factions.js";
+import type { PortalGuid } from "../common/Identifiers.js";
 
 /**
  * Base Portal information.
@@ -12,18 +11,50 @@ export interface Portal extends Coordinates {
      * Ingress portal GUID - mandatory for identifiable portals, optional for others.
      */
     guid?: PortalGuid;
+    /** 
+     * Chronological history of observations for this portal.
+     */
+    history: PortalHistoryEntry[];
 }
 
-export interface PortalObservation {
-    portalId: PortalId;
+export type PortalHistoryType = "target" | "battle-beacon" | "recursive" | "pre-event";
+
+/**
+ * Base historical entry for a portal.
+ */
+export interface BasePortalHistoryEntry {
     /** Epoch time in milliseconds */
-    observedAt: number;
-    /** The specific characteristic observed (Target, Beacon, etc.) */
-    feature: PortalFeature;
+    timestamp: number;
+    /** The specific characteristic observed */
+    type: PortalHistoryType;
 }
 
-export type PortalFeature =
-    | { type: "target"; alignment: FactionId }
-    | { type: "beacon" }
-    | { type: "recursive"; bonus: number }
-    | { type: "ornament"; ornamentId: string };
+export interface TargetHistoryEntry extends BasePortalHistoryEntry {
+    type: "target";
+    /** Target portal identifier (driven by blueprint keys) */
+    ornId: string;
+}
+
+export interface BattleBeaconHistoryEntry extends BasePortalHistoryEntry {
+    type: "battle-beacon";
+    /** The specific ornament ID for the beacon (driven by blueprint keys) */
+    ornId: string;
+}
+
+export interface RecursiveHistoryEntry extends BasePortalHistoryEntry {
+    type: "recursive";
+    /** Bonus multiplier */
+    bonus: number;
+}
+
+export interface PreEventHistoryEntry extends BasePortalHistoryEntry {
+    type: "pre-event";
+    /** Internal ornament identifier for pre-event ornaments (driven by blueprint keys) */
+    ornId: string;
+}
+
+export type PortalHistoryEntry = 
+    | TargetHistoryEntry 
+    | BattleBeaconHistoryEntry 
+    | RecursiveHistoryEntry 
+    | PreEventHistoryEntry;

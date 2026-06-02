@@ -2,7 +2,7 @@ import type { FactionId } from "../common/Factions.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId } from "../common/Identifiers.js";
 import type { SiteGeocode } from "../contracts/Geocode.js";
-import type { Portal, PortalObservation } from "./Portal.js";
+import type { Portal } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
 
 /**
@@ -31,14 +31,14 @@ export const PhaseDisplayNames: Record<SitePhase, string> = {
  * This is the primary storage format for the local IndexedDB.
  */
 export interface SiteRecord {
+    /** Epoch time in milliseconds */
+    lastUpdated: number;
     metadata: SiteRecordMetadata;
     observations?: SiteObservation;
     analysis?: SiteAnalysis;
 }
 
 export interface SiteRecordMetadata {
-    /** Epoch time in milliseconds */
-    lastUpdated: number;
     /** Site geocode information */
     geocode: SiteGeocode;
     schedule: any;
@@ -47,7 +47,6 @@ export interface SiteRecordMetadata {
 export interface SiteObservation {
     portals: Record<PortalId, Portal>;
     shards: Record<ShardId, Shard>;
-    featureObservations: PortalObservation[];
 }
 
 export interface SiteAnalysis {

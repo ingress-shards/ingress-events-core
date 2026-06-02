@@ -91,7 +91,7 @@ export const SiteManager = {
         timeRemaining,
     }: {
         phase: SitePhase;
-        timeRemaining: Temporal.Duration | undefined;
+        timeRemaining: Temporal.DurationLike | undefined;
     }): string => {
         // 1. Scheduled / Discovery
         if (phase === SitePhase.Scheduled || phase === SitePhase.Discovery) {
