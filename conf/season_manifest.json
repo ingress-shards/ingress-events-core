@@ -766,7 +766,6 @@
             "name": "Orion",
             "year": 2026,
             "overviewUrl": "https://ingress.com/news/2026-orion",
-            "defaultView": true,
             "components": [
                 {
                     "eventType": "ANOMALY",
@@ -839,22 +838,22 @@
                         {
                             "date": "2026-07-18",
                             "sites": [
-                                { "label": "Helsinki, Finland", "latE6": 601698557, "lngE6": 249383791 },
-                                { "label": "Bogotá, Colombia", "latE6": 47109886, "lngE6": -74072092 }
+                                { "label": "Helsinki, Finland", "latE6": 60169856, "lngE6": 24938379 },
+                                { "label": "Bogotá, Colombia", "latE6": 4710989, "lngE6": -74072092 }
                             ]
                         },
                         {
                             "date": "2026-08-22",
                             "sites": [
-                                { "label": "Seoul, South Korea", "latE6": 37550263, "lngE6": 1269970831 },
-                                { "label": "Paris, France", "latE6": 488575475, "lngE6": 23513765 }
+                                { "label": "Seoul, South Korea", "latE6": 37550263, "lngE6": 126997083 },
+                                { "label": "Paris, France", "latE6": 48857548, "lngE6": 2351377 }
                             ]
                         },
                         {
                             "date": "2026-09-19",
                             "sites": [
                                 { "label": "Singapore", "latE6": 1352083, "lngE6": 103819836 },
-                                { "label": "Denver CO, USA", "latE6": 397392358, "lngE6": -104990251 }
+                                { "label": "Denver CO, USA", "latE6": 39739236, "lngE6": -104990251 }
                             ]
                         }
                     ]
