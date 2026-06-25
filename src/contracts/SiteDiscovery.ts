@@ -18,4 +18,7 @@ export interface PortalDiscovery {
     lng: number;
     /** The mandatory ornament found during discovery (e.g., "ap1") */
     ornamentId: string;
+    /** Ingress portal GUID - optional for backwards compatibility */
+    guid?: string;
 }
+
