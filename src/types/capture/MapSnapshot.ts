@@ -1,8 +1,7 @@
-import type { PortalGuid } from "../common/Identifiers.js";
-import type { Coordinates } from "../common/Geo.js";
+import type { PortalGuid } from "../../common/Identifiers.js";
+import type { Portal } from "../../sites/Portal.js";
 
-export interface MapPortalCapture extends Coordinates {
-    title: string;
+export interface MapPortalCapture extends Portal {
     /**
      * Ingress portal GUID - mandatory for identifiable portals, optional for others.
      */
@@ -12,5 +11,6 @@ export interface MapPortalCapture extends Coordinates {
 }
 
 export interface MapSnapshot {
+    timestamp: number;
     portals: MapPortalCapture[];
 }

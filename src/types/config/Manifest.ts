@@ -1,11 +1,11 @@
-import type { SeasonId } from "../common/Identifiers.js";
-import type { SeasonEvent } from "../seasons/Season.js";
-import type { NamedLocation } from "../common/Geo.js";
+import type { SeasonId } from "../../common/Identifiers.js";
+import type { SeasonEvent } from "../../seasons/Season.js";
+import type { SiteLocation } from "../../common/Geo.js";
 
 /**
  * Site specific metadata within a scheduled season component.
  */
-export interface SiteManifestMetadata extends NamedLocation {
+export interface SiteManifestMetadata extends SiteLocation {
     /** Optional site-specific shard count overrides per wave */
     shardCounts?: number[];
 }

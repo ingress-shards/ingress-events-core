@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { shardJumpCaptureSchema } from "../../gen/zod-schemas/ShardJumps.zod.js";
+import { shardJumpCaptureSchema } from "../../../gen/zod-schemas/ShardJumps.zod.js";
 
 const currentFileDirectory = path.dirname(fileURLToPath(import.meta.url));
 const testDataDirectory = path.join(currentFileDirectory, "test-data");

@@ -1,4 +1,4 @@
-import type { Portal } from "../sites/Portal.js";
+import type { Portal } from "../../sites/Portal.js";
 
 /**
  * RAW interface for the getShardHistory Intel endpoint.

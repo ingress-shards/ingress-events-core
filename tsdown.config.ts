@@ -8,9 +8,9 @@ export default defineConfig({
     clean: true,
     bundle: false,
     copy: [
-        { from: "conf/**/*.json", to: "dist/conf" },
-        { from: "gen/conf/*.json", to: "dist/conf" },
-        { from: "gen/conf/recent/*.json", to: "dist/conf/recent" },
+        { from: "conf/*", to: "dist/conf" },
+        { from: "gen/conf/*", to: "dist/conf" },
+        { from: "gen/conf/recent/*", to: "dist/conf/recent" },
         { from: "src/visuals/**/*.css", to: "dist/visuals" },
     ],
 });

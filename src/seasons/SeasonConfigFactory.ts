@@ -1,6 +1,4 @@
-import type { EventBlueprints } from "../contracts/EventBlueprints.js";
-import type { SeasonGeocode } from "../contracts/Geocode.js";
-import type { SeasonManifest } from "../contracts/Manifest.js";
+import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
 import type { SeasonId } from "../common/Identifiers.js";
 import type { SeasonConfig } from "./SeasonConfig.js";
 

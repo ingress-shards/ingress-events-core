@@ -1,8 +1,8 @@
 import type { FactionId } from "../common/Factions.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId } from "../common/Identifiers.js";
-import type { SiteGeocode } from "../contracts/Geocode.js";
-import type { Portal } from "./Portal.js";
+import type { SiteGeocode } from "../types/index.js";
+import type { ObservedPortal } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
 
 /**
@@ -45,13 +45,14 @@ export interface SiteRecordMetadata {
 }
 
 export interface SiteObservation {
-    portals: Record<PortalId, Portal>;
-    shards: Record<ShardId, Shard>;
+    portals?: Record<PortalId, ObservedPortal>;
+    shards?: Record<ShardId, Shard>;
 }
+
 
 export interface SiteAnalysis {
     /** Geographic center point of all portals */
-    centroid: Coordinates;
+    centroid?: Coordinates;
     /** Complete state of everything at the site for the entire event */
     siteState: SiteState;
     /** Periodic snapshots of shard movements (Waves) */

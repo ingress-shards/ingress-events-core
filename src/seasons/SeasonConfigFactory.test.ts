@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { buildSeasonConfig } from "./SeasonConfigFactory.js";
-import type { EventBlueprints, SeasonManifest, SeasonGeocode } from "../contracts/index.js";
+import type { EventBlueprints, SeasonManifest, SeasonGeocode } from "../types/index.js";
 
 // Import real data for the "golden path" test
 import manifestJson from "../../conf/season_manifest.json" with { type: "json" };
@@ -22,7 +22,7 @@ describe("config Builder", () => {
         // Singapore is a known site in 2024-sharedmem
         const singaporeConfig = result["2024-sharedmem"]!.sites["2024-sharedmem-singapore"];
         expect(singaporeConfig).toBeDefined();
-        expect(singaporeConfig!.geocode.label).toBe("Singapore");
+        expect(singaporeConfig!.geocode.name).toBe("Singapore");
         expect(singaporeConfig!.shardMechanics).toBeDefined();
         // 2024-sharedmem ANOMALY component has targetMechanics: "1w_241m"
         expect(singaporeConfig!.targetMechanics).toBeDefined();
@@ -62,12 +62,12 @@ describe("config Builder", () => {
                                     date: "2026-01-01",
                                     sites: [
                                         {
-                                            label: "Override Site",
+                                            name: "Override Site",
                                             latE6: 10000000,
                                             lngE6: 10000000,
                                             shardCounts: [10, 20],
                                         },
-                                        { label: "Default Site", latE6: 20000000, lngE6: 20000000 },
+                                        { name: "Default Site", latE6: 20000000, lngE6: 20000000 },
                                     ],
                                 },
                             ],
@@ -84,7 +84,7 @@ describe("config Builder", () => {
                     sites: [
                         {
                             id: "s1",
-                            label: "Override Site",
+                            name: "Override Site",
                             latE6: 10000000,
                             lngE6: 10000000,
                             eventType: "ANOMALY",
@@ -94,7 +94,7 @@ describe("config Builder", () => {
                         },
                         {
                             id: "s2",
-                            label: "Default Site",
+                            name: "Default Site",
                             latE6: 20000000,
                             lngE6: 20000000,
                             eventType: "ANOMALY",
@@ -154,7 +154,7 @@ describe("config Builder", () => {
                     sites: [
                         {
                             id: "site-id",
-                            label: "Solo Site",
+                            name: "Solo Site",
                             latE6: 0,
                             lngE6: 0,
                             eventType: "STORM",
@@ -177,6 +177,6 @@ describe("config Builder", () => {
         expect(siteConfig).toBeDefined();
         expect(siteConfig!.shardMechanics).toBeUndefined();
         expect(siteConfig!.targetMechanics).toBeUndefined();
-        expect(siteConfig!.geocode.label).toBe("Solo Site");
+        expect(siteConfig!.geocode.name).toBe("Solo Site");
     });
 });

@@ -1,4 +1,4 @@
-import type { SiteId } from "../common/Identifiers.js";
+import type { SiteId } from "../../common/Identifiers.js";
 
 /**
  * Standardized snapshot from the IITC plugin.
@@ -6,7 +6,7 @@ import type { SiteId } from "../common/Identifiers.js";
  */
 export interface SiteDiscovery {
     siteId: SiteId;
-    /** The timestamp of the export action itself (epoch seconds) */
+    /** The timestamp of the export action itself */
     exportedAt: number;
     /** Array of detected portals and their observed state */
     portals: PortalDiscovery[];

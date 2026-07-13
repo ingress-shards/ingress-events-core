@@ -2,8 +2,7 @@ import { describe, it, expect } from "vitest";
 import * as Duration from "temporal-polyfill/fns/duration";
 import { SiteManager } from "./SiteManager.js";
 import { SitePhase } from "../sites/Site.js";
-import type { ShardMechanics } from "../contracts/EventBlueprints.js";
-import type { SiteManifestMetadata } from "../contracts/Manifest.js";
+import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
 
 describe("Site Manager", () => {
     describe("getExpectedShardCount", () => {
@@ -21,7 +20,7 @@ describe("Site Manager", () => {
 
         it("should return sum of shardCounts if override exists", () => {
             const override: SiteManifestMetadata = {
-                label: "Test",
+                name: "Test",
                 latE6: 0,
                 lngE6: 0,
                 shardCounts: [2, 2, 2],

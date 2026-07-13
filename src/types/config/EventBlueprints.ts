@@ -1,6 +1,6 @@
-import type { PortalHistoryType } from "../sites/Portal.js";
-import type { SeasonEvent } from "../seasons/Season.js";
-import type { ShardAction } from "../sites/Shard.js";
+import type { PortalHistoryType } from "../../sites/Portal.js";
+import type { SeasonEvent } from "../../seasons/Season.js";
+import type { ShardAction } from "../../sites/Shard.js";
 
 /**
  * Base definition for a wave window with start and end offsets.

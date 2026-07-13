@@ -11,19 +11,22 @@ export interface Portal extends Coordinates {
      * Ingress portal GUID - mandatory for identifiable portals, optional for others.
      */
     guid?: PortalGuid;
+}
+
+export interface ObservedPortal extends Portal {
     /** 
      * Chronological history of observations for this portal.
      */
-    history: PortalHistoryEntry[];
+    history?: PortalHistoryEntry[];
 }
 
 export type PortalHistoryType = "target" | "battle-beacon" | "recursive" | "pre-event";
+export const PORTAL_HISTORY_TYPES: readonly PortalHistoryType[] = ["target", "battle-beacon", "recursive", "pre-event"] as const;
 
 /**
  * Base historical entry for a portal.
  */
 export interface BasePortalHistoryEntry {
-    /** Epoch time in milliseconds */
     timestamp: number;
     /** The specific characteristic observed */
     type: PortalHistoryType;
@@ -32,7 +35,7 @@ export interface BasePortalHistoryEntry {
 export interface TargetHistoryEntry extends BasePortalHistoryEntry {
     type: "target";
     /** Target portal identifier (driven by blueprint keys) */
-    ornId: string;
+    ornId: "targetres" | "targetenl";
 }
 
 export interface BattleBeaconHistoryEntry extends BasePortalHistoryEntry {

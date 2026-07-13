@@ -1,7 +1,5 @@
-import type { SeasonMetadata } from "../contracts/Manifest.js";
+import type { SeasonMetadata, SiteGeocode, ShardMechanics, TargetMechanics } from "../types/index.js";
 import type { SiteId } from "../common/Identifiers.js";
-import type { SiteGeocode } from "../contracts/Geocode.js";
-import type { ShardMechanics, TargetMechanics } from "../contracts/EventBlueprints.js";
 
 /**
  * Unified configuration for an entire anomaly season.

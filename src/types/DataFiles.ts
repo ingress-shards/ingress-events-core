@@ -3,7 +3,7 @@
  * - shardJumpTimes: Full shard movement history and jump logs.
  * - ornamentedPortals: List of detected ornamented portals from discovery.
  */
-export type DataFileType = "shardJumpTimes" | "ornamentedPortals" | "targetPortals" | "recursivePortals";
+export type DataFileType = "siteRecord" | "shardJumpTimes" | "ornamentedPortals" | "targetPortals" | "recursivePortals";
 
 /**
  * Metadata definition for a shard data file.
@@ -22,6 +22,11 @@ export interface DataFileMetadata {
  * The key is the DataFileType.
  */
 export const DATA_FILES: Record<DataFileType, DataFileMetadata> = {
+    siteRecord: {
+        label: "Site Record",
+        importPattern: /^site-record.*\.json$/i,
+        exportPrefix: "site-record",
+    },
     shardJumpTimes: {
         label: "Shard Jump Times",
         importPattern: /^shard-jump-times.*\.json$/i,

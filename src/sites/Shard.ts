@@ -22,6 +22,8 @@ export interface ShardHistoryEntry {
     dest?: PortalId;
     /** Team that controlled the action (if applicable) */
     team?: FactionId;
+    /** Epoch time in milliseconds when the link was created */
+    linkTime?: number;
 }
 
 /**
