@@ -49,7 +49,7 @@
         "test:unit": "yarn generate && vitest run",
         "test:coverage": "yarn generate && vitest run --coverage",
         "lint": "eslint src",
-        "validate": "yarn clean && yarn generate && yarn lint && yarn build && vitest run --coverage",
+        "validate": "yarn clean && yarn generate && yarn lint && yarn build && tsc --noEmit && vitest run --coverage",
         "validate:docker": "docker build -f Dockerfile.validate -t ingress-events-core-validate . && docker run --rm ingress-events-core-validate"
     },
     "dependencies": {
