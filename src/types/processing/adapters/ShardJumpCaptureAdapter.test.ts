@@ -1,23 +1,56 @@
 import { describe, test, expect } from "vitest";
 import { ShardJumpCaptureAdapter } from "./ShardJumpCaptureAdapter.js";
-import type { SiteGeocode } from "../../config/Geocode.js";
+import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
 
 describe("ShardJumpCaptureAdapter", () => {
     const adapter = new ShardJumpCaptureAdapter();
 
-    const activeSites: SiteGeocode[] = [
+    const activeSites = [
         {
             id: "test-site",
             name: "Test Site",
             latE6: 10000000,
             lngE6: 20000000,
-            eventType: "ANOMALY",
-            startTime: "2026-06-18T12:00:00Z",
+            eventType: "ANOMALY" as const,
+            startTime: "2026-06-18T12:00:00Z[UTC]",
             timeZone: "UTC",
             countryCode: "US"
         }
     ];
+
+    const geocode = {
+        seasons: [
+            {
+                id: "test-season",
+                sites: activeSites
+            }
+        ]
+    };
+
+    const mockRegistry = new EventConfigRegistry({
+        eventBlueprints: {
+            events: { "ANOMALY": { label: "Anomaly" } },
+            ornaments: {},
+            shardMechanics: {},
+            targetMechanics: {},
+            scoring: {}
+        } as any,
+        seasonManifest: {
+            seasons: [
+                {
+                    id: "test-season",
+                    name: "Test Season",
+                    year: 2026,
+                    overviewUrl: "",
+                    components: [
+                        { eventType: "ANOMALY", startTime: "12:00" }
+                    ]
+                }
+            ]
+        },
+        seasonGeocode: geocode
+    });
 
     test("should parse fragment jumps correctly", () => {
         const input: ShardJumpCapture = {
@@ -49,14 +82,18 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroup(input, activeSites);
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
         console.log("--- ShardJumpCaptureAdapter Input ---");
         console.log(JSON.stringify(input, undefined, 2));
         console.log("--- ShardJumpCaptureAdapter Output ---");
-        console.log(JSON.stringify(Object.fromEntries(result), undefined, 2));
+        console.log(JSON.stringify(result, undefined, 2));
 
-        expect(result.has("test-site")).toBe(true);
-        const obs = result.get("test-site")!;
+        expect(result.length).toBe(1);
+        const record = result[0]!;
+        expect(record.metadata.siteId).toBe("test-site");
+        expect(record.metadata.seasonId).toBe("test-season");
+
+        const obs = record.observations!;
         expect(obs.shards).toBeDefined();
 
         const shard = obs.shards![1]!;
@@ -104,8 +141,11 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroup(input, activeSites);
-        const obs = result.get("test-site")!;
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        expect(result.length).toBe(1);
+
+        const record = result[0]!;
+        const obs = record.observations!;
         const shard = obs.shards![1]!;
         
         expect(shard.history).toHaveLength(2);
@@ -171,8 +211,11 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroup(input, activeSites);
-        const obs = result.get("test-site")!;
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        expect(result.length).toBe(1);
+
+        const record = result[0]!;
+        const obs = record.observations!;
         const shard = obs.shards![1]!;
         
         expect(shard.history).toHaveLength(3);

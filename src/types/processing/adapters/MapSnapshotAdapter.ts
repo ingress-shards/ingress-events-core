@@ -1,15 +1,14 @@
 import type { SiteId } from "../../../common/Identifiers.js";
-import type { SiteGeocode } from "../../config/Geocode.js";
-import type { SiteObservation } from "../../../sites/Site.js";
+import type { SiteRecord } from "../../../sites/Site.js";
 import type { MapSnapshot } from "../../capture/MapSnapshot.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import type { Ornament } from "../../config/EventBlueprints.js";
-import { isWithinSiteRange } from "../../../common/Geo.js";
-import { getOrCreateSiteBucket, PortalIdMapper } from "../AdapterHelpers.js";
+import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
 import * as Now from "temporal-polyfill/fns/now";
 import * as Instant from "temporal-polyfill/fns/instant";
+import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
     private portalIdMapper = new PortalIdMapper();
@@ -19,19 +18,39 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
         private timestampMs: number = Instant.epochMilliseconds(Now.instant())
     ) {}
 
-    public parseAndGroup(input: MapSnapshot, activeSites: SiteGeocode[]): Map<SiteId, SiteObservation> {
-        const grouped = new Map<SiteId, SiteObservation>();
-
-        const findSiteForCoords = (latE6: number, lngE6: number): SiteGeocode | undefined => {
-            return activeSites.find(site => isWithinSiteRange(site, { latE6, lngE6 }));
-        };
+    public parseAndGroupObservations(input: MapSnapshot, config: EventConfigRegistry): SiteRecord[] {
+        const siteRecordsMap = new Map<SiteId, SiteRecord>();
+        const ignoredSites = new Set<SiteId>();
 
         for (const p of input.portals ?? []) {
-            const site = findSiteForCoords(p.latE6, p.lngE6);
-            if (!site) continue;
+            const match = config.findSiteByCoords(p.latE6, p.lngE6, input.timestamp);
+            if (!match) continue;
 
-            const bucket = getOrCreateSiteBucket(grouped, site.id);
-            const portalId = this.portalIdMapper.getOrCreatePortalId(site.id, p.latE6, p.lngE6);
+            const { siteId, seasonId } = match;
+            if (ignoredSites.has(siteId)) continue;
+
+            const siteConfig = config.getSiteConfig(siteId);
+            const cutoff = siteConfig?.actionSchedule?.preEventCutoff;
+            if (cutoff !== undefined && input.timestamp > cutoff) {
+                ignoredSites.add(siteId);
+                continue;
+            }
+
+            let record = siteRecordsMap.get(siteId);
+            if (!record) {
+                record = {
+                    metadata: {
+                        siteId,
+                        seasonId,
+                        lastUpdated: 0,
+                    },
+                    observations: { portals: {}, shards: {} },
+                };
+                siteRecordsMap.set(siteId, record);
+            }
+
+            const portals = record.observations!.portals!;
+            const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, p.latE6, p.lngE6);
 
             const historyEntries: any[] = [];
 
@@ -59,14 +78,13 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
             // If we found any valid ornament history entries, or if it's an identifiable portal we want to track
             if (historyEntries.length > 0) {
-                bucket.portals ??= {};
-                bucket.portals[portalId] = {
+                portals[portalId] = {
                     ...p,
                     history: historyEntries
                 };
             }
         }
 
-        return grouped;
+        return [...siteRecordsMap.values()];
     }
 }

@@ -1,22 +1,20 @@
-import type { SiteId } from "../../../common/Identifiers.js";
-import type { SiteGeocode } from "../../config/Geocode.js";
-import type { SiteObservation } from "../../../sites/Site.js";
+import type { SiteRecord } from "../../../sites/Site.js";
 import type { ObservedPortal } from "../../../sites/Portal.js";
 import type { SiteDiscovery } from "../../data-files/SiteDiscovery.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
+import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscovery> {
     private portalIdMapper = new PortalIdMapper();
 
-    public parseAndGroup(input: SiteDiscovery, activeSites: SiteGeocode[]): Map<SiteId, SiteObservation> {
-        const grouped = new Map<SiteId, SiteObservation>();
-        
+    public parseAndGroupObservations(input: SiteDiscovery, config: EventConfigRegistry): SiteRecord[] {
         const siteId = input.siteId;
-        const siteExists = activeSites.some(s => s.id === siteId);
-        if (!siteExists) {
-            console.warn(`[SiteDiscoveryAdapter] SiteId "${siteId}" not found in activeSites. Skipping.`);
-            return grouped;
+        const foundSeasonId = config.getSeasonIdForSite(siteId);
+
+        if (!foundSeasonId) {
+            console.warn(`[SiteDiscoveryAdapter] SiteId "${siteId}" not found in season config. Skipping.`);
+            return [];
         }
 
         const portals: Record<number, ObservedPortal> = {};
@@ -42,8 +40,15 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
         }
 
         if (Object.keys(portals).length > 0) {
-            grouped.set(siteId, { portals });
+            return [{
+                metadata: {
+                    siteId,
+                    seasonId: foundSeasonId,
+                    lastUpdated: 0,
+                },
+                observations: { portals },
+            }];
         }
-        return grouped;
+        return [];
     }
 }

@@ -2,25 +2,15 @@ import { describe, test, expect } from "vitest";
 import { SiteRecordMerger } from "./SiteRecordMerger.js";
 import type { SiteRecord, SiteObservation } from "../Site.js";
 import type { TargetHistoryEntry } from "../Portal.js";
-import type { SeasonEvent } from "../../seasons/Season.js";
 
 describe("SiteRecordMerger", () => {
     const merger = new SiteRecordMerger();
 
     const baseRecord: SiteRecord = {
-        lastUpdated: 0,
         metadata: {
-            geocode: {
-                id: "test-site",
-                name: "Test Site",
-                latE6: 10000000,
-                lngE6: 20000000,
-                eventType: "ANOMALY" as SeasonEvent,
-                startTime: "2026-06-18T12:00:00Z",
-                timeZone: "UTC",
-                countryCode: "US"
-            },
-            schedule: {}
+            siteId: "test-site",
+            seasonId: "test-season",
+            lastUpdated: 0,
         },
         observations: {
             portals: {
@@ -58,7 +48,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result = merger.merge(baseRecord, incoming);
+        const { record: result } = merger.merge(baseRecord, incoming);
         const portals = result.observations!.portals!;
 
         const portal1 = portals["1"]!;
@@ -83,7 +73,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result = merger.merge(baseRecord, incoming);
+        const { record: result } = merger.merge(baseRecord, incoming);
         expect(result.observations!.portals!["1"]!.history!.length).toBe(1);
     });
 
@@ -109,7 +99,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result = merger.merge(baseRecord, incoming);
+        const { record: result } = merger.merge(baseRecord, incoming);
         const portals = result.observations!.portals!;
 
         const portal2 = portals["2"]!;
@@ -177,7 +167,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result = merger.merge(baseRecord, incoming);
+        const { record: result } = merger.merge(baseRecord, incoming);
         const shards = result.observations!.shards!;
 
         const shard1 = shards["1"]!;
@@ -223,10 +213,6 @@ describe("SiteRecordMerger", () => {
             },
             metadata: {
                 ...baseRecord.metadata,
-                geocode: {
-                    ...baseRecord.metadata.geocode,
-                    startTime: "1970-01-01T12:00:00Z"
-                }
             }
         };
 
@@ -244,7 +230,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result1 = merger.merge(targetBase, duplicateScan);
+        const { record: result1 } = merger.merge(targetBase, duplicateScan);
         const portal1 = result1.observations!.portals!["1"]!;
         expect(portal1.history!.length).toBe(1); // Ignored duplicate state
 
@@ -262,7 +248,7 @@ describe("SiteRecordMerger", () => {
             }
         };
 
-        const result2 = merger.merge(targetBase, transitionScan);
+        const { record: result2 } = merger.merge(targetBase, transitionScan);
         const portal2 = result2.observations!.portals!["1"]!;
         expect(portal2.history!.length).toBe(2); // Recorded transition
         expect((portal2.history![1] as TargetHistoryEntry).ornId).toBe("targetenl");

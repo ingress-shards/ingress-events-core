@@ -2,25 +2,58 @@ import { describe, test, expect, vi } from "vitest";
 import { SiteDataProcessor } from "./SiteDataProcessor.js";
 import { SiteRecordMerger } from "./SiteRecordMerger.js";
 import type { SiteRecord, SiteObservation } from "../Site.js";
-import type { SiteGeocode } from "../../types/config/Geocode.js";
+import { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
 import type { DataObservationAdapter } from "../../types/processing/DataObservationAdapter.js";
 
 describe("SiteDataProcessor", () => {
     const merger = new SiteRecordMerger();
     const processor = new SiteDataProcessor(merger);
 
-    const activeSites: SiteGeocode[] = [
+    const activeSites = [
         {
             id: "test-site",
             name: "Test Site",
             latE6: 10000000,
             lngE6: 20000000,
-            eventType: "ANOMALY",
-            startTime: "2026-06-18T12:00:00Z",
+            eventType: "ANOMALY" as const,
+            startTime: "2026-06-18T12:00:00Z[UTC]",
             timeZone: "UTC",
             countryCode: "US"
         }
     ];
+
+    const geocode = {
+        seasons: [
+            {
+                id: "test-season",
+                sites: activeSites
+            }
+        ]
+    };
+
+    const mockRegistry = new EventConfigRegistry({
+        eventBlueprints: {
+            events: { "ANOMALY": { label: "Anomaly" } },
+            ornaments: {},
+            shardMechanics: {},
+            targetMechanics: {},
+            scoring: {}
+        } as any,
+        seasonManifest: {
+            seasons: [
+                {
+                    id: "test-season",
+                    name: "Test Season",
+                    year: 2026,
+                    overviewUrl: "",
+                    components: [
+                        { eventType: "ANOMALY", startTime: "12:00" }
+                    ]
+                }
+            ]
+        },
+        seasonGeocode: geocode
+    });
 
     test("should orchestrate processing flow correctly", async () => {
         const mockInput = { someRawData: true };
@@ -36,28 +69,37 @@ describe("SiteDataProcessor", () => {
             shards: {}
         };
 
+        const mockSiteRecord: SiteRecord = {
+            metadata: {
+                siteId: "test-site",
+                seasonId: "test-season",
+                lastUpdated: 0
+            },
+            observations: mockObservations
+        };
+
         // Mock adapter
         const mockAdapter: DataObservationAdapter<typeof mockInput> = {
-            parseAndGroup: vi.fn().mockReturnValue(new Map([["test-site", mockObservations]]))
+            parseAndGroupObservations: vi.fn().mockReturnValue([mockSiteRecord])
         };
 
         const resolveRecord = vi.fn();
-        const saveRecord = vi.fn();
 
-        await processor.process({
+        const result = await processor.process({
             input: mockInput,
             adapter: mockAdapter,
-            activeSites,
-            resolveRecord,
-            saveRecord
+            config: mockRegistry,
+            resolveRecord
         });
 
-        expect(mockAdapter.parseAndGroup).toHaveBeenCalledWith(mockInput, activeSites);
+        expect(mockAdapter.parseAndGroupObservations).toHaveBeenCalledWith(mockInput, mockRegistry);
         expect(resolveRecord).toHaveBeenCalledWith("test-site");
-        expect(saveRecord).toHaveBeenCalled();
+        expect(result.length).toBe(1);
 
-        const savedRecord: SiteRecord = saveRecord.mock.calls[0]![1];
-        expect(savedRecord.metadata.geocode.id).toBe("test-site");
+        const savedRecord = result[0]!;
+        expect(savedRecord.metadata.siteId).toBe("test-site");
+        expect(savedRecord.metadata.seasonId).toBe("test-season");
+        expect(savedRecord.analysis).toBeDefined();
         const portal = savedRecord.observations!.portals!["1"]!;
         expect(portal).toBeDefined();
         expect(portal.title).toBe("Test Portal");

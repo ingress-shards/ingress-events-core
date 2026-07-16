@@ -4,6 +4,7 @@ export interface PortalMergeResult {
     portals: Record<number, ObservedPortal>;
     coordToPortalIdMap: Map<string, number>;
     nextPortalId: number;
+    hasChanged: boolean;
 }
 
 export interface PortalMergeStrategy {

@@ -74,7 +74,7 @@ Timestamps are stored as **Epoch Milliseconds (13-digit Unix timestamps)** in al
 ### 1. Root Container: SiteRecord
 The `SiteRecord` is the primary domain entity representing the complete lifecycle of a single event site. It acts as the "Shoebox" for everything known about that site.
 
-- **metadata**: Static configuration, geocode, and scheduling information (Stage 3).
+- **metadata**: Identifying keys (siteId, seasonId) and lastUpdated timestamp (Stage 3).
 - **observations**: The raw processed state and historical jump data (Stage 4).
 - **analysis**: The enriched results, point tallies, and faction scores (Stage 5).
 

@@ -11,9 +11,10 @@ export class SiteRecordMerger {
      * Merges incoming observations into an existing site record, performing deep merging
      * of portals and shards, allocating IDs, and maintaining strict chronological order.
      */
-    public merge(baseRecord: SiteRecord, incomingObs: SiteObservation): SiteRecord {
+    public merge(baseRecord: SiteRecord, incomingObs: SiteObservation): { record: SiteRecord; hasChanged: boolean } {
         // 1. Deep clone the base record to ensure immutability
         const record = structuredClone(baseRecord);
+        let hasChanged = false;
 
         record.observations ??= {};
         const observations: SiteObservation = record.observations;
@@ -43,6 +44,9 @@ export class SiteRecordMerger {
             });
 
             observations.portals = result.portals;
+            if (result.hasChanged) {
+                hasChanged = true;
+            }
 
             // Sync orchestrator's map with strategy's final coordinate mapping for shard ID resolution
             coordToPortalIdMap.clear();
@@ -104,6 +108,7 @@ export class SiteRecordMerger {
                         shardNumber: incomingShardNumber,
                         history: [...mappedHistory].sort((a, b) => a.moveTime - b.moveTime)
                     };
+                    hasChanged = true;
                 } else {
                     // Shard already exists, merge history
                     const existingShard = observations.shards[shardId];
@@ -122,6 +127,7 @@ export class SiteRecordMerger {
 
                         if (!isDuplicate) {
                             existingShard.history.push(incomingHist);
+                            hasChanged = true;
                         }
                     }
 
@@ -130,7 +136,9 @@ export class SiteRecordMerger {
             }
         }
 
-        record.lastUpdated = epochMilliseconds(instant());
-        return record;
+        if (hasChanged) {
+            record.metadata.lastUpdated = epochMilliseconds(instant());
+        }
+        return { record, hasChanged };
     }
 }

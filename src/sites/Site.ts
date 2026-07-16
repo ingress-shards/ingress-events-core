@@ -1,7 +1,6 @@
 import type { FactionId } from "../common/Factions.js";
 import type { Shard, ShardPath } from "./Shard.js";
-import type { PortalId, ShardId } from "../common/Identifiers.js";
-import type { SiteGeocode } from "../types/index.js";
+import type { PortalId, ShardId, SiteId, SeasonId } from "../common/Identifiers.js";
 import type { ObservedPortal } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
 
@@ -31,17 +30,16 @@ export const PhaseDisplayNames: Record<SitePhase, string> = {
  * This is the primary storage format for the local IndexedDB.
  */
 export interface SiteRecord {
-    /** Epoch time in milliseconds */
-    lastUpdated: number;
     metadata: SiteRecordMetadata;
     observations?: SiteObservation;
     analysis?: SiteAnalysis;
 }
 
 export interface SiteRecordMetadata {
-    /** Site geocode information */
-    geocode: SiteGeocode;
-    schedule: any;
+    siteId: SiteId;
+    seasonId: SeasonId;
+    /** Epoch time in milliseconds */
+    lastUpdated: number;
 }
 
 export interface SiteObservation {

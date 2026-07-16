@@ -1,14 +1,13 @@
 /* eslint-disable unicorn/no-array-sort */
 import type { SiteId, PortalId } from "../../../common/Identifiers.js";
-import type { SiteGeocode } from "../../config/Geocode.js";
-import type { SiteObservation } from "../../../sites/Site.js";
+import type { SiteRecord } from "../../../sites/Site.js";
 import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
-import { isWithinSiteRange } from "../../../common/Geo.js";
 import * as Now from "temporal-polyfill/fns/now";
 import * as Instant from "temporal-polyfill/fns/instant";
-import { getOrCreateSiteBucket, PortalIdMapper } from "../AdapterHelpers.js";
+import { PortalIdMapper } from "../AdapterHelpers.js";
 import { fromNianticId } from "../../../common/Factions.js";
+import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 interface ReferencePortal {
     latE6: number;
@@ -20,11 +19,23 @@ interface ReferencePortal {
 export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJumpCapture> {
     private portalIdMapper = new PortalIdMapper();
 
-    public parseAndGroup(input: ShardJumpCapture, activeSites: SiteGeocode[]): Map<SiteId, SiteObservation> {
-        const grouped = new Map<SiteId, SiteObservation>();
+    public parseAndGroupObservations(input: ShardJumpCapture, config: EventConfigRegistry): SiteRecord[] {
+        const siteRecordsMap = new Map<SiteId, SiteRecord>();
 
-        const findSiteForCoords = (latE6: number, lngE6: number): SiteGeocode | undefined => {
-            return activeSites.find(site => isWithinSiteRange(site, { latE6, lngE6 }));
+        const getOrCreateRecord = (siteId: SiteId, seasonId: string): SiteRecord => {
+            let record = siteRecordsMap.get(siteId);
+            if (!record) {
+                record = {
+                    metadata: {
+                        siteId,
+                        seasonId,
+                        lastUpdated: 0,
+                    },
+                    observations: { portals: {}, shards: {} },
+                };
+                siteRecordsMap.set(siteId, record);
+            }
+            return record;
         };
 
         for (const art of input.artifact ?? []) {
@@ -48,10 +59,13 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
                     if (!referencePortal) continue;
 
-                    const site = findSiteForCoords(referencePortal.latE6, referencePortal.lngE6);
-                    if (!site) continue;
+                    const firstTimeMs = parseInt(firstItem.moveTimeMs, 10);
+                    const match = config.findSiteByCoords(referencePortal.latE6, referencePortal.lngE6, firstTimeMs);
+                    if (!match) continue;
 
-                    const bucket = getOrCreateSiteBucket(grouped, site.id);
+                    const { siteId, seasonId } = match;
+                    const record = getOrCreateRecord(siteId, seasonId);
+                    const obs = record.observations!;
 
                     // Extract shard details
                     const shardIdNum = parseInt(
@@ -74,11 +88,11 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
                             let portalId: PortalId | undefined;
                             if (portal) {
-                                portalId = this.portalIdMapper.getOrCreatePortalId(site.id, portal.latE6, portal.lngE6);
+                                portalId = this.portalIdMapper.getOrCreatePortalId(siteId, portal.latE6, portal.lngE6);
 
                                 // Add portals seen in history to our site's portals record (WHITE-LISTING)
-                                bucket.portals ??= {};
-                                bucket.portals[portalId] = {
+                                obs.portals ??= {};
+                                obs.portals[portalId] = {
                                     title: portal.title,
                                     latE6: portal.latE6,
                                     lngE6: portal.lngE6,
@@ -92,11 +106,11 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                                 return;
                             }
 
-                            const destinationPortalId = destinationPortal ? this.portalIdMapper.getOrCreatePortalId(site.id, destinationPortal.latE6, destinationPortal.lngE6) : undefined;
+                            const destinationPortalId = destinationPortal ? this.portalIdMapper.getOrCreatePortalId(siteId, destinationPortal.latE6, destinationPortal.lngE6) : undefined;
                             if (destinationPortal && destinationPortalId) {
                                 // Add destination portal to site's portals record (WHITE-LISTING)
-                                bucket.portals ??= {};
-                                bucket.portals[destinationPortalId] = {
+                                obs.portals ??= {};
+                                obs.portals[destinationPortalId] = {
                                     title: destinationPortal.title,
                                     latE6: destinationPortal.latE6,
                                     lngE6: destinationPortal.lngE6,
@@ -106,7 +120,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                             // Update last portal ID based on destination or origin (in that order)
                             const restingPortal = destinationPortal ?? originPortal;
                             if (restingPortal) {
-                                lastPortalId = this.portalIdMapper.getOrCreatePortalId(site.id, restingPortal.latE6, restingPortal.lngE6);
+                                lastPortalId = this.portalIdMapper.getOrCreatePortalId(siteId, restingPortal.latE6, restingPortal.lngE6);
                             }
 
                             // Determine the team/faction code exclusively from linkCreatorTeam
@@ -145,8 +159,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                         })
                         .filter((entry): entry is NonNullable<typeof entry> => entry !== undefined);
 
-                    bucket.shards ??= {};
-                    bucket.shards[shardIdNum] = {
+                    obs.shards ??= {};
+                    obs.shards[shardIdNum] = {
                         shardNumber: shardIdNum,
                         history: historyEntries
                     };
@@ -162,15 +176,17 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 }
                 for (const t of art.target) {
                     const info = t.portalInfo;
-                    const site = findSiteForCoords(info.latE6, info.lngE6);
-                    if (!site) continue;
-
-                    const bucket = getOrCreateSiteBucket(grouped, site.id);
-                    const portalId = this.portalIdMapper.getOrCreatePortalId(site.id, info.latE6, info.lngE6);
                     const timestampMs = Instant.epochMilliseconds(Now.instant());
+                    const match = config.findSiteByCoords(info.latE6, info.lngE6, timestampMs);
+                    if (!match) continue;
 
-                    bucket.portals ??= {};
-                    bucket.portals[portalId] = {
+                    const { siteId, seasonId } = match;
+                    const record = getOrCreateRecord(siteId, seasonId);
+                    const obs = record.observations!;
+                    const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, info.latE6, info.lngE6);
+
+                    obs.portals ??= {};
+                    obs.portals[portalId] = {
                         ...info,
                         history: [
                             {
@@ -184,6 +200,6 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
             }
         }
 
-        return grouped;
+        return [...siteRecordsMap.values()];
     }
 }

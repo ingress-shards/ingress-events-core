@@ -13,6 +13,7 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
         const portals = structuredClone(existingPortals);
         const coordToPortalIdMap = new Map(options.coordToPortalIdMap);
         let nextPortalId = options.nextPortalId;
+        let hasChanged = false;
 
         // Merge incoming portals from the scan
         for (const incomingPortal of Object.values(incomingPortals)) {
@@ -23,9 +24,13 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
 
             if (typeof existingPortalId === "number" && portals[existingPortalId]) {
                 portal = portals[existingPortalId]!;
-                portal.title = incomingPortal.title || portal.title;
+                if (incomingPortal.title && portal.title !== incomingPortal.title) {
+                    portal.title = incomingPortal.title;
+                    hasChanged = true;
+                }
                 if (incomingPortal.guid && !portal.guid) {
                     portal.guid = incomingPortal.guid;
+                    hasChanged = true;
                 }
             } else {
                 existingPortalId = nextPortalId++;
@@ -37,6 +42,7 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
                     ...(incomingPortal.guid && { guid: incomingPortal.guid }),
                 };
                 portals[existingPortalId] = portal;
+                hasChanged = true;
             }
 
             const incomingHistory = incomingPortal.history ?? [];
@@ -77,6 +83,7 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
                 }
 
                 mergedHistory.push(incomingHist);
+                hasChanged = true;
             }
 
             if (mergedHistory.length > 0) {
@@ -93,6 +100,6 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
             console.warn(`[DefaultPortalMergeStrategy] Consistency mismatch: portals count (${portalCount}) !== coordToPortalIdMap size (${coordToPortalIdMap.size})`);
         }
 
-        return { portals, coordToPortalIdMap, nextPortalId };
+        return { portals, coordToPortalIdMap, nextPortalId, hasChanged };
     }
 }
