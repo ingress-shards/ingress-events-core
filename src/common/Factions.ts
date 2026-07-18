@@ -13,8 +13,8 @@ export interface FactionMetadata {
     label: string;
     /** The hex color code used for styling */
     color: string;
-    /** The raw string value as it appears in Niantic's input data (e.g. "RESISTANCE") */
-    nianticId: string;
+    /** The raw string values as they appear in Niantic's input data (e.g. ["RESISTANCE"]) */
+    nianticIds: readonly string[];
 }
 
 /**
@@ -23,22 +23,22 @@ export interface FactionMetadata {
 export const FACTIONS: Record<FactionId, FactionMetadata> = {
     RES: {
         label: "Resistance",
-        nianticId: "RESISTANCE",
+        nianticIds: ["RESISTANCE"],
         color: FACTION_COLORS.RES,
     },
     ENL: {
         label: "Enlightened",
-        nianticId: "ENLIGHTENED",
+        nianticIds: ["ENLIGHTENED", "ALIENS"],
         color: FACTION_COLORS.ENL,
     },
     MAC: {
         label: "Machina",
-        nianticId: "MACHINA",
+        nianticIds: ["MACHINA"],
         color: FACTION_COLORS.MAC,
     },
     NEU: {
         label: "Neutral",
-        nianticId: "NEUTRAL",
+        nianticIds: ["NEUTRAL"],
         color: FACTION_COLORS.NEU,
     },
 } as const;
@@ -47,6 +47,7 @@ export const FACTIONS: Record<FactionId, FactionMetadata> = {
  * Converts raw Niantic input data string into a normalized FactionId.
  */
 export const fromNianticId = (nianticId: string): FactionId => {
-    const entry = Object.entries(FACTIONS).find(([_, meta]) => meta.nianticId === nianticId.toUpperCase());
+    const upper = nianticId.toUpperCase();
+    const entry = Object.entries(FACTIONS).find(([_, meta]) => meta.nianticIds.includes(upper));
     return entry ? (entry[0] as FactionId) : "NEU";
 };
