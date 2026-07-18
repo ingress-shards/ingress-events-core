@@ -4,17 +4,20 @@ import { fromString as instantFromString, epochMilliseconds as instantEpochMilli
 /**
  * Formats a Temporal.Duration into a human-readable string (e.g., 1d 4h 30m).
  */
-export const formatDuration = (d: Temporal.DurationLike): string => {
-    const { days = 0, hours = 0, minutes = 0 } = d;
+export const formatDuration = (d: Temporal.DurationLike, includeSeconds = false): string => {
+    const { days = 0, hours = 0, minutes = 0, seconds = 0 } = d;
 
-    if (days === 0 && hours === 0 && minutes === 0) {
-        return "< 1m";
+    if (days === 0 && hours === 0 && minutes === 0 && (!includeSeconds || seconds === 0)) {
+        return includeSeconds ? "< 1s" : "< 1m";
     }
 
     const parts: string[] = [];
     if (days > 0) parts.push(`${days}d`);
     if (hours > 0) parts.push(`${hours}h`);
     if (minutes > 0) parts.push(`${minutes}m`);
+    if (includeSeconds && (seconds > 0 || (days === 0 && hours === 0 && minutes === 0))) {
+        parts.push(`${seconds}s`);
+    }
 
     return parts.join(" ");
 };

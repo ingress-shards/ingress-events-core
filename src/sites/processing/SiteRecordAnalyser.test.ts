@@ -18,9 +18,10 @@ describe("SiteRecordAnalyser", () => {
         expect(analysis.siteState.counters.shards.moving).toBe(0);
         expect(analysis.siteState.counters.shards.nonMoving).toBe(0);
         expect(analysis.siteState.counters.links).toBe(0);
+        expect(analysis.siteState.counters.paths).toBe(0);
     });
 
-    it("should calculate correct centroid and shard/link counters", () => {
+    it("should calculate correct centroid and shard/link/path counters", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -34,14 +35,12 @@ describe("SiteRecordAnalyser", () => {
                 },
                 shards: {
                     101: {
-                        shardNumber: 101,
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2000, portalId: 1, dest: 2 },
+                            { action: "link", moveTime: 2000, portalId: 1, dest: 2, team: "RES" },
                         ],
                     },
                     102: {
-                        shardNumber: 102,
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 2 },
                             { action: "no move", moveTime: 3000, portalId: 2 },
@@ -64,9 +63,18 @@ describe("SiteRecordAnalyser", () => {
 
         // Links: Shard 101 has 1 link action
         expect(analysis.siteState.counters.links).toBe(1);
+
+        // Paths: 1 path ("1-2")
+        expect(analysis.siteState.counters.paths).toBe(1);
+        const path = analysis.siteState.shardPaths["1-2"];
+        expect(path).toBeDefined();
+        expect(path!.links.length).toBe(1);
+        expect(path!.links[0]!.team).toBe("RES");
+        expect(path!.links[0]!.moves.length).toBe(1);
+        expect(path!.links[0]!.moves[0]!.shardId).toBe(101);
     });
 
-    it("should calculate correct wave-by-wave shard and link counts when config is provided", () => {
+    it("should calculate correct wave-by-wave shard, link, and path counts when config is provided", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -79,7 +87,6 @@ describe("SiteRecordAnalyser", () => {
                 },
                 shards: {
                     101: {
-                        shardNumber: 101,
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 1 },
                             { action: "jump", moveTime: 150000, portalId: 1 },
@@ -87,10 +94,9 @@ describe("SiteRecordAnalyser", () => {
                         ] as any,
                     },
                     102: {
-                        shardNumber: 102,
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2500000, portalId: 1, dest: 2 }
+                            { action: "link", moveTime: 2500000, portalId: 1, dest: 2, team: "ENL" }
                         ] as any,
                     },
                 },
@@ -129,6 +135,7 @@ describe("SiteRecordAnalyser", () => {
         expect(w1.counters.shards.moving).toBe(1); // Shard 101 jumped
         expect(w1.counters.shards.nonMoving).toBe(1); // Shard 102 present but not moving
         expect(w1.counters.links).toBe(0);
+        expect(w1.counters.paths).toBe(0);
 
         // Wave 2 checks:
         const w2 = analysis.waves[1]!;
@@ -136,5 +143,11 @@ describe("SiteRecordAnalyser", () => {
         expect(w2.counters.shards.moving).toBe(1); // Shard 102 linked
         expect(w2.counters.shards.nonMoving).toBe(1); // Shard 101 present but despawned (not jump/link)
         expect(w2.counters.links).toBe(1); // 1 link from Shard 102
+        expect(w2.counters.paths).toBe(1); // 1 path from Shard 102 link
+        const wavePath = w2.shardPaths["1-2"];
+        expect(wavePath).toBeDefined();
+        expect(wavePath!.links.length).toBe(1);
+        expect(wavePath!.links[0]!.team).toBe("ENL");
+        expect(wavePath!.links[0]!.moves[0]!.shardId).toBe(102);
     });
 });

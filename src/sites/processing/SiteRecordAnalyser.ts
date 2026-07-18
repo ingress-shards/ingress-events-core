@@ -1,15 +1,98 @@
 import type { SiteRecord, SiteAnalysis, SiteState } from "../Site.js";
-import { calculateCentroid } from "../../common/Geo.js";
+import { calculateCentroid, haversineDistance } from "../../common/Geo.js";
 import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import type { Shard, ShardHistoryEntry, ShardPath } from "../Shard.js";
+import type { PortalId } from "../../common/Identifiers.js";
+import type { ObservedPortal } from "../Portal.js";
+import { roundToDecimalPlaces } from "../../common/Math.js";
+
+const buildShardPaths = (
+    shardEntries: [string, Shard][],
+    portals: Record<PortalId, ObservedPortal> | undefined,
+    filterFunction?: (h: ShardHistoryEntry) => boolean
+): Record<string, ShardPath> => {
+    const paths: Record<string, ShardPath> = {};
+
+    for (const [shardIdStr, shard] of shardEntries) {
+        const shardId = Number(shardIdStr);
+        const history = shard.history || [];
+        const filteredHistory = filterFunction ? history.filter(filterFunction) : history;
+
+        for (const h of filteredHistory) {
+            if (h.action === "link") {
+                const origin = h.portalId;
+                const destination = h.dest;
+                if (destination === undefined) continue;
+
+                // Key is concatenation of the two portal IDs, in numerical order, with a dash
+                const p1 = Math.min(origin, destination);
+                const p2 = Math.max(origin, destination);
+                const pathKey = `${p1}-${p2}`;
+
+                // Calculate distance if portals are available
+                let distance = 0;
+                const portal1 = portals?.[p1];
+                const portal2 = portals?.[p2];
+                if (portal1 && portal2) {
+                    distance = roundToDecimalPlaces(haversineDistance(portal1, portal2), 2);
+                }
+
+                // Initialize path if not present
+                paths[pathKey] ??= {
+                    links: [],
+                    distance
+                };
+
+                const linkTime = h.linkTime ?? h.moveTime;
+                const team = h.team ?? "NEU";
+
+                // Find or create the link on this path
+                let existingLink = paths[pathKey].links.find(l => l.linkTime === linkTime);
+                if (!existingLink) {
+                    existingLink = {
+                        linkTime,
+                        team,
+                        moves: []
+                    };
+                    paths[pathKey].links.push(existingLink);
+                }
+
+                // Add shard move along the link
+                const moveExists = existingLink.moves.some(m => m.shardId === shardId && m.moveTime === h.moveTime);
+                if (!moveExists) {
+                    existingLink.moves.push({
+                        origin,
+                        dest: destination,
+                        shardId,
+                        moveTime: h.moveTime,
+                        points: 0
+                    });
+                }
+            }
+        }
+    }
+
+    // Sort links by linkTime, and moves by moveTime
+    for (const path of Object.values(paths)) {
+        path.links.sort((a, b) => a.linkTime - b.linkTime);
+        for (const link of path.links) {
+            link.moves.sort((a, b) => a.moveTime - b.moveTime);
+        }
+    }
+
+    return paths;
+};
 
 export const SiteRecordAnalyser = {
     /**
      * Enriches a SiteRecord by analyzing its observations to generate SiteAnalysis.
      * Overwrites or populates the analysis field.
      */
-     analyze: (record: SiteRecord, config?: EventConfigRegistry): SiteAnalysis => {
+    analyze: (record: SiteRecord, config?: EventConfigRegistry): SiteAnalysis => {
         const portals = record.observations?.portals ? Object.values(record.observations.portals) : [];
-        const shards = record.observations?.shards ? Object.values(record.observations.shards) : [];
+        const shardEntries = record.observations?.shards ? Object.entries(record.observations.shards) : [];
+        const shards = shardEntries.map(([, s]) => s);
+        const portalsMap = record.observations?.portals;
 
         // 1. Calculate Centroid
         const portalCoordinates = portals.map(p => ({ latE6: p.latE6, lngE6: p.lngE6 }));
@@ -33,6 +116,9 @@ export const SiteRecordAnalyser = {
             const shardLinks = history.filter(h => h.action === "link").length;
             totalLinks += shardLinks;
         }
+
+        // Calculate Overall Shard Paths
+        const overallShardPaths = buildShardPaths(shardEntries, portalsMap);
 
         // 3. Calculate Wave Snapshots
         const waveStates: SiteState[] = [];
@@ -74,8 +160,14 @@ export const SiteRecordAnalyser = {
                     waveLinks += shardLinks;
                 }
 
+                const waveShardPaths = buildShardPaths(
+                    shardEntries,
+                    portalsMap,
+                    h => h.moveTime >= wave.start && h.moveTime <= wave.end
+                );
+
                 waveStates.push({
-                    shardPaths: {},
+                    shardPaths: waveShardPaths,
                     points: {},
                     counters: {
                         shards: {
@@ -83,7 +175,7 @@ export const SiteRecordAnalyser = {
                             nonMoving: waveNonMoving,
                         },
                         links: waveLinks,
-                        paths: 0,
+                        paths: Object.keys(waveShardPaths).length,
                     },
                     period: {
                         start: wave.start,
@@ -96,7 +188,7 @@ export const SiteRecordAnalyser = {
         return {
             ...(centroid && { centroid }),
             siteState: {
-                shardPaths: {},
+                shardPaths: overallShardPaths,
                 points: {},
                 counters: {
                     shards: {
@@ -104,7 +196,7 @@ export const SiteRecordAnalyser = {
                         nonMoving: nonMovingShards,
                     },
                     links: totalLinks,
-                    paths: 0,
+                    paths: Object.keys(overallShardPaths).length,
                 },
             },
             waves: waveStates,

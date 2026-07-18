@@ -69,19 +69,6 @@ export class SiteRecordMerger {
             return resolvedPortal;
         };
 
-        // Map to keep track of shard number -> final numeric database shard ID mapping
-        const shardNumberToIdMap = new Map<number, number>();
-
-        // Pre-populate the map with existing shards in the site record
-        if (observations.shards) {
-            for (const [id, s] of Object.entries(observations.shards)) {
-                shardNumberToIdMap.set(s.shardNumber, Number(id));
-            }
-        }
-
-        // Determine the next numeric database shard ID to allocate
-        let nextShardId = 1 + Math.max(0, ...Object.keys(observations.shards ?? {}).map(Number));
-
         // 3. Merge Shards
         if (incomingObs.shards && Object.keys(incomingObs.shards).length > 0) {
             observations.shards ??= {};
@@ -98,25 +85,14 @@ export class SiteRecordMerger {
                     ...(h.linkTime !== undefined && { linkTime: h.linkTime })
                 }) as ShardHistoryEntry);
 
-                let shardId = shardNumberToIdMap.get(incomingShardNumber);
-                if (shardId === undefined) {
-                    // New shard at this site, assign new sequential database ID
-                    shardId = nextShardId++;
-                    shardNumberToIdMap.set(incomingShardNumber, shardId);
-
-                    observations.shards[shardId] = {
-                        shardNumber: incomingShardNumber,
+                const existingShard = observations.shards[incomingShardNumber];
+                if (existingShard === undefined) {
+                    observations.shards[incomingShardNumber] = {
                         history: [...mappedHistory].sort((a, b) => a.moveTime - b.moveTime)
                     };
                     hasChanged = true;
                 } else {
                     // Shard already exists, merge history
-                    const existingShard = observations.shards[shardId];
-                    if (!existingShard) {
-                        console.log("Existing shard not found", shardId);
-                        continue;
-                    }
-
                     for (const incomingHist of mappedHistory) {
                         const isDuplicate = existingShard.history.some(h =>
                             h.action === incomingHist.action &&

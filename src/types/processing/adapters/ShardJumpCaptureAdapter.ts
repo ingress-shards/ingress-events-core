@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-array-sort */
 import type { SiteId, PortalId } from "../../../common/Identifiers.js";
 import type { SiteRecord } from "../../../sites/Site.js";
-import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
+import type { ShardJumpCapture, FragmentArtifact } from "../../capture/ShardJumps.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import * as Now from "temporal-polyfill/fns/now";
 import * as Instant from "temporal-polyfill/fns/instant";
@@ -161,7 +161,6 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
                     obs.shards ??= {};
                     obs.shards[shardIdNum] = {
-                        shardNumber: shardIdNum,
                         history: historyEntries
                     };
                 }
@@ -176,7 +175,14 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 }
                 for (const t of art.target) {
                     const info = t.portalInfo;
-                    const timestampMs = Instant.epochMilliseconds(Now.instant());
+                    
+                    let timestampMs = Instant.epochMilliseconds(Now.instant());
+                    const firstFragment = input.artifact?.find((a): a is FragmentArtifact => "fragment" in a && !!a.fragment);
+                    const firstHistory = firstFragment?.fragment?.[0]?.history?.[0];
+                    if (firstHistory) {
+                        timestampMs = parseInt(firstHistory.moveTimeMs, 10);
+                    }
+
                     const match = config.findSiteByCoords(info.latE6, info.lngE6, timestampMs);
                     if (!match) continue;
 

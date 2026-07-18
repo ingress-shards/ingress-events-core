@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { ShardJumpCaptureAdapter } from "./ShardJumpCaptureAdapter.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
@@ -98,7 +98,6 @@ describe("ShardJumpCaptureAdapter", () => {
 
         const shard = obs.shards![1]!;
         expect(shard).toBeDefined();
-        expect(shard.shardNumber).toBe(1);
         expect(shard.history[0]!.action).toBe("spawn");
         expect(shard.history[0]!.moveTime).toBe(1000);
         expect(shard.history[0]!.portalId).toBe(1);
@@ -226,5 +225,50 @@ describe("ShardJumpCaptureAdapter", () => {
         const destinationPortalId = shard.history[1]!.dest;
         expect(destinationPortalId).toBeDefined();
         expect(shard.history[2]!.portalId).toBe(destinationPortalId);
+    });
+
+    test("should parse target portals from artifact list correctly", () => {
+        vi.useFakeTimers();
+        vi.setSystemTime(new Date("2026-06-18T12:00:00Z"));
+        try {
+            const input: ShardJumpCapture = {
+                artifact: [
+                    {
+                        id: "targetres",
+                        name: "Target RES",
+                        target: [
+                            {
+                                portalInfo: {
+                                    title: "Target Portal One",
+                                    latE6: 10000000,
+                                    lngE6: 20000000,
+                                    team: "NEUTRAL"
+                                },
+                                targetAlignment: "RESISTANCE"
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            const result = adapter.parseAndGroupObservations(input, mockRegistry);
+            expect(result.length).toBe(1);
+            const record = result[0]!;
+            expect(record.metadata.siteId).toBe("test-site");
+            expect(record.metadata.seasonId).toBe("test-season");
+
+            const obs = record.observations!;
+            expect(obs.portals).toBeDefined();
+            const portal = Object.values(obs.portals!)[0]!;
+            expect(portal).toBeDefined();
+            expect(portal.title).toBe("Target Portal One");
+            expect(portal.history).toHaveLength(1);
+            expect(portal.history![0]!.type).toBe("target");
+            
+            const historyEntry = portal.history![0] as any;
+            expect(historyEntry.ornId).toBe("targetres");
+        } finally {
+            vi.useRealTimers();
+        }
     });
 });

@@ -24,8 +24,7 @@ describe("SiteRecordMerger", () => {
                 }
             },
             shards: {
-                "1": {
-                    shardNumber: 10,
+                "10": {
                     history: [
                         { action: "spawn", moveTime: 1781868600000, portalId: 1 }
                     ]
@@ -135,9 +134,7 @@ describe("SiteRecordMerger", () => {
                 }
             },
             shards: {
-                // shardNumber 10 is an existing shard (should map to db shard ID 1)
                 "10": {
-                    shardNumber: 10,
                     history: [
                         {
                             action: "link" as const,
@@ -147,9 +144,7 @@ describe("SiteRecordMerger", () => {
                         }
                     ]
                 },
-                // shardNumber 20 is a new shard (should map to a new db shard ID 2)
                 "20": {
-                    shardNumber: 20,
                     history: [
                         {
                             action: "spawn" as const,
@@ -170,21 +165,17 @@ describe("SiteRecordMerger", () => {
         const { record: result } = merger.merge(baseRecord, incoming);
         const shards = result.observations!.shards!;
 
-        const shard1 = shards["1"]!;
-        const shard2 = shards["2"]!;
+        const shard1 = shards["10"]!;
+        const shard2 = shards["20"]!;
 
-        // Shard ID 1 (for shardNumber 10)
         expect(shard1).toBeDefined();
-        expect(shard1.shardNumber).toBe(10);
         expect(shard1.history.length).toBe(2);
         expect(shard1.history[0]!.action).toBe("spawn");
         expect(shard1.history[1]!.action).toBe("link");
         expect(shard1.history[1]!.portalId).toBe(1); // base record ID
         expect(shard1.history[1]!.dest).toBe(2); // Newly allocated portal ID 2
 
-        // Shard ID 2 (for new shardNumber 20)
         expect(shard2).toBeDefined();
-        expect(shard2.shardNumber).toBe(20);
         expect(shard2.history.length).toBe(2);
         expect(shard2.history[0]!.action).toBe("spawn");
         expect(shard2.history[0]!.moveTime).toBe(1781870402000);

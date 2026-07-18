@@ -5,7 +5,6 @@ import type { PortalId } from "../common/Identifiers.js";
  * Individual shard data.
  */
 export interface Shard {
-    shardNumber: number;
     history: ShardHistoryEntry[];
 }
 
