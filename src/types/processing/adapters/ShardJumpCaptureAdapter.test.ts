@@ -16,6 +16,16 @@ describe("ShardJumpCaptureAdapter", () => {
             startTime: "2026-06-18T12:00:00Z[UTC]",
             timeZone: "UTC",
             countryCode: "US"
+        },
+        {
+            id: "helsinki",
+            name: "Helsinki, Finland",
+            latE6: 60169856,
+            lngE6: 24938379,
+            eventType: "ANOMALY" as const,
+            startTime: "2026-07-18T12:00:00Z[UTC]",
+            timeZone: "UTC",
+            countryCode: "FI"
         }
     ];
 
@@ -225,6 +235,139 @@ describe("ShardJumpCaptureAdapter", () => {
         const destinationPortalId = shard.history[1]!.dest;
         expect(destinationPortalId).toBeDefined();
         expect(shard.history[2]!.portalId).toBe(destinationPortalId);
+    });
+
+    test("should parse full shard 32 history correctly with spawn, 2 no moves, 2 links (RES and ENL), and despawn", () => {
+        const input: ShardJumpCapture = {
+            artifact: [
+                {
+                    id: "abaddon1_32",
+                    name: "Shard 32",
+                    fragment: [
+                        {
+                            id: "abaddon1_32",
+                            history: [
+                                {
+                                  "moveTimeMs": "1784375980580",
+                                  "reason": "despawn",
+                                  "originPortalInfo": {
+                                    "title": "Kobolttikanuunan muistolaatta",
+                                    "latE6": 60170844,
+                                    "lngE6": 24949832,
+                                    "team": "RESISTANCE"
+                                  },
+                                  "originCapturerTeam": "RESISTANCE",
+                                  "destinationCapturerTeam": "NEUTRAL",
+                                  "linkCreatorTeam": "RESISTANCE"
+                                },
+                                {
+                                  "moveTimeMs": "1784375735042",
+                                  "reason": "link",
+                                  "originPortalInfo": {
+                                    "title": "Kirahvi Giraffen",
+                                    "latE6": 60169044,
+                                    "lngE6": 24949573,
+                                    "team": "ENLIGHTENED"
+                                  },
+                                  "originCapturerTeam": "ENLIGHTENED",
+                                  "destinationPortalInfo": {
+                                    "title": "Kobolttikanuunan muistolaatta",
+                                    "latE6": 60170844,
+                                    "lngE6": 24949832,
+                                    "team": "ENLIGHTENED"
+                                  },
+                                  "destinationCapturerTeam": "ENLIGHTENED",
+                                  "linkCreationTimeMs": "1784375661238",
+                                  "linkCreatorTeam": "ENLIGHTENED",
+                                  "linkOriginatedFromOriginPortal": "ORIGIN_TO_DESTINATION"
+                                },
+                                {
+                                  "moveTimeMs": "1784375468313",
+                                  "reason": "link",
+                                  "originPortalInfo": {
+                                    "title": "Hei vaan / Ilmaiskyyti",
+                                    "latE6": 60167705,
+                                    "lngE6": 24950008,
+                                    "team": "RESISTANCE"
+                                  },
+                                  "originCapturerTeam": "RESISTANCE",
+                                  "destinationPortalInfo": {
+                                    "title": "Kirahvi Giraffen",
+                                    "latE6": 60169044,
+                                    "lngE6": 24949573,
+                                    "team": "RESISTANCE"
+                                  },
+                                  "destinationCapturerTeam": "RESISTANCE",
+                                  "linkCreationTimeMs": "1784375206567",
+                                  "linkCreatorTeam": "RESISTANCE",
+                                  "linkOriginatedFromOriginPortal": "DESTINATION_TO_ORIGIN"
+                                },
+                                {
+                                  "moveTimeMs": "1784375153838",
+                                  "reason": "no move",
+                                  "originCapturerTeam": "NEUTRAL",
+                                  "destinationCapturerTeam": "NEUTRAL",
+                                  "linkCreatorTeam": "NEUTRAL"
+                                },
+                                {
+                                  "moveTimeMs": "1784374829924",
+                                  "reason": "no move",
+                                  "originCapturerTeam": "NEUTRAL",
+                                  "destinationCapturerTeam": "NEUTRAL",
+                                  "linkCreatorTeam": "NEUTRAL"
+                                },
+                                {
+                                  "moveTimeMs": "1784374342160",
+                                  "reason": "spawn",
+                                  "originCapturerTeam": "NEUTRAL",
+                                  "destinationPortalInfo": {
+                                    "title": "Hei vaan / Ilmaiskyyti",
+                                    "latE6": 60167705,
+                                    "lngE6": 24950008,
+                                    "team": "RESISTANCE"
+                                  },
+                                  "destinationCapturerTeam": "RESISTANCE",
+                                  "linkCreatorTeam": "NEUTRAL"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        expect(result).toHaveLength(1);
+        const record = result[0]!;
+        expect(record.metadata.siteId).toBe("helsinki");
+
+        const shard = record.observations!.shards![32]!;
+        expect(shard).toBeDefined();
+        expect(shard.history).toHaveLength(6);
+
+        // spawn
+        expect(shard.history[0]!.action).toBe("spawn");
+        expect(shard.history[0]!.team).toBe("RES");
+
+        // no move
+        expect(shard.history[1]!.action).toBe("no move");
+        expect(shard.history[1]!.team).toBeUndefined();
+
+        // no move
+        expect(shard.history[2]!.action).toBe("no move");
+        expect(shard.history[2]!.team).toBeUndefined();
+
+        // link 1 (RES)
+        expect(shard.history[3]!.action).toBe("link");
+        expect(shard.history[3]!.team).toBe("RES");
+
+        // link 2 (ENL)
+        expect(shard.history[4]!.action).toBe("link");
+        expect(shard.history[4]!.team).toBe("ENL");
+
+        // despawn (RES)
+        expect(shard.history[5]!.action).toBe("despawn");
+        expect(shard.history[5]!.team).toBe("RES");
     });
 
     test("should parse target portals from artifact list correctly", () => {

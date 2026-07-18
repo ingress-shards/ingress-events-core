@@ -6,7 +6,7 @@ import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import * as Now from "temporal-polyfill/fns/now";
 import * as Instant from "temporal-polyfill/fns/instant";
 import { PortalIdMapper } from "../AdapterHelpers.js";
-import { fromNianticId } from "../../../common/Factions.js";
+import { fromNianticId, type FactionId } from "../../../common/Factions.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 interface ReferencePortal {
@@ -132,13 +132,17 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                             const destinationFaction = destinationCapturerTeam ? fromNianticId(destinationCapturerTeam) : undefined;
                             const originFaction = originCapturerTeam ? fromNianticId(originCapturerTeam) : undefined;
 
-                            if (creatorFaction && destinationFaction && originFaction &&
+                            if (h.reason === "link" && creatorFaction && destinationFaction && originFaction &&
                                 (creatorFaction !== destinationFaction || creatorFaction !== originFaction || destinationFaction !== originFaction)) {
                                 console.warn(`[ShardJumpCaptureAdapter] Team mismatch for shard ${fragment.id} at ${h.moveTimeMs}: linkCreatorTeam="${creatorFaction}", destinationCapturerTeam="${destinationFaction}", originCapturerTeam="${originFaction}"`);
                             }
 
-                            // No move entries do not need to include the team code
-                            const team = (creatorFaction && h.reason !== "no move") ? creatorFaction : undefined;
+                            let team: FactionId | undefined;
+                            switch (h.reason) {
+                                case "spawn": team = destinationFaction; break;
+                                case "link": team = creatorFaction; break;
+                                case "despawn": team = originFaction; break;
+                            }
 
                             let linkTime: number | undefined;
                             if ("linkCreationTimeMs" in h && h.linkCreationTimeMs) {
