@@ -244,4 +244,128 @@ describe("SiteRecordMerger", () => {
         expect(portal2.history!.length).toBe(2); // Recorded transition
         expect((portal2.history![1] as TargetHistoryEntry).ornId).toBe("targetenl");
     });
+
+    test("should merge Helsinki shard 32 history correctly into a new site record", () => {
+        const emptyRecord: SiteRecord = {
+            metadata: {
+                siteId: "helsinki",
+                seasonId: "test-season",
+                lastUpdated: 0,
+            },
+            observations: {
+                portals: {},
+                shards: {}
+            }
+        };
+
+        const incoming: SiteObservation = {
+            portals: {
+                "1": { title: "Hei vaan / Ilmaiskyyti", latE6: 60167705, lngE6: 24950008, history: [] },
+                "2": { title: "Kirahvi Giraffen", latE6: 60169044, lngE6: 24949573, history: [] },
+                "3": { title: "Kobolttikanuunan muistolaatta", latE6: 60170844, lngE6: 24949832, history: [] }
+            },
+            shards: {
+                "32": {
+                    history: [
+                        { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" },
+                        { action: "no move", moveTime: 1784374829924, portalId: 1 },
+                        { action: "no move", moveTime: 1784375153838, portalId: 1 },
+                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, team: "RES", linkTime: 1784375206567 },
+                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, team: "ENL", linkTime: 1784375661238 },
+                        { action: "despawn", moveTime: 1784375980580, portalId: 3, team: "RES" }
+                    ]
+                }
+            }
+        };
+
+        const { record: result } = merger.merge(emptyRecord, incoming);
+        const shard = result.observations!.shards!["32"]!;
+        expect(shard).toBeDefined();
+        expect(shard.history).toHaveLength(6);
+
+        expect(shard.history[0]!.action).toBe("spawn");
+        expect(shard.history[0]!.team).toBe("RES");
+
+        expect(shard.history[1]!.action).toBe("no move");
+        expect(shard.history[1]!.team).toBeUndefined();
+
+        expect(shard.history[2]!.action).toBe("no move");
+        expect(shard.history[2]!.team).toBeUndefined();
+
+        expect(shard.history[3]!.action).toBe("link");
+        expect(shard.history[3]!.team).toBe("RES");
+
+        expect(shard.history[4]!.action).toBe("link");
+        expect(shard.history[4]!.team).toBe("ENL");
+
+        expect(shard.history[5]!.action).toBe("despawn");
+        expect(shard.history[5]!.team).toBe("RES");
+    });
+
+    test("should merge Helsinki shard 32 history correctly into an existing site record with only the spawn history item", () => {
+        const existingRecord: SiteRecord = {
+            metadata: {
+                siteId: "helsinki",
+                seasonId: "test-season",
+                lastUpdated: 0,
+            },
+            observations: {
+                portals: {
+                    "1": { title: "Hei vaan / Ilmaiskyyti", latE6: 60167705, lngE6: 24950008, history: [] },
+                    "2": { title: "Kirahvi Giraffen", latE6: 60169044, lngE6: 24949573, history: [] },
+                    "3": { title: "Kobolttikanuunan muistolaatta", latE6: 60170844, lngE6: 24949832, history: [] }
+                },
+                shards: {
+                    "32": {
+                        history: [
+                            { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" }
+                        ]
+                    }
+                }
+            }
+        };
+
+        const incoming: SiteObservation = {
+            portals: {
+                "1": { title: "Hei vaan / Ilmaiskyyti", latE6: 60167705, lngE6: 24950008, history: [] },
+                "2": { title: "Kirahvi Giraffen", latE6: 60169044, lngE6: 24949573, history: [] },
+                "3": { title: "Kobolttikanuunan muistolaatta", latE6: 60170844, lngE6: 24949832, history: [] }
+            },
+            shards: {
+                "32": {
+                    history: [
+                        { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" },
+                        { action: "no move", moveTime: 1784374829924, portalId: 1 },
+                        { action: "no move", moveTime: 1784375153838, portalId: 1 },
+                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, team: "RES", linkTime: 1784375206567 },
+                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, team: "ENL", linkTime: 1784375661238 },
+                        { action: "despawn", moveTime: 1784375980580, portalId: 3, team: "RES" }
+                    ]
+                }
+            }
+        };
+
+        const { record: result } = merger.merge(existingRecord, incoming);
+        const shard = result.observations!.shards!["32"]!;
+        expect(shard).toBeDefined();
+        expect(shard.history).toHaveLength(6);
+
+        expect(shard.history[0]!.action).toBe("spawn");
+        expect(shard.history[0]!.team).toBe("RES");
+
+        expect(shard.history[1]!.action).toBe("no move");
+        expect(shard.history[1]!.team).toBeUndefined();
+
+        expect(shard.history[2]!.action).toBe("no move");
+        expect(shard.history[2]!.team).toBeUndefined();
+
+        expect(shard.history[3]!.action).toBe("link");
+        expect(shard.history[3]!.team).toBe("RES");
+
+        expect(shard.history[4]!.action).toBe("link");
+        expect(shard.history[4]!.team).toBe("ENL");
+
+        expect(shard.history[5]!.action).toBe("despawn");
+        expect(shard.history[5]!.team).toBe("RES");
+    });
 });
