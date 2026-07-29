@@ -8,6 +8,7 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
         options: {
             coordToPortalIdMap: Map<string, number>;
             nextPortalId: number;
+            getWaveIndex?: (timestamp: number) => number | undefined;
         }
     ): PortalMergeResult {
         const portals = structuredClone(existingPortals);
@@ -50,14 +51,20 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
 
             // Append history entries (with state transition / duplicate checks)
             for (const incomingHist of incomingHistory) {
-                // Duplicate timestamp check
-                const isDuplicate = mergedHistory.some(h =>
-                    h.type === incomingHist.type &&
-                    h.timestamp === incomingHist.timestamp
-                );
+                // Duplicate timestamp / wave check
+                const isDuplicate = mergedHistory.some(h => {
+                    if (h.type !== incomingHist.type) return false;
+                    if (options.getWaveIndex) {
+                        const existingWave = options.getWaveIndex(h.timestamp);
+                        const incomingWave = options.getWaveIndex(incomingHist.timestamp);
+                        if (existingWave !== undefined && incomingWave !== undefined) {
+                            return existingWave === incomingWave;
+                        }
+                    }
+                    return h.timestamp === incomingHist.timestamp;
+                });
 
                 if (isDuplicate) {
-                    console.info(`[DefaultPortalMergeStrategy] Ignoring duplicate history entry at portal ${existingPortalId} (matching timestamp ${incomingHist.timestamp})`);
                     continue;
                 }
 
@@ -69,7 +76,13 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
                 let isSameState = false;
                 if (lastEntry) {
                     if (incomingHist.type === "target" && lastEntry.type === "target") {
-                        isSameState = (incomingHist.ornId === lastEntry.ornId);
+                        if (options.getWaveIndex) {
+                            const lastWave = options.getWaveIndex(lastEntry.timestamp);
+                            const incomingWave = options.getWaveIndex(incomingHist.timestamp);
+                            isSameState = (incomingHist.ornId === lastEntry.ornId) && (lastWave === incomingWave);
+                        } else {
+                            isSameState = (incomingHist.ornId === lastEntry.ornId);
+                        }
                     } else if (incomingHist.type === "battle-beacon" && lastEntry.type === "battle-beacon") {
                         isSameState = (incomingHist.ornId === lastEntry.ornId);
                     } else if (incomingHist.type === "pre-event" && lastEntry.type === "pre-event") {
@@ -78,7 +91,6 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
                 }
 
                 if (isSameState) {
-                    console.info(`[DefaultPortalMergeStrategy] Ignoring duplicate state transition at portal ${existingPortalId} (state '${incomingHist.type}' ornament ID remained '${(incomingHist as any).ornId}')`);
                     continue;
                 }
 
@@ -95,9 +107,9 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
         // Verify count consistency
         const portalCount = Object.keys(portals).length;
         if (portalCount === coordToPortalIdMap.size) {
-            console.info(`[DefaultPortalMergeStrategy] Completed merge: ${portalCount} portals successfully processed.`);
+            console.info(`[Site Observer: Portal Merge] Completed merge: ${portalCount} portals successfully processed.`);
         } else {
-            console.warn(`[DefaultPortalMergeStrategy] Consistency mismatch: portals count (${portalCount}) !== coordToPortalIdMap size (${coordToPortalIdMap.size})`);
+            console.warn(`[Site Observer: Portal Merge] Consistency mismatch: portals count (${portalCount}) !== coordToPortalIdMap size (${coordToPortalIdMap.size})`);
         }
 
         return { portals, coordToPortalIdMap, nextPortalId, hasChanged };

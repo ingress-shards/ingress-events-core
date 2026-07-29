@@ -1,10 +1,8 @@
 /* eslint-disable unicorn/no-array-sort */
 import type { SiteId, PortalId } from "../../../common/Identifiers.js";
 import type { SiteRecord } from "../../../sites/Site.js";
-import type { ShardJumpCapture, FragmentArtifact } from "../../capture/ShardJumps.js";
+import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
-import * as Now from "temporal-polyfill/fns/now";
-import * as Instant from "temporal-polyfill/fns/instant";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { fromNianticId, type FactionId } from "../../../common/Factions.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
@@ -20,6 +18,10 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
     private portalIdMapper = new PortalIdMapper();
 
     public parseAndGroupObservations(input: ShardJumpCapture, config: EventConfigRegistry): SiteRecord[] {
+        const timestampMs = input.timestamp;
+        if (timestampMs === undefined) {
+            throw new Error("[ShardJumpCaptureAdapter] Missing capture timestamp in ShardJumpCapture input");
+        }
         const siteRecordsMap = new Map<SiteId, SiteRecord>();
 
         const getOrCreateRecord = (siteId: SiteId, seasonId: string): SiteRecord => {
@@ -132,9 +134,11 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                             const destinationFaction = destinationCapturerTeam ? fromNianticId(destinationCapturerTeam) : undefined;
                             const originFaction = originCapturerTeam ? fromNianticId(originCapturerTeam) : undefined;
 
-                            if (h.reason === "link" && creatorFaction && destinationFaction && originFaction &&
-                                (creatorFaction !== destinationFaction || creatorFaction !== originFaction || destinationFaction !== originFaction)) {
-                                console.warn(`[ShardJumpCaptureAdapter] Team mismatch for shard ${fragment.id} at ${h.moveTimeMs}: linkCreatorTeam="${creatorFaction}", destinationCapturerTeam="${destinationFaction}", originCapturerTeam="${originFaction}"`);
+                            const mismatch = (h.reason === "link" || h.reason === "jump") && creatorFaction && destinationFaction && originFaction &&
+                                (creatorFaction !== destinationFaction || creatorFaction !== originFaction || destinationFaction !== originFaction);
+
+                            if (mismatch) {
+                                console.warn(`[Shard Observer: Shard Jump Adapter] Team mismatch for shard ${fragment.id} at ${h.moveTimeMs}: linkCreatorTeam="${creatorFaction}", destinationCapturerTeam="${destinationFaction}", originCapturerTeam="${originFaction}"`);
                             }
 
                             let team: FactionId | undefined;
@@ -159,6 +163,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                                 ...(destination && { dest: destination }),
                                 ...(team && { team }),
                                 ...(linkTime && { linkTime }),
+                                ...(mismatch && { mismatch: true }),
                             };
                         })
                         .filter((entry): entry is NonNullable<typeof entry> => entry !== undefined);
@@ -179,14 +184,6 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 }
                 for (const t of art.target) {
                     const info = t.portalInfo;
-                    
-                    let timestampMs = Instant.epochMilliseconds(Now.instant());
-                    const firstFragment = input.artifact?.find((a): a is FragmentArtifact => "fragment" in a && !!a.fragment);
-                    const firstHistory = firstFragment?.fragment?.[0]?.history?.[0];
-                    if (firstHistory) {
-                        timestampMs = parseInt(firstHistory.moveTimeMs, 10);
-                    }
-
                     const match = config.findSiteByCoords(info.latE6, info.lngE6, timestampMs);
                     if (!match) continue;
 

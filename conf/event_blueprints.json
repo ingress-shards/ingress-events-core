@@ -246,5 +246,153 @@
       ]
     }
   },
-  "scoring": {}
+  "scoringRules": {
+    "shards": {
+      "default_jump": {
+        "label": "Shard Jumped",
+        "tooltip": "Shard jump along an eligible Link",
+        "points": 1,
+        "scoreType": "jumps"
+      },
+      "anomaly_zone_arrival_499.5": {
+        "label": "Jump > 499.5m to Zone Portal",
+        "tooltip": "Shard jump along an eligible Link exceeding 499.5m and landing on an Anomaly Zone Portal",
+        "conditions": {
+          "minDistance": 499.5,
+          "ornaments": ["ap1", "ap2", "ap3"]
+        },
+        "points": 1,
+        "scoreType": "jumps"
+      },
+      "secured_target_1-4": {
+        "label": "Shard secured",
+        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
+        "conditions": {
+          "isTarget": true
+        },
+        "maxScoringShardsPerPortal": 4,
+        "teamAttribution": "TARGET_OWNER",
+        "points": 1,
+        "scoreType": "goals"
+      },
+      "secured_target_5-4": {
+        "label": "Shard secured",
+        "tooltip": "Awarded to the Faction to which a Target Portal belongs, regardless of which Faction controlled the Target Portal at the time of the Shard landing. Maximum of 4 scoring shards per target per wave.",
+        "conditions": {
+          "isTarget": true
+        },
+        "maxScoringShardsPerPortal": 4,
+        "teamAttribution": "TARGET_OWNER",
+        "points": 5,
+        "scoreType": "goals"
+      },
+      "secured_target_6-4": {
+        "label": "Shard secured",
+        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
+        "conditions": {
+          "isTarget": true
+        },
+        "maxScoringShardsPerPortal": 4,
+        "teamAttribution": "TARGET_OWNER",
+        "points": 6,
+        "scoreType": "goals"
+      },
+      "secured_target_7-4": {
+        "label": "Shard secured",
+        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
+        "conditions": {
+          "isTarget": true
+        },
+        "maxScoringShardsPerPortal": 4,
+        "teamAttribution": "TARGET_OWNER",
+        "points": 7,
+        "scoreType": "goals"
+      },
+      "skirmish_jump_0.5p": {
+        "label": "Skirmish",
+        "tooltip": "Shard jump > 249.5m",
+        "conditions": {
+          "minDistance": 249.5
+        },
+        "points": 0.5,
+        "scoreType": "jumps"
+      },
+      "skirmish_jump_0.7p": {
+        "label": "Skirmish",
+        "tooltip": "Shard jump > 249.5m",
+        "conditions": {
+          "minDistance": 249.5
+        },
+        "points": 0.7,
+        "scoreType": "jumps"
+      },
+      "singular_jump_1-5": {
+        "label": "Jump (1-5km)",
+        "tooltip": "Shard jump between 1km and 5km",
+        "conditions": {
+          "minDistance": 1000,
+          "maxDistance": 5000
+        },
+        "points": 1,
+        "scoreType": "jumps"
+      },
+      "singular_jump_100": {
+        "label": "Jump (>100km)",
+        "tooltip": "Shard jump > 100km. Stops further scoring for this shard.",
+        "conditions": {
+          "minDistance": 100000
+        },
+        "points": 3,
+        "allowFurtherPoints": false,
+        "scoreType": "jumps"
+      },
+      "storm_jump_1-5": {
+        "label": "Jump (1-5km)",
+        "tooltip": "Shard jump between 1km and 5km",
+        "conditions": {
+          "minDistance": 1000,
+          "maxDistance": 5000
+        },
+        "points": 5,
+        "scoreType": "jumps"
+      },
+      "storm_jump_10": {
+        "label": "Jump (>10km)",
+        "tooltip": "Shard jump > 10km. Stops further scoring for this shard.",
+        "conditions": {
+          "minDistance": 10000
+        },
+        "points": 10,
+        "allowFurtherPoints": false,
+        "scoreType": "jumps"
+      },
+      "investigation_jump_500": {
+        "label": "Jump (<500m)",
+        "tooltip": "Shard jump < 500m",
+        "conditions": {
+          "maxDistance": 499.5
+        },
+        "points": 5,
+        "scoreType": "jumps"
+      },
+      "investigation_jump_200": {
+        "label": "Jump (<200m)",
+        "tooltip": "Shard jump < 200m",
+        "conditions": {
+          "maxDistance": 199.5
+        },
+        "points": 5,
+        "scoreType": "jumps"
+      },
+      "nl1331_arrival": {
+        "label": "NL-1331",
+        "tooltip": "Shard secured",
+        "conditions": {
+          "ornaments": ["nl-1331-2026"]
+        },
+        "points": 3,
+        "scoreType": "goals"
+      }
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect } from "vitest";
 import { ShardJumpCaptureAdapter } from "./ShardJumpCaptureAdapter.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
@@ -54,7 +54,19 @@ describe("ShardJumpCaptureAdapter", () => {
                     year: 2026,
                     overviewUrl: "",
                     components: [
-                        { eventType: "ANOMALY", startTime: "12:00" }
+                        {
+                            eventType: "ANOMALY",
+                            startTime: "12:00",
+                            mechanics: {
+                                shards: {
+                                    shardMechanics: "test-shard-mech",
+                                    scoring: {
+                                        rules: ["default_jump"],
+                                        wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
+                                    }
+                                }
+                            }
+                        }
                     ]
                 }
             ]
@@ -64,6 +76,7 @@ describe("ShardJumpCaptureAdapter", () => {
 
     test("should parse fragment jumps correctly", () => {
         const input: ShardJumpCapture = {
+            timestamp: 1000,
             artifact: [
                 {
                     id: "fragment_1",
@@ -115,6 +128,7 @@ describe("ShardJumpCaptureAdapter", () => {
 
     test("should parse no move history entries by tracking last known location", () => {
         const input: ShardJumpCapture = {
+            timestamp: 1000,
             artifact: [
                 {
                     id: "fragment_1",
@@ -166,6 +180,7 @@ describe("ShardJumpCaptureAdapter", () => {
 
     test("should map portalId in no move directly after a link to the destination portal", () => {
         const input: ShardJumpCapture = {
+            timestamp: 1000,
             artifact: [
                 {
                     id: "fragment_1",
@@ -239,6 +254,7 @@ describe("ShardJumpCaptureAdapter", () => {
 
     test("should parse full shard 32 history correctly with spawn, 2 no moves, 2 links (RES and ENL), and despawn", () => {
         const input: ShardJumpCapture = {
+            timestamp: 1000,
             artifact: [
                 {
                     id: "abaddon1_32",
@@ -371,47 +387,101 @@ describe("ShardJumpCaptureAdapter", () => {
     });
 
     test("should parse target portals from artifact list correctly", () => {
-        vi.useFakeTimers();
-        vi.setSystemTime(new Date("2026-06-18T12:00:00Z"));
-        try {
-            const input: ShardJumpCapture = {
-                artifact: [
-                    {
-                        id: "targetres",
-                        name: "Target RES",
-                        target: [
-                            {
-                                portalInfo: {
-                                    title: "Target Portal One",
-                                    latE6: 10000000,
-                                    lngE6: 20000000,
-                                    team: "NEUTRAL"
+        const input: ShardJumpCapture = {
+            timestamp: 1771243200000, // 2026-06-18T12:00:00Z
+            artifact: [
+                {
+                    id: "targetres",
+                    name: "Target RES",
+                    target: [
+                        {
+                            portalInfo: {
+                                title: "Target Portal One",
+                                latE6: 10000000,
+                                lngE6: 20000000,
+                                team: "NEUTRAL"
+                            },
+                            targetAlignment: "RESISTANCE"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        expect(result.length).toBe(1);
+        const record = result[0]!;
+        expect(record.metadata.siteId).toBe("test-site");
+        expect(record.metadata.seasonId).toBe("test-season");
+
+        const obs = record.observations!;
+        expect(obs.portals).toBeDefined();
+        const portal = Object.values(obs.portals!)[0]!;
+        expect(portal).toBeDefined();
+        expect(portal.title).toBe("Target Portal One");
+        expect(portal.history).toHaveLength(1);
+        expect(portal.history![0]!.type).toBe("target");
+        
+        const historyEntry = portal.history![0] as any;
+        expect(historyEntry.ornId).toBe("targetres");
+        expect(historyEntry.timestamp).toBe(1771243200000);
+    });
+
+    test("should detect team mismatch correctly on links", () => {
+        const input: ShardJumpCapture = {
+            timestamp: 1771243200000,
+            artifact: [
+                {
+                    id: "test-artifact",
+                    name: "Test Artifact",
+                    fragment: [
+                        {
+                            id: "shard_99",
+                            history: [
+                                {
+                                    moveTimeMs: "1771243200000",
+                                    reason: "spawn",
+                                    originCapturerTeam: "NEUTRAL",
+                                    destinationPortalInfo: {
+                                        title: "Portal One",
+                                        latE6: 10000000,
+                                        lngE6: 20000000,
+                                        team: "ENLIGHTENED"
+                                    },
+                                    destinationCapturerTeam: "ENLIGHTENED",
+                                    linkCreatorTeam: "NEUTRAL"
                                 },
-                                targetAlignment: "RESISTANCE"
-                            }
-                        ]
-                    }
-                ]
-            };
+                                {
+                                    moveTimeMs: "1771243500000",
+                                    reason: "link",
+                                    originPortalInfo: {
+                                        title: "Portal One",
+                                        latE6: 10000000,
+                                        lngE6: 20000000,
+                                        team: "ENLIGHTENED"
+                                    },
+                                    originCapturerTeam: "ENLIGHTENED",
+                                    destinationPortalInfo: {
+                                        title: "Portal Two",
+                                        latE6: 10001000,
+                                        lngE6: 20001000,
+                                        team: "RESISTANCE"
+                                    },
+                                    destinationCapturerTeam: "RESISTANCE",
+                                    linkCreatorTeam: "ENLIGHTENED",
+                                    linkCreationTimeMs: "1771243300000"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
 
-            const result = adapter.parseAndGroupObservations(input, mockRegistry);
-            expect(result.length).toBe(1);
-            const record = result[0]!;
-            expect(record.metadata.siteId).toBe("test-site");
-            expect(record.metadata.seasonId).toBe("test-season");
-
-            const obs = record.observations!;
-            expect(obs.portals).toBeDefined();
-            const portal = Object.values(obs.portals!)[0]!;
-            expect(portal).toBeDefined();
-            expect(portal.title).toBe("Target Portal One");
-            expect(portal.history).toHaveLength(1);
-            expect(portal.history![0]!.type).toBe("target");
-            
-            const historyEntry = portal.history![0] as any;
-            expect(historyEntry.ornId).toBe("targetres");
-        } finally {
-            vi.useRealTimers();
-        }
+        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        expect(result.length).toBe(1);
+        const shard = result[0]!.observations!.shards![99]!;
+        expect(shard.history[1]!.action).toBe("link");
+        expect(shard.history[1]!.mismatch).toBe(true);
     });
 });

@@ -10,15 +10,17 @@ import type { Coordinates } from "../common/Geo.js";
 export enum SitePhase {
     Scheduled = 0, // In the future, no intel (ornaments) yet
     Discovery = 1, // In the future, intel (ornaments) available
-    Active = 2, // Event is currently happening
-    Processing = 3, // Event finished, but data is missing or incomplete
-    Complete = 4, // Event finished and all expected shard data is available
-    NoData = 5, // Event finished > 24h ago with zero shard data recovered
+    StandBy = 2, // Site is not yet active, but very soon!
+    Active = 3, // Site and event elements (shards / battle beacons) are active 
+    Processing = 4, // Event finished, but data is missing or incomplete
+    Complete = 5, // Event finished and all expected data is available
+    NoData = 6, // No data available (can be used for error states too)
 }
 
 export const PhaseDisplayNames: Record<SitePhase, string> = {
     [SitePhase.Scheduled]: "Scheduled",
     [SitePhase.Discovery]: "Discovery",
+    [SitePhase.StandBy]: "Stand By",
     [SitePhase.Active]: "Active",
     [SitePhase.Processing]: "Processing",
     [SitePhase.Complete]: "Complete",
@@ -53,28 +55,42 @@ export interface SiteAnalysis {
     centroid?: Coordinates;
     /** Complete state of everything at the site for the entire event */
     siteState: SiteState;
-    /** Periodic snapshots of shard movements (Waves) */
-    waves: SiteState[];
+    /** Periodic snapshots of shard movements (Waves), keyed by wave number */
+    waves: Record<number, SiteState>;
     /** Official site result/points contributing to season standings */
-    siteScore: Points;
+    seasonPoints: Points;
     /** Whether the site has target data */
     hasTargetData: boolean;
 }
 
-/**
- * Comprehensive state of a site at a specific snapshot (Wave) or for the whole event.
- */
 export interface SiteState {
     /** Key format: "portalId-portalId" */
     shardPaths: Record<string, ShardPath>;
-    /** Raw point tallies */
-    points: Points;
+    /** Detailed points snapshot */
+    points: PointsSnapshot;
     counters: Counters;
-    /** Active time period for this state snapshot (epoch milliseconds) */
-    period?: {
-        start: number;
-        end: number;
-    };
+}
+
+/**
+ * Detailed breakdown of points scored within a specific category.
+ */
+export interface PointsBreakdown {
+    /** Sub-total points for this category */
+    summary: Points;
+    /** Breakdown of points scored by each rule key in this category */
+    detail: Record<string, Points>;
+}
+
+/**
+ * Detailed snapshot of points scored at a site or wave.
+ */
+export interface PointsSnapshot {
+    /** Faction-wide accumulated total points across all categories */
+    total: Points;
+    /** Breakdown of jump-based points */
+    jumps: PointsBreakdown;
+    /** Breakdown of goal/target landing points */
+    goals: PointsBreakdown;
 }
 
 /**
@@ -89,4 +105,5 @@ export interface Counters {
     };
     links: number;
     paths: number;
+    linkAlignmentMismatch?: number;
 }

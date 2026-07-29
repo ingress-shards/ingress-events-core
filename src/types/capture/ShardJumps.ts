@@ -1,9 +1,10 @@
+import type { Capture } from "./Capture.js";
 import type { Portal } from "../../sites/Portal.js";
 
 /**
  * RAW interface for the getShardHistory Intel endpoint.
  */
-export interface ShardJumpCapture {
+export interface ShardJumpCapture extends Capture {
     artifact: (FragmentArtifact | TargetArtifact)[];
 }
 

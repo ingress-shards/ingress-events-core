@@ -6,25 +6,6 @@
 /* Import design tokens to ensure variables are resolved in the same context */
 @import "./tokens.css";
 
-/* --- Interaction Patterns --- */
-
-/* Standardized row highlight with non-shifting visual accent */
-/* Note: We apply this to td because tr rendering of box-shadow is inconsistent across browsers */
-.shards-row-highlight td {
-    background-color: rgba(255, 204, 0, 0.05) !important;
-    transition: background-color 0.2s ease;
-}
-
-.shards-row-highlight td:first-child {
-    /* Inset shadow creates the left accent bar without shifting table layout */
-    box-shadow: inset 2px 0 0 0 var(--shards-signal-color);
-}
-
-/* Row Hover Interaction */
-.shards-row-hover:hover td {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
 /* --- Typography Standards --- */
 
 .shards-header-primary {

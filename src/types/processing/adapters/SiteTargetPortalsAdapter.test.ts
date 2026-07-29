@@ -45,7 +45,19 @@ describe("SiteTargetPortalsAdapter", () => {
                     year: 2026,
                     overviewUrl: "",
                     components: [
-                        { eventType: "ANOMALY", startTime: "12:00" }
+                        {
+                            eventType: "ANOMALY",
+                            startTime: "12:00",
+                            mechanics: {
+                                shards: {
+                                    shardMechanics: "test-shard-mech",
+                                    scoring: {
+                                        rules: ["default_jump"],
+                                        wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
+                                    }
+                                }
+                            }
+                        }
                     ]
                 }
             ]

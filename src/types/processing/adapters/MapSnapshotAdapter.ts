@@ -6,8 +6,7 @@ import type { Ornament } from "../../config/EventBlueprints.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
-import * as Now from "temporal-polyfill/fns/now";
-import * as Instant from "temporal-polyfill/fns/instant";
+import * as Now from "temporal-polyfill/fns/Now";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
@@ -15,23 +14,27 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
     constructor(
         private blueprintOrnaments: Record<string, Ornament>,
-        private timestampMs: number = Instant.epochMilliseconds(Now.instant())
+        private timestampMs: number = Now.instant().epochMilliseconds
     ) {}
 
     public parseAndGroupObservations(input: MapSnapshot, config: EventConfigRegistry): SiteRecord[] {
+        const timestampMs = input.timestamp;
+        if (timestampMs === undefined) {
+            throw new Error("[MapSnapshotAdapter] Missing snapshot timestamp in MapSnapshot input");
+        }
         const siteRecordsMap = new Map<SiteId, SiteRecord>();
         const ignoredSites = new Set<SiteId>();
 
         for (const p of input.portals ?? []) {
-            const match = config.findSiteByCoords(p.latE6, p.lngE6, input.timestamp);
+            const match = config.findSiteByCoords(p.latE6, p.lngE6, timestampMs);
             if (!match) continue;
 
             const { siteId, seasonId } = match;
             if (ignoredSites.has(siteId)) continue;
 
             const siteConfig = config.getSiteConfig(siteId);
-            const cutoff = siteConfig?.actionSchedule?.preEventCutoff;
-            if (cutoff !== undefined && input.timestamp > cutoff) {
+            const cutoff = siteConfig?.timeline?.preEventCutoff;
+            if (cutoff !== undefined && timestampMs > cutoff) {
                 ignoredSites.add(siteId);
                 continue;
             }

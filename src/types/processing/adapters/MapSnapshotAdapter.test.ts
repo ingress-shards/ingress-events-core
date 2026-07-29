@@ -57,7 +57,19 @@ describe("MapSnapshotAdapter", () => {
                     year: 2026,
                     overviewUrl: "",
                     components: [
-                        { eventType: "ANOMALY", startTime: "12:00" }
+                        {
+                            eventType: "ANOMALY",
+                            startTime: "12:00",
+                            mechanics: {
+                                shards: {
+                                    shardMechanics: "test-shard-mech",
+                                    scoring: {
+                                        rules: ["default_jump"],
+                                        wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
+                                    }
+                                }
+                            }
+                        }
                     ]
                 }
             ]
@@ -108,7 +120,7 @@ describe("MapSnapshotAdapter", () => {
         mockRegistry.getSiteConfig = ((siteId: string) => {
             return {
                 geocode: { id: siteId },
-                actionSchedule: {
+                timeline: {
                     preEventCutoff: snapshotTime - 1000 // cutoff is 1 second BEFORE the snapshot
                 }
             };

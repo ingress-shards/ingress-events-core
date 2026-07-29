@@ -1,17 +1,22 @@
 /* eslint-disable unicorn/no-array-sort */
 import type { SiteRecord, SiteObservation } from "../Site.js";
 import type { ShardHistoryEntry } from "../Shard.js";
-import { instant } from "temporal-polyfill/fns/now";
-import { epochMilliseconds } from "temporal-polyfill/fns/instant";
+import { instant } from "temporal-polyfill/fns/Now";
 import type { PortalMergeStrategy } from "./PortalMergeStrategy.js";
 import { DefaultPortalMergeStrategy } from "./DefaultPortalMergeStrategy.js";
+import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import type { WaveTimeline } from "../../seasons/SeasonConfig.js";
 
 export class SiteRecordMerger {
     /**
      * Merges incoming observations into an existing site record, performing deep merging
      * of portals and shards, allocating IDs, and maintaining strict chronological order.
      */
-    public merge(baseRecord: SiteRecord, incomingObs: SiteObservation): { record: SiteRecord; hasChanged: boolean } {
+    public merge(
+        baseRecord: SiteRecord,
+        incomingObs: SiteObservation,
+        config?: EventConfigRegistry
+    ): { record: SiteRecord; hasChanged: boolean } {
         // 1. Deep clone the base record to ensure immutability
         const record = structuredClone(baseRecord);
         let hasChanged = false;
@@ -37,10 +42,18 @@ export class SiteRecordMerger {
             observations.portals ??= {};
 
             const strategy: PortalMergeStrategy = new DefaultPortalMergeStrategy();
+            const siteConfig = config?.getSiteConfig(record.metadata.siteId);
+            const waves = siteConfig?.timeline?.shards;
 
             const result = strategy.merge(observations.portals, incomingObs.portals, {
                 coordToPortalIdMap,
-                nextPortalId
+                nextPortalId,
+                getWaveIndex: (timestamp: number) => {
+                    if (!waves) return;
+                    // Check if timestamp falls in [start, end + 59999] of any wave
+                    const index = waves.findIndex((w: WaveTimeline) => timestamp >= w.start && timestamp <= w.end + 59999);
+                    return index === -1 ? undefined : index;
+                }
             });
 
             observations.portals = result.portals;
@@ -82,7 +95,8 @@ export class SiteRecordMerger {
                     portalId: resolvePortalId(h.portalId),
                     dest: h.dest ? resolvePortalId(h.dest) : undefined,
                     team: h.team,
-                    ...(h.linkTime !== undefined && { linkTime: h.linkTime })
+                    ...(h.linkTime !== undefined && { linkTime: h.linkTime }),
+                    ...(h.mismatch !== undefined && { mismatch: h.mismatch })
                 }) as ShardHistoryEntry);
 
                 const existingShard = observations.shards[incomingShardNumber];
@@ -113,7 +127,7 @@ export class SiteRecordMerger {
         }
 
         if (hasChanged) {
-            record.metadata.lastUpdated = epochMilliseconds(instant());
+            record.metadata.lastUpdated = instant().epochMilliseconds;
         }
         return { record, hasChanged };
     }

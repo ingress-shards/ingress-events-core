@@ -1,3 +1,4 @@
+import type { Capture } from "./Capture.js";
 import type { PortalGuid } from "../../common/Identifiers.js";
 import type { Portal } from "../../sites/Portal.js";
 import type { SiteDiscovery } from "../data-files/SiteDiscovery.js";
@@ -11,8 +12,7 @@ export interface MapPortalCapture extends Portal {
     ornaments: string[];
 }
 
-export interface MapSnapshot {
-    timestamp: number;
+export interface MapSnapshot extends Capture {
     portals: MapPortalCapture[];
 }
 

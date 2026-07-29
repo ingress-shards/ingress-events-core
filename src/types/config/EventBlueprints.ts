@@ -92,6 +92,7 @@ export interface TargetMechanics {
 
 /**
  * Root structure for event_blueprints.json
+ * @strict
  */
 export interface EventBlueprints {
     /** Display branding for each event type */
@@ -103,8 +104,29 @@ export interface EventBlueprints {
     /** Target behavior patterns indexed by ID */
     targetMechanics: Record<string, TargetMechanics>;
     /**
-     * Placeholder for scoring rules indexed by brand or specific mechanic ID.
-     * Implementation details for scoring consolidation are pending.
+     * Scoring rules grouped by entity type
      */
-    scoring: Record<string, unknown>;
+    scoringRules: {
+        shards: Record<string, ShardScoringRule>;
+    };
+}
+
+/**
+ * @strict
+ */
+export interface ShardScoringRule {
+    label: string;
+    tooltip: string;
+    points: number;
+    conditions?: {
+        minDistance?: number;
+        maxDistance?: number;
+        ornaments?: string[];
+        isTarget?: boolean;
+    };
+    maxScoringShardsPerPortal?: number;
+    teamAttribution?: "TARGET_OWNER" | "LINK_OWNER";
+    allowFurtherPoints?: boolean;
+    /** Category under which points are bucketed */
+    scoreType: "jumps" | "goals";
 }

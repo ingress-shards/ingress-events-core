@@ -33,7 +33,8 @@ export class SiteDataProcessor {
 
             const { record: updatedRecord, hasChanged } = this.merger.merge(
                 baseRecord, 
-                incomingRecord.observations ?? {}
+                incomingRecord.observations ?? {},
+                config
             );
 
             if (hasChanged || !existingRecord) {

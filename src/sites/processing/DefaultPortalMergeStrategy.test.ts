@@ -1,6 +1,12 @@
 import { describe, expect, test, vi } from "vitest";
 import { DefaultPortalMergeStrategy } from "./DefaultPortalMergeStrategy.js";
 
+const getWaveIndex = (ts: number): number | undefined => {
+    if (ts >= 1000 && ts <= 2000) return 0;
+    if (ts >= 3000 && ts <= 4000) return 1;
+    return undefined;
+};
+
 describe("DefaultPortalMergeStrategy", () => {
     const strategy = new DefaultPortalMergeStrategy();
 
@@ -156,5 +162,48 @@ describe("DefaultPortalMergeStrategy", () => {
             expect.stringContaining("Consistency mismatch")
         );
         warnSpy.mockRestore();
+    });
+
+
+    test("should deduplicate targets by wave period when getWaveIndex is provided", () => {
+        const coordToPortalIdMap = new Map<string, number>([
+            ["10000000_20000000", 1]
+        ]);
+
+        const result = strategy.merge(
+            {
+                1: {
+                    title: "Portal One",
+                    latE6: 10000000,
+                    lngE6: 20000000,
+                    history: [
+                        { type: "target", timestamp: 1200, ornId: "targetres" }
+                    ]
+                }
+            },
+            {
+                1: {
+                    title: "Portal One",
+                    latE6: 10000000,
+                    lngE6: 20000000,
+                    history: [
+                        // Duplicate wave (Wave 1): should ignore
+                        { type: "target", timestamp: 1500, ornId: "targetres" },
+                        // New wave (Wave 2): should accept
+                        { type: "target", timestamp: 3500, ornId: "targetres" }
+                    ]
+                }
+            },
+            {
+                coordToPortalIdMap,
+                nextPortalId: 2,
+                getWaveIndex
+            }
+        );
+
+        expect(result.portals[1]?.history).toEqual([
+            { type: "target", timestamp: 1200, ornId: "targetres" },
+            { type: "target", timestamp: 3500, ornId: "targetres" }
+        ]);
     });
 });

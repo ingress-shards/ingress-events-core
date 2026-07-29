@@ -14,6 +14,7 @@ export interface PortalMergeStrategy {
         options: {
             coordToPortalIdMap: Map<string, number>;
             nextPortalId: number;
+            getWaveIndex?: (timestamp: number) => number | undefined;
         }
     ): PortalMergeResult;
 }

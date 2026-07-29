@@ -4,6 +4,7 @@ import type { SiteLocation } from "../../common/Geo.js";
 
 /**
  * Site specific metadata within a scheduled season component.
+ * @strict
  */
 export interface SiteManifestMetadata extends SiteLocation {
     /** Optional site-specific shard count overrides per wave */
@@ -12,15 +13,24 @@ export interface SiteManifestMetadata extends SiteLocation {
 
 /**
  * Component of an Anomaly season, defining specific shard/target behavior.
+ * @strict
  */
 export interface SeasonComponent {
     eventType: SeasonEvent;
     /** Default local start time (HH:mm) */
     startTime: string;
-    /** ID of the matching shard mechanics in blueprints */
-    shardMechanics?: string;
-    /** ID of the matching target mechanics in blueprints */
-    targetMechanics?: string;
+    /** Event mechanics configuration, including shards and their scoring rules */
+    mechanics: {
+        shards?: {
+            shardMechanics: string;
+            targetMechanics?: string;
+            scoring: {
+                rules: string[];
+                wavePointAggregation?: number[][];
+                seasonPoints?: number;
+            };
+        };
+    };
     /** Optional specific dates and locations for this component */
     schedule?: {
         /** ISO date (YYYY-MM-DD) */
@@ -32,6 +42,7 @@ export interface SeasonComponent {
 
 /**
  * Metadata for an entire Anomaly season.
+ * @strict
  */
 export interface SeasonMetadata {
     id: SeasonId;
@@ -46,6 +57,7 @@ export interface SeasonMetadata {
 
 /**
  * Root structure for season_manifest.json
+ * @strict
  */
 export interface SeasonManifest {
     seasons: SeasonMetadata[];

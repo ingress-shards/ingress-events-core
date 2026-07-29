@@ -23,6 +23,8 @@ export interface ShardHistoryEntry {
     team?: FactionId;
     /** Epoch time in milliseconds when the link was created */
     linkTime?: number;
+    /** Whether there is a faction mismatch between link creator, origin, and destination */
+    mismatch?: boolean;
 }
 
 /**
@@ -81,4 +83,6 @@ export interface ShardMove {
     moveTime: number;
     /** Points awarded */
     points: number;
+    /** Whether there is an alignment mismatch for this move */
+    mismatch?: boolean;
 }

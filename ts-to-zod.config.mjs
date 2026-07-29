@@ -49,6 +49,11 @@ export default [
         output: "gen/zod-schemas/Shard.zod.ts",
     },
     {
+        name: "Capture",
+        input: "src/types/capture/Capture.ts",
+        output: "gen/zod-schemas/Capture.zod.ts",
+    },
+    {
         name: "ShardJumps",
         input: "src/types/capture/ShardJumps.ts",
         output: "gen/zod-schemas/ShardJumps.zod.ts",
