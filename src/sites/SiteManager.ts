@@ -1,7 +1,7 @@
-import * as Instant from "temporal-polyfill/fns/instant";
-import * as ZonedDateTime from "temporal-polyfill/fns/zoneddatetime";
-import * as Now from "temporal-polyfill/fns/now";
-import * as Duration from "temporal-polyfill/fns/duration";
+import * as Instant from "temporal-polyfill/fns/Instant";
+import * as ZonedDateTime from "temporal-polyfill/fns/ZonedDateTime";
+import * as Now from "temporal-polyfill/fns/Now";
+import * as Duration from "temporal-polyfill/fns/Duration";
 import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
 import { PhaseDisplayNames, SitePhase } from "./Site.js";
 import type { Temporal } from "temporal-polyfill";
@@ -30,11 +30,14 @@ export const SiteManager = {
         currentTime = Now.instant(),
     ): SitePhase => {
         const endTime = ZonedDateTime.add(startTime, Duration.fromFields({ minutes: eventDurationMins }));
+        const standbyThreshold = ZonedDateTime.subtract(startTime, Duration.fromFields({ hours: 2 }));
         const staleThreshold = ZonedDateTime.add(endTime, Duration.fromFields({ hours: 24 }));
-        const nowZoned = Instant.toZonedDateTimeISO(currentTime, ZonedDateTime.timeZoneId(startTime));
+        const nowZoned = Instant.toZonedDateTimeISO(currentTime, startTime.timeZoneId);
 
         if (ZonedDateTime.compare(nowZoned, startTime) >= 0 && ZonedDateTime.compare(nowZoned, endTime) <= 0) {
             return SitePhase.Active;
+        } else if (ZonedDateTime.compare(nowZoned, standbyThreshold) >= 0 && ZonedDateTime.compare(nowZoned, startTime) < 0) {
+            return SitePhase.StandBy;
         } else if (ZonedDateTime.compare(nowZoned, startTime) < 0) {
             return hasOrnaments ? SitePhase.Discovery : SitePhase.Scheduled;
         } else if (shards.actual >= shards.expected) {
@@ -49,7 +52,7 @@ export const SiteManager = {
     /**
      * Calculates the total number of shards expected at a site based on metadata overrides and blueprint mechanics.
      */
-    getExpectedShardCount: (metadata: SiteManifestMetadata | undefined, shardMechanics: ShardMechanics): number => {
+    getExpectedShardCount: (shardMechanics: ShardMechanics, metadata?: SiteManifestMetadata): number => {
         if (metadata?.shardCounts && metadata.shardCounts.length > 0) {
             return metadata.shardCounts.reduce((a, b) => a + b, 0);
         }
@@ -90,12 +93,12 @@ export const SiteManager = {
         timeRemaining,
     }: {
         phase: SitePhase;
-        timeRemaining: Temporal.DurationLike | undefined;
+        timeRemaining: Temporal.DurationLikeObject | undefined;
     }): string => {
         // 1. Scheduled / Discovery
         if (phase === SitePhase.Scheduled || phase === SitePhase.Discovery) {
             if (timeRemaining) {
-                return `starts in ${formatDuration(timeRemaining)}`;
+                return `starts in<br />${formatDuration(timeRemaining)}`;
             }
             return "starts soon";
         }
@@ -103,7 +106,7 @@ export const SiteManager = {
         // 2. Active
         if (phase === SitePhase.Active) {
             if (timeRemaining) {
-                return `<strong>Active</strong> (ends in ${formatDuration(timeRemaining)})`;
+                return `<strong>Active</strong>, ends in<br />${formatDuration(timeRemaining)}`;
             }
             return "<strong>Active</strong>";
         }

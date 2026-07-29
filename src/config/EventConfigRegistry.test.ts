@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { EventConfigRegistry } from "./EventConfigRegistry.js";
+import { parseZonedDateTime } from "../common/Date.js";
 import type { SeasonGeocode, SeasonManifest } from "../types/index.js";
-import * as ZonedDateTime from "temporal-polyfill/fns/zoneddatetime";
+import * as ZonedDateTime from "temporal-polyfill/fns/ZonedDateTime";
+import { getBasic } from "temporal-polyfill/fns/Calendar";
 
 import realBlueprints from "../../conf/event_blueprints.json" with { type: "json" };
 import realManifest from "../../conf/season_manifest.json" with { type: "json" };
@@ -33,7 +35,15 @@ describe("EventConfigRegistry", () => {
                 waveActions: []
             }
         },
-        scoring: {}
+        scoringRules: {
+            shards: {
+                "default_jump": {
+                    label: "Jumps",
+                    tooltip: "Shard jump along an eligible Link",
+                    points: 1
+                }
+            }
+        }
     };
 
     const mockManifest: SeasonManifest = {
@@ -47,8 +57,16 @@ describe("EventConfigRegistry", () => {
                     {
                         eventType: "ANOMALY",
                         startTime: "12:00",
-                        shardMechanics: "test-shard-mech",
-                        targetMechanics: "test-target-mech"
+                        mechanics: {
+                            shards: {
+                                shardMechanics: "test-shard-mech",
+                                targetMechanics: "test-target-mech",
+                                scoring: {
+                                    rules: ["default_jump"],
+                                    wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
+                                }
+                            }
+                        }
                     }
                 ]
             }
@@ -90,8 +108,8 @@ describe("EventConfigRegistry", () => {
         expect(londonConfig?.geocode.name).toBe("London");
 
         // London startTime: "2026-06-01T12:00:00Z[UTC]" -> 1777723200000 ms
-        const startMs = ZonedDateTime.epochMilliseconds(ZonedDateTime.fromString("2026-06-01T12:00:00Z[UTC]"));
-        const schedule = londonConfig!.actionSchedule;
+        const startMs = ZonedDateTime.fromString("2026-06-01T12:00:00Z[UTC]", getBasic).epochMilliseconds;
+        const schedule = londonConfig!.timeline;
         expect(schedule.start).toBe(startMs);
         expect(schedule.preEventCutoff).toBe(startMs - 2 * 60 * 60 * 1000);
         
@@ -99,10 +117,10 @@ describe("EventConfigRegistry", () => {
         expect(schedule.end).toBe(startMs + 45 * 60 * 1000);
 
         // Shard waves (2 waves):
-        expect(schedule.waves.length).toBe(2);
+        expect(schedule.shards.length).toBe(2);
         
         // Wave 1:
-        const w1 = schedule.waves[0]!;
+        const w1 = schedule.shards[0]!;
         expect(w1.waveNumber).toBe(1);
         expect(w1.start).toBe(startMs + 10 * 60 * 1000);
         expect(w1.end).toBe(startMs + 15 * 60 * 1000);
@@ -123,7 +141,7 @@ describe("EventConfigRegistry", () => {
             seasonGeocode: mockGeocode
         });
 
-        const startMs = ZonedDateTime.epochMilliseconds(ZonedDateTime.fromString("2026-06-01T12:00:00Z[UTC]"));
+        const startMs = parseZonedDateTime("2026-06-01T12:00:00Z[UTC]").epochMilliseconds;
         const endMs = startMs + 45 * 60 * 1000;
 
         // Coordinates within London range

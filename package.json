@@ -40,7 +40,7 @@
     },
     "scripts": {
         "clean": "node -e \"['dist', 'gen'].forEach(d => require('fs').rmSync(d, { recursive: true, force: true }))\"",
-        "build": "tsdown",
+        "build": "tsdown && node -e \"require('fs').mkdirSync('dist/conf/recent', { recursive: true }); require('fs').copyFileSync('conf/event_blueprints.json', 'dist/conf/event_blueprints.json'); require('fs').copyFileSync('conf/season_manifest.json', 'dist/conf/season_manifest.json'); if (require('fs').existsSync('gen/conf/season_geocode.json')) require('fs').copyFileSync('gen/conf/season_geocode.json', 'dist/conf/season_geocode.json'); if (require('fs').existsSync('gen/conf/recent/season_manifest.json')) require('fs').copyFileSync('gen/conf/recent/season_manifest.json', 'dist/conf/recent/season_manifest.json'); if (require('fs').existsSync('gen/conf/recent/season_geocode.json')) require('fs').copyFileSync('gen/conf/recent/season_geocode.json', 'dist/conf/recent/season_geocode.json')\"",
         "build:watch": "tsdown --watch",
         "prepare": "yarn build",
         "geocode": "python scripts/geocode.py",
@@ -53,7 +53,7 @@
         "validate:docker": "docker build -f Dockerfile.validate -t ingress-events-core-validate . && docker run --rm ingress-events-core-validate"
     },
     "dependencies": {
-        "temporal-polyfill": "^0.3.0"
+        "temporal-polyfill": "^1.0.2"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",

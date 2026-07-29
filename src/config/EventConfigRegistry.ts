@@ -1,8 +1,8 @@
-import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
+import type { EventBlueprints, SeasonGeocode, SeasonManifest, ShardScoringRule } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
-import type { SeasonConfig, SiteConfig, ActionSchedule, WaveSchedule, ShardActionSchedule } from "../seasons/SeasonConfig.js";
+import type { SeasonConfig, SiteConfig, EventTimeline, WaveTimeline, ScheduledShardAction } from "../seasons/SeasonConfig.js";
 import { isWithinSiteRange } from "../common/Geo.js";
-import * as ZonedDateTime from "temporal-polyfill/fns/zoneddatetime";
+import { parseZonedDateTime } from "../common/Date.js";
 
 export class EventConfigRegistry {
     public readonly seasons: Record<SeasonId, SeasonConfig> = {};
@@ -38,17 +38,17 @@ export class EventConfigRegistry {
                 const componentSites = geocodeSeason?.sites.filter(s => s.eventType === component.eventType) ?? [];
 
                 // Resolve mechanics blueprints
-                const resolvedShard = component.shardMechanics ? eventBlueprints.shardMechanics[component.shardMechanics] : undefined;
-                const targetMechanics = component.targetMechanics ? eventBlueprints.targetMechanics[component.targetMechanics] : undefined;
+                const shardMechanics = component.mechanics.shards?.shardMechanics ? eventBlueprints.shardMechanics[component.mechanics.shards.shardMechanics] : undefined;
+                const targetMechanics = component.mechanics.shards?.targetMechanics ? eventBlueprints.targetMechanics[component.mechanics.shards.targetMechanics] : undefined;
 
                 for (const site of componentSites) {
                     // Resolve site config (with potential schedule overrides from component)
-                    const startMs = ZonedDateTime.epochMilliseconds(ZonedDateTime.fromString(site.startTime));
+                    const startMs = parseZonedDateTime(site.startTime).epochMilliseconds;
                     const preEventCutoffMs = startMs - 2 * 60 * 60 * 1000;
 
                     // Determine end time by finding max end offset from shard or target mechanics
                     let maxEndOffsetMinutes = 240; // fallback default of 4 hours
-                    const shardWaves = resolvedShard?.waves ?? [];
+                    const shardWaves = shardMechanics?.waves ?? [];
                     const targetWaves = targetMechanics?.waves ?? [];
                     const allWaves = [...shardWaves, ...targetWaves];
                     if (allWaves.length > 0) {
@@ -56,13 +56,13 @@ export class EventConfigRegistry {
                     }
                     const endMs = startMs + maxEndOffsetMinutes * 60 * 1000;
 
-                    // Compute wave schedules
-                    const waves: WaveSchedule[] = shardWaves.map((w, index) => {
+                    // Compute shard wave schedules
+                    const shards: WaveTimeline[] = shardWaves.map((w, index) => {
                         const waveStart = startMs + w.startOffset * 60 * 1000;
                         const waveEnd = startMs + w.endOffset * 60 * 1000;
 
                         // Resolve wave actions absolute timestamps
-                        const shardsActions: ShardActionSchedule[] = (resolvedShard?.waveActions ?? []).map(action => ({
+                        const shardsActions: ScheduledShardAction[] = (shardMechanics?.waveActions ?? []).map(action => ({
                             action: action.action,
                             time: waveStart + action.time * 60 * 1000
                         }));
@@ -75,18 +75,63 @@ export class EventConfigRegistry {
                         };
                     });
 
-                    const actionSchedule: ActionSchedule = {
+                    // Compute target wave schedules
+                    const targets: WaveTimeline[] = targetWaves.map((w, index) => {
+                        const waveStart = startMs + w.startOffset * 60 * 1000;
+                        const waveEnd = startMs + w.endOffset * 60 * 1000;
+
+                        const shardsActions: ScheduledShardAction[] = (targetMechanics?.waveActions ?? []).map(action => ({
+                            action: action.action as any,
+                            time: waveStart + action.time * 60 * 1000
+                        }));
+
+                        return {
+                            waveNumber: index + 1,
+                            start: waveStart,
+                            end: waveEnd,
+                            shardsActions
+                        };
+                    });
+
+                    const timeline: EventTimeline = {
                         start: startMs,
                         preEventCutoff: preEventCutoffMs,
                         end: endMs,
-                        waves
+                        shards,
+                        ...(targets.length > 0 && { targets })
                     };
 
-                    const siteConfig = {
-                        geocode: site,
-                        ...(resolvedShard && { shardMechanics: resolvedShard }),
+                    const shardsConfig = component.mechanics.shards && shardMechanics ? {
+                        shardMechanics,
                         ...(targetMechanics && { targetMechanics }),
-                        actionSchedule
+                        scoring: {
+                            shardScoringRules: (component.mechanics.shards.scoring.rules ?? [])
+                                .reduce<Record<string, ShardScoringRule>>((accumulator, r) => {
+                                    const rule = eventBlueprints.scoringRules.shards[r];
+                                    if (rule) {
+                                        accumulator[r] = {
+                                            ...rule,
+                                            teamAttribution: rule.teamAttribution ?? "LINK_OWNER",
+                                            scoreType: rule.scoreType
+                                        };
+                                    }
+                                    return accumulator;
+                                }, {}),
+                            ...(component.mechanics.shards.scoring.wavePointAggregation && {
+                                wavePointAggregation: component.mechanics.shards.scoring.wavePointAggregation
+                            }),
+                            ...(component.mechanics.shards.scoring.seasonPoints !== undefined && {
+                                seasonPoints: component.mechanics.shards.scoring.seasonPoints
+                            })
+                        }
+                    } : undefined;
+
+                    const siteConfig: SiteConfig = {
+                        geocode: site,
+                        timeline,
+                        mechanics: {
+                            ...(shardsConfig && { shards: shardsConfig })
+                        }
                     };
 
                     siteConfigCache[site.id] = siteConfig;
@@ -120,7 +165,7 @@ export class EventConfigRegistry {
 
         // 1. Check for active/recent event matching (start <= timestampMs <= end + 60 mins)
         const activeMatch = matches.find(m => {
-            const { start, end } = m.config.actionSchedule;
+            const { start, end } = m.config.timeline;
             return timestampMs >= start && timestampMs <= end + 60 * 60 * 1000;
         });
         if (activeMatch) {
@@ -128,8 +173,8 @@ export class EventConfigRegistry {
         }
 
         // 2. Check for upcoming event matching (start > timestampMs)
-        const upcomingMatches = matches.filter(m => m.config.actionSchedule.start > timestampMs);
-        upcomingMatches.sort((a, b) => a.config.actionSchedule.start - b.config.actionSchedule.start);
+        const upcomingMatches = matches.filter(m => m.config.timeline.start > timestampMs);
+        upcomingMatches.sort((a, b) => a.config.timeline.start - b.config.timeline.start);
         
         if (upcomingMatches.length > 0) {
             return upcomingMatches[0];

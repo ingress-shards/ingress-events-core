@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as Duration from "temporal-polyfill/fns/duration";
+import * as Duration from "temporal-polyfill/fns/Duration";
 import { SiteManager } from "./SiteManager.js";
 import { SitePhase } from "../sites/Site.js";
 import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
@@ -15,7 +15,7 @@ describe("Site Manager", () => {
         };
 
         it("should return sum of waves if no override exists", () => {
-            expect(SiteManager.getExpectedShardCount(undefined, mechanics)).toBe(10);
+            expect(SiteManager.getExpectedShardCount(mechanics)).toBe(10);
         });
 
         it("should return sum of shardCounts if override exists", () => {
@@ -25,7 +25,7 @@ describe("Site Manager", () => {
                 lngE6: 0,
                 shardCounts: [2, 2, 2],
             };
-            expect(SiteManager.getExpectedShardCount(override, mechanics)).toBe(6);
+            expect(SiteManager.getExpectedShardCount(mechanics, override)).toBe(6);
         });
     });
 
@@ -51,7 +51,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.Scheduled,
                     timeRemaining,
                 }),
-            ).toBe("starts in 1h 30m");
+            ).toBe("starts in<br />1h 30m");
         });
 
         it("should format Active status", () => {
@@ -61,7 +61,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.Active,
                     timeRemaining,
                 }),
-            ).toBe("<strong>Active</strong> (ends in 45m)");
+            ).toBe("<strong>Active</strong>, ends in<br />45m");
         });
 
         it("should format status without time remaining", () => {
