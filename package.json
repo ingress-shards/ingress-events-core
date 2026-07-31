@@ -73,6 +73,9 @@
         "typescript-eslint": "^8.54.0",
         "vitest": "4.1.4"
     },
+    "resolutions": {
+        "ts-to-zod": "patch:ts-to-zod@npm%3A5.1.0#~/.yarn/patches/ts-to-zod-npm-5.1.0-8f81b27357.patch"
+    },
     "packageManager": "yarn@4.12.0",
     "publishConfig": {
         "registry": "https://npm.pkg.github.com"
