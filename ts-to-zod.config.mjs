@@ -20,17 +20,17 @@ export default [
     },
     {
         name: "SeasonManifest",
-        input: "src/contracts/Manifest.ts",
+        input: "src/types/config/Manifest.ts",
         output: "gen/zod-schemas/Manifest.zod.ts",
     },
     {
         name: "SeasonGeocode",
-        input: "src/contracts/Geocode.ts",
+        input: "src/types/config/Geocode.ts",
         output: "gen/zod-schemas/Geocode.zod.ts",
     },
     {
         name: "EventBlueprints",
-        input: "src/contracts/EventBlueprints.ts",
+        input: "src/types/config/EventBlueprints.ts",
         output: "gen/zod-schemas/EventBlueprints.zod.ts",
     },
     {
@@ -49,8 +49,13 @@ export default [
         output: "gen/zod-schemas/Shard.zod.ts",
     },
     {
+        name: "Capture",
+        input: "src/types/capture/Capture.ts",
+        output: "gen/zod-schemas/Capture.zod.ts",
+    },
+    {
         name: "ShardJumps",
-        input: "src/capture/ShardJumps.ts",
+        input: "src/types/capture/ShardJumps.ts",
         output: "gen/zod-schemas/ShardJumps.zod.ts",
     }
 ];

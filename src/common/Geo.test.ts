@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { haversineDistance } from "./Geo.js";
+import { haversineDistance, calculateCentroid } from "./Geo.js";
 
 describe("geo utils", () => {
     describe("haversineDistance", () => {
@@ -15,6 +15,29 @@ describe("geo utils", () => {
         it("should return 0 for same coordinates", () => {
             const coords = { latE6: 0, lngE6: 0 };
             expect(haversineDistance(coords, coords)).toBe(0);
+        });
+    });
+
+    describe("calculateCentroid", () => {
+        it("should return undefined for empty coordinates", () => {
+            expect(calculateCentroid([])).toBeUndefined();
+        });
+
+        it("should calculate correct average coordinates", () => {
+            const coords = [
+                { latE6: 10, lngE6: 20 },
+                { latE6: 20, lngE6: 40 },
+                { latE6: 30, lngE6: 60 }
+            ];
+            expect(calculateCentroid(coords)).toEqual({ latE6: 20, lngE6: 40 });
+        });
+
+        it("should handle rounding correctly", () => {
+            const coords = [
+                { latE6: 10, lngE6: 20 },
+                { latE6: 11, lngE6: 21 }
+            ];
+            expect(calculateCentroid(coords)).toEqual({ latE6: 11, lngE6: 21 });
         });
     });
 });

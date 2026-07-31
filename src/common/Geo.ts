@@ -25,9 +25,9 @@ export interface Coordinates {
 /**
  * Common structure for map-related coordinate data.
  */
-export interface NamedLocation extends Coordinates {
-    /** Human-readable label for the location */
-    label: string;
+export interface SiteLocation extends Coordinates {
+    /** Human-readable name for the location */
+    name: string;
 }
 
 /**
@@ -88,4 +88,22 @@ export const calculateBoundingBoxDimensions = (coords: Coordinates[]): { width: 
     const height = haversineDistance({ latE6: minLat, lngE6: avgLng }, { latE6: maxLat, lngE6: avgLng });
 
     return { width, height };
+};
+
+/**
+ * Calculates the geographic centroid (average location) of a set of coordinates.
+ * Returns undefined if the coordinates list is empty.
+ */
+export const calculateCentroid = (coords: Coordinates[]): Coordinates | undefined => {
+    if (coords.length === 0) return undefined;
+    let sumLat = 0;
+    let sumLng = 0;
+    for (const c of coords) {
+        sumLat += c.latE6;
+        sumLng += c.lngE6;
+    }
+    return {
+        latE6: Math.round(sumLat / coords.length),
+        lngE6: Math.round(sumLng / coords.length),
+    };
 };

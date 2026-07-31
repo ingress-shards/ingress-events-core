@@ -29,7 +29,7 @@ The extraction and capture of data as received (e.g., API responses). Data can b
 
 ### Stage 3: Processing
 
-The transformation of raw captures into unified domain models, based around seasons and sites. For example, the shard jumps file may contain data across multiple sites during any given weekend; this stage is responsible for sorting this data into separate sites.
+The transformation of raw captures into unified domain models, based around seasons and sites. For details on deduplication, scanning windows, and event phases, see [Processing](./Processing.md).
 
 ### Stage 4: Storage
 
@@ -39,16 +39,7 @@ Storage can consist of both collected and processed files, however they are typi
 
 ### Stage 5: Analysis
 
-The enrichment of stored data to determine event statistics such as **Points**, **Scores** etc.
-
-#### Points vs. Scores
-
-We distinguish between the points scored by agent actions, and the final score achieved by the faction.
-
-- **Points**: Raw cumulative tallies of actions (e.g., a shard jump awarded 10 points).
-- **Scores**: The final rule-based result derived from Points (e.g. a ratio of 100 points is split between the two factions based on points earned during a wave).
-
-Note that in some events, points and scores can have a 1 to 1 relationship. In other events, the highest number of points scored in a wave can be used to determine the final score.
+The enrichment of stored data to determine event statistics such as points, scores, centroids, and active links. For details on the analysis pipeline, see [Analysis](./Analysis.md).
 
 ### Stage 6: Usage
 
@@ -62,5 +53,5 @@ Long-term management of historical season data for comparison and legacy trackin
 
 ### **Related Documentation**
 
-- [Game Mechanics](./mechanics/README.md)
-- [Data Schema](./Schema.md)
+- [Game Mechanics](../mechanics/README.md)
+- [Data Schema](../Schema.md)

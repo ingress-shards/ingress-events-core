@@ -61,19 +61,20 @@ erDiagram
 
 ## Temporal Data Standards
 
-To maintain consistency across the plugin and core analysis tools, all timestamps in the domain models use **Epoch Seconds** (Unix timestamps) rather than milliseconds.
+Timestamps are stored as **Epoch Milliseconds (13-digit Unix timestamps)** in all circumstances (both for high-level metadata and raw event observations) to maintain consistency and ease of calculation:
 
-- **`SiteRecord.lastUpdated`**: The 10-digit timestamp of when the record was last persisted.
-- **`PortalHistoryEntry.timestamp`**: The timestamp of the specific observation.
-
-This precision is sufficient for the minute-scale resolution of Ingress events and makes manual verification of data exports significantly easier.
+- `PortalHistoryEntry.timestamp`
+- `ShardHistoryEntry.moveTime`
+- `ShardJumpObservation.timestamp`
+- `SiteRecord.lastUpdated`
+- `SiteState.period.start` / `end`
 
 ## Layer Definitions
 
 ### 1. Root Container: SiteRecord
 The `SiteRecord` is the primary domain entity representing the complete lifecycle of a single event site. It acts as the "Shoebox" for everything known about that site.
 
-- **metadata**: Static configuration, geocode, and scheduling information (Stage 3).
+- **metadata**: Identifying keys (siteId, seasonId) and lastUpdated timestamp (Stage 3).
 - **observations**: The raw processed state and historical jump data (Stage 4).
 - **analysis**: The enriched results, point tallies, and faction scores (Stage 5).
 

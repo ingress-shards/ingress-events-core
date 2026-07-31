@@ -1,0 +1,665 @@
+{
+  "siteId": "2026-orion-jersey-city",
+  "artifact": [
+    {
+      "id": "targetres",
+      "name": "Target RES",
+      "target": [
+        {
+          "portalInfo": {
+            "title": "In Memory of Mark I Movitz",
+            "latE6": 40726804,
+            "lngE6": -74034050
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Makeshift Memorial",
+            "latE6": 40714867,
+            "lngE6": -74033178
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Only Place To Live",
+            "latE6": 40719473,
+            "lngE6": -74033661
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Polish Army Veterans Association & Ladies Auxiliary Post 51",
+            "latE6": 40725705,
+            "lngE6": -74045007
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Shirley Rutherford Memorial Plaque",
+            "latE6": 40717557,
+            "lngE6": -74043638
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Thinker Mural",
+            "latE6": 40721268,
+            "lngE6": -74048011
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Chains in White",
+            "latE6": 40715498,
+            "lngE6": -74037966
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Iglesia Pentecostal Church",
+            "latE6": 40721849,
+            "lngE6": -74047609
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Old St. Francis Giant Cross",
+            "latE6": 40727078,
+            "lngE6": -74044173
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Peace, Love and Strength Together",
+            "latE6": 40716553,
+            "lngE6": -74033795
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Utility Box Mural on Barrow & Montgomery St",
+            "latE6": 40718176,
+            "lngE6": -74046366
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Yacht Harbor",
+            "latE6": 40725552,
+            "lngE6": -74034829
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Chariot",
+            "latE6": 40725391,
+            "lngE6": -74047128
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Firefighter Memorial",
+            "latE6": 40714865,
+            "lngE6": -74033193
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Information for Exhange Place",
+            "latE6": 40721067,
+            "lngE6": -74031459
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "JC Community Educational & Recreational Center",
+            "latE6": 40727875,
+            "lngE6": -74040183
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Kingdom Hall of Jehovah's Witnesses",
+            "latE6": 40721229,
+            "lngE6": -74046565
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Taqueria Downtown",
+            "latE6": 40716184,
+            "lngE6": -74044738
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Hungry Fortune Mural",
+            "latE6": 40722421,
+            "lngE6": -74047518
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Jackson & Nieves Memorial Walkway",
+            "latE6": 40715699,
+            "lngE6": -74032765
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Jersey City Free Public Library",
+            "latE6": 40718969,
+            "lngE6": -74047479
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Pizzeria Las Americas",
+            "latE6": 40716565,
+            "lngE6": -74039059
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Rainbow Hearts",
+            "latE6": 40727588,
+            "lngE6": -74043210
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Town City Gathering JC",
+            "latE6": 40726354,
+            "lngE6": -74032336
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Fishy Storm Drain",
+            "latE6": 40727138,
+            "lngE6": -74046963
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Iglesia Adventista",
+            "latE6": 40718014,
+            "lngE6": -74045533
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Santeria",
+            "latE6": 40720673,
+            "lngE6": -74045962
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Self Reflection",
+            "latE6": 40715293,
+            "lngE6": -74033027
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Smorgasbar",
+            "latE6": 40720480,
+            "lngE6": -74032242
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "We Remember September 11, 2001 Plaque",
+            "latE6": 40726029,
+            "lngE6": -74034737
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Adam Marc Wissemann Memorial Plaque",
+            "latE6": 40725755,
+            "lngE6": -74034749
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Milk Sugar Love",
+            "latE6": 40727790,
+            "lngE6": -74044067
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Smell the Flowers Mural",
+            "latE6": 40722231,
+            "lngE6": -74047749
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "St. Peter's Hall",
+            "latE6": 40716299,
+            "lngE6": -74040590
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Train Past & Present",
+            "latE6": 40717266,
+            "lngE6": -74034130
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Van Vorst Park Gazebo",
+            "latE6": 40718084,
+            "lngE6": -74047180
+          },
+          "targetAlignment": "RESISTANCE",
+          "observedAt": 1780173120000
+        }
+      ]
+    },
+    {
+      "id": "targetenl",
+      "name": "Target ENL",
+      "target": [
+        {
+          "portalInfo": {
+            "title": "Faith",
+            "latE6": 40721692,
+            "lngE6": -74046883
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Inglesia Cristiana Spanish Church",
+            "latE6": 40718941,
+            "lngE6": -74047805
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Jersey City the Destination History",
+            "latE6": 40717088,
+            "lngE6": -74032999
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "The Whittier House",
+            "latE6": 40715825,
+            "lngE6": -74041792
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Town Square",
+            "latE6": 40726804,
+            "lngE6": -74032810
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Welcome Graffiti",
+            "latE6": 40728127,
+            "lngE6": -74042681
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780164120000
+        },
+        {
+          "portalInfo": {
+            "title": "Bronze Girl With Fluffy Hair",
+            "latE6": 40719484,
+            "lngE6": -74047266
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Colgate Clock",
+            "latE6": 40712053,
+            "lngE6": -74033914
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Grassroots Community Space",
+            "latE6": 40723585,
+            "lngE6": -74047133
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Iglesia Del Nazareno",
+            "latE6": 40716756,
+            "lngE6": -74044755
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Mandalay Gazebo",
+            "latE6": 40721463,
+            "lngE6": -74032201
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Newport Yacht Club",
+            "latE6": 40725505,
+            "lngE6": -74035242
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780165920000
+        },
+        {
+          "portalInfo": {
+            "title": "Exchange Place PATH Station",
+            "latE6": 40716730,
+            "lngE6": -74032583
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Golden Cicada Bar and Restaurant",
+            "latE6": 40715726,
+            "lngE6": -74042576
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Newport Financial Center",
+            "latE6": 40726413,
+            "lngE6": -74033662
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Ocean Mural",
+            "latE6": 40727568,
+            "lngE6": -74042653
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Pino's Pizza & Restaurant",
+            "latE6": 40722168,
+            "lngE6": -74047475
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Van Vorst Park West Entrance",
+            "latE6": 40718270,
+            "lngE6": -74047880
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780167720000
+        },
+        {
+          "portalInfo": {
+            "title": "Anchor",
+            "latE6": 40720009,
+            "lngE6": -74032744
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Cosmic vision",
+            "latE6": 40714562,
+            "lngE6": -74033141
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Dr. Seuss Storm Drain Mural",
+            "latE6": 40725710,
+            "lngE6": -74047035
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Iglesia Pentecostal Antioquia",
+            "latE6": 40717563,
+            "lngE6": -74044633
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Swing set Live Mural",
+            "latE6": 40726662,
+            "lngE6": -74035532
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "William Mercado Memorial Plaza",
+            "latE6": 40721415,
+            "lngE6": -74046106
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780169520000
+        },
+        {
+          "portalInfo": {
+            "title": "Hamilton Park",
+            "latE6": 40728233,
+            "lngE6": -74044236
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Harborside Ferry Terminal",
+            "latE6": 40718955,
+            "lngE6": -74032638
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Hudson River Water Walkway",
+            "latE6": 40724547,
+            "lngE6": -74033984
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Stained Glass Artwork",
+            "latE6": 40715751,
+            "lngE6": -74040571
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "The Rev William V. Albert Houses",
+            "latE6": 40722717,
+            "lngE6": -74045760
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Van Vorst Fountain",
+            "latE6": 40718180,
+            "lngE6": -74047452
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780171320000
+        },
+        {
+          "portalInfo": {
+            "title": "Built C. 1860",
+            "latE6": 40725639,
+            "lngE6": -74045287
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Jersey City - America's Golden Door",
+            "latE6": 40717671,
+            "lngE6": -74043838
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Knight Chess Piece",
+            "latE6": 40715426,
+            "lngE6": -74033909
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Pavonia Arcs by Robert Pfitzen",
+            "latE6": 40726579,
+            "lngE6": -74034486
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Powerhouse Arts District",
+            "latE6": 40720217,
+            "lngE6": -74032669
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        },
+        {
+          "portalInfo": {
+            "title": "Time Warp",
+            "latE6": 40721010,
+            "lngE6": -74048028
+          },
+          "targetAlignment": "ENLIGHTENED",
+          "observedAt": 1780173120000
+        }
+      ]
+    }
+  ]
+}

@@ -32,7 +32,7 @@ SEASON_MANIFEST_FILE_PATH = os.path.join(SCRIPT_DIR, '..', 'conf', SEASON_MANIFE
 with open(SEASON_MANIFEST_FILE_PATH, 'r', encoding="utf-8") as f:
     season_manifest = json.load(f)
 
-EVENT_MARKER_REGEX = r"L.marker\(\[(?P<lat>-?\d+.\d+), (?P<lng>-?\d+.\d+)\]\).bindPopup\('(?P<type>Shard Skirmish|Anomaly)<br /> ?(?P<label>.+?)<br />(?P<date>.+?)'\)"
+EVENT_MARKER_REGEX = r"L.marker\(\[(?P<lat>-?\d+.\d+), (?P<lng>-?\d+.\d+)\]\).bindPopup\('(?P<type>Shard Skirmish|Anomaly)<br /> ?(?P<name>.+?)<br />(?P<date>.+?)'\)"
 
 PACKAGE_JSON_PATH = os.path.join(SCRIPT_DIR, '..', 'package.json')
 with open(PACKAGE_JSON_PATH, 'r', encoding='utf-8') as f:
@@ -104,7 +104,7 @@ def process_season(season):
             r = requests.get(overview_url, headers=HEADERS)
             found = re.findall(EVENT_MARKER_REGEX, r.text)
             if found:
-                site_df = pd.DataFrame(found, columns=["lat", "lng", "type", "label", "date"])
+                site_df = pd.DataFrame(found, columns=["lat", "lng", "type", "name", "date"])
                 site_df["latE6"] = (site_df["lat"].astype(float) * 1e6).round().astype(int)
                 site_df["lngE6"] = (site_df["lng"].astype(float) * 1e6).round().astype(int)
                 site_df['eventType'] = site_df['type'].map(LABEL_TO_EVENT_TYPE)
@@ -125,12 +125,12 @@ def process_season(season):
                         for site_config in sites:
                             latE6 = site_config.get("latE6")
                             lngE6 = site_config.get("lngE6")
-                            label = site_config.get("label")
+                            name = site_config.get("name")
                             if latE6 is not None and lngE6 is not None:
                                 site_rows.append({
                                     "latE6": int(latE6),
                                     "lngE6": int(lngE6),
-                                    "label": label,
+                                    "name": name,
                                     "eventType": event_type,
                                     "date": pd.to_datetime(entry_date, format='%Y-%m-%d')
                                 })
@@ -143,7 +143,7 @@ def process_season(season):
 
         # Phase 3: ID Generation & De-duplication
         # Use only the city name for the primary slug (e.g. 'Singapore, SG' -> 'singapore')
-        df["base_id"] = df.apply(lambda r: f"{season_id}-{slugify(str(r['label']).split(',')[0])}", axis=1)
+        df["base_id"] = df.apply(lambda r: f"{season_id}-{slugify(str(r['name']).split(',')[0])}", axis=1)
         
         # Identify sites with same base ID in the same season (rare, but happens with events in the same location on different days)
         is_duplicate = df["base_id"].duplicated(keep=False)
@@ -167,7 +167,7 @@ def process_season(season):
         df = df.drop(columns=["date"])
         
         # Final cleanup and export
-        df = df[["id", "label", "latE6", "lngE6", "eventType", "startTime", "timeZone", "countryCode"]]
+        df = df[["id", "name", "latE6", "lngE6", "eventType", "startTime", "timeZone", "countryCode"]]
         print(f'{season_name} - {len(df)} sites geocoded')
         return season_id, df.to_dict(orient="records")
 

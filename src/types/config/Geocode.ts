@@ -1,11 +1,11 @@
-import type { SeasonId, SiteId } from "../common/Identifiers.js";
-import type { SeasonEvent } from "../seasons/Season.js";
-import type { NamedLocation } from "../common/Geo.js";
+import type { SeasonId, SiteId } from "../../common/Identifiers.js";
+import type { SeasonEvent } from "../../seasons/Season.js";
+import type { SiteLocation } from "../../common/Geo.js";
 
 /**
  * Site specific geocode data.
  */
-export interface SiteGeocode extends NamedLocation {
+export interface SiteGeocode extends SiteLocation {
     /** Unique ID for the site (e.g. '2025-plusalpha-singapore') */
     id: SiteId;
     /** The event type this site belongs to (for blueprint matching) */
