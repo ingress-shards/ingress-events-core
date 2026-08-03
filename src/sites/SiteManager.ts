@@ -36,17 +36,20 @@ export const SiteManager = {
 
         if (ZonedDateTime.compare(nowZoned, startTime) >= 0 && ZonedDateTime.compare(nowZoned, endTime) <= 0) {
             return SitePhase.Active;
-        } else if (ZonedDateTime.compare(nowZoned, standbyThreshold) >= 0 && ZonedDateTime.compare(nowZoned, startTime) < 0) {
-            return SitePhase.StandBy;
-        } else if (ZonedDateTime.compare(nowZoned, startTime) < 0) {
-            return hasOrnaments ? SitePhase.Discovery : SitePhase.Scheduled;
-        } else if (shards.actual >= shards.expected) {
-            return SitePhase.Complete;
-        } else if (shards.actual === 0 && ZonedDateTime.compare(nowZoned, staleThreshold) >= 0) {
-            return SitePhase.NoData;
-        } else {
-            return SitePhase.Processing;
         }
+        if (ZonedDateTime.compare(nowZoned, standbyThreshold) >= 0 && ZonedDateTime.compare(nowZoned, startTime) < 0) {
+            return SitePhase.StandBy;
+        }
+        if (ZonedDateTime.compare(nowZoned, startTime) < 0) {
+            return hasOrnaments ? SitePhase.Discovery : SitePhase.Scheduled;
+        }
+        if (shards.actual >= shards.expected) {
+            return SitePhase.Complete;
+        }
+        if (shards.actual === 0 && ZonedDateTime.compare(nowZoned, staleThreshold) >= 0) {
+            return SitePhase.NoData;
+        }
+        return SitePhase.Processing;
     },
 
     /**

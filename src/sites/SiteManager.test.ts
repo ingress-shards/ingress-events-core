@@ -100,7 +100,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.NoData,
                     timeRemaining: undefined,
                 }),
-            ).toBe("No Shard Data Available");
+            ).toBe("No Shard Data");
         });
     });
 });

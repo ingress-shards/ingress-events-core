@@ -63,9 +63,11 @@ describe("Strict Configuration Validation", () => {
                 (data: unknown) => {
                     const blueprints = data as EventBlueprints;
                     const activeTags = new Set<string>();
-                    Object.values(blueprints.ornaments).forEach((o) => {
-                        o.tags.forEach((tag) => activeTags.add(tag));
-                    });
+                    for (const o of Object.values(blueprints.ornaments)) {
+                        for (const tag of o.tags) {
+                            activeTags.add(tag);
+                        }
+                    }
 
                     const required = ["target", "battle-beacon", "pre-event"];
                     return required.every((tag) => activeTags.has(tag));

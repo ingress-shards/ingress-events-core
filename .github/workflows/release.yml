@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
-      - "feat/*"
-      - "fix/*"
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -29,7 +30,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
 
       - name: Install python dependencies
         run: |
@@ -49,4 +50,5 @@ jobs:
         run: yarn validate
 
       - name: Tag and publish release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: yarn semantic-release

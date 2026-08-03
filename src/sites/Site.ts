@@ -24,7 +24,7 @@ export const PhaseDisplayNames: Record<SitePhase, string> = {
     [SitePhase.Active]: "Active",
     [SitePhase.Processing]: "Processing",
     [SitePhase.Complete]: "Complete",
-    [SitePhase.NoData]: "No Shard Data Available",
+    [SitePhase.NoData]: "No Shard Data",
 };
 
 /**

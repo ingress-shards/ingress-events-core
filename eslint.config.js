@@ -81,9 +81,10 @@ const config = tseslint.config(
                 {
                     case: "pascalCase",
                     ignore: [".*\\.d\\.ts$", "^index(\\.d)?\\.ts$", "^API.*", "\\.schema(\\.ts)?", "\\.spec\\.ts$", ".*\\.config\\.ts$"],
+                    checkDirectories: false,
                 },
             ],
-            "unicorn/prevent-abbreviations": [
+            "unicorn/name-replacements": [
                 "error",
                 {
                     replacements: {
@@ -107,6 +108,12 @@ const config = tseslint.config(
             "unicorn/prefer-query-selector": "off", // nah, just not my style
             "unicorn/prefer-string-raw": "off",
             "unicorn/switch-case-braces": "off",
+            "unicorn/no-this-outside-of-class": "off",
+            "unicorn/no-top-level-side-effects": "off",
+            "unicorn/no-top-level-assignment-in-function": "off",
+            "unicorn/consistent-optional-chaining": "off",
+            "unicorn/no-unsafe-string-replacement": "off",
+            "unicorn/no-useless-undefined": "off",
         },
     },
 );
