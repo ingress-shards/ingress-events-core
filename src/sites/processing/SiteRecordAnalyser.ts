@@ -8,71 +8,84 @@ import type { ObservedPortal } from "../Portal.js";
 import { roundToDecimalPlaces } from "../../common/Math.js";
 import { ScoringEngine } from "./ScoringEngine.js";
 
+const addShardPathEntries = (
+    shardId: number,
+    filteredHistory: ShardHistoryEntry[],
+    portals: Record<PortalId, ObservedPortal> | undefined,
+    paths: Record<string, ShardPath>
+): void => {
+    for (const h of filteredHistory) {
+        if (h.action !== "link") {
+            continue;
+        }
+
+        const origin = h.portalId;
+        const destination = h.dest;
+        if (destination === undefined) {
+            continue;
+        }
+
+        // Key is concatenation of the two portal IDs, in numerical order, with a dash
+        const p1 = Math.min(origin, destination);
+        const p2 = Math.max(origin, destination);
+        const pathKey = `${p1}-${p2}`;
+
+        // Calculate distance if portals are available
+        let distance = 0;
+        const portal1 = portals?.[p1];
+        const portal2 = portals?.[p2];
+        if (portal1 && portal2) {
+            distance = roundToDecimalPlaces(haversineDistance(portal1, portal2), 2);
+        }
+
+        // Initialize path if not present
+        paths[pathKey] ??= {
+            links: [],
+            distance
+        };
+
+        const linkTime = h.linkTime ?? h.moveTime;
+        const team = h.team ?? "NEU";
+
+        // Find or create the link on this path
+        let existingLink = paths[pathKey].links.find(l => l.linkTime === linkTime && l.team === team);
+        if (!existingLink) {
+            existingLink = {
+                linkTime,
+                team,
+                moves: []
+            };
+            paths[pathKey].links.push(existingLink);
+        }
+
+        // Add shard move along the link
+        const isMoveExists = existingLink.moves.some(m => m.shardId === shardId && m.moveTime === h.moveTime);
+        if (!isMoveExists) {
+            existingLink.moves.push({
+                origin,
+                dest: destination,
+                shardId,
+                moveTime: h.moveTime,
+                points: 0,
+                ...(h.mismatch && { mismatch: true })
+            });
+        }
+    }
+};
+
 const buildShardPaths = (
     shardEntries: [string, Shard][],
     portals: Record<PortalId, ObservedPortal> | undefined,
-    filterFunction?: (h: ShardHistoryEntry) => boolean
+    shouldKeepEntry?: (h: ShardHistoryEntry) => boolean
 ): Record<string, ShardPath> => {
     const paths: Record<string, ShardPath> = {};
 
     for (const [shardIdStr, shard] of shardEntries) {
         const shardId = Number(shardIdStr);
         const history = shard.history || [];
-        const filteredHistory = filterFunction ? history.filter(filterFunction) : history;
+        const filteredHistory = shouldKeepEntry ? history.filter(shouldKeepEntry) : history;
 
-        for (const h of filteredHistory) {
-            if (h.action === "link") {
-                const origin = h.portalId;
-                const destination = h.dest;
-                if (destination === undefined) continue;
-
-                // Key is concatenation of the two portal IDs, in numerical order, with a dash
-                const p1 = Math.min(origin, destination);
-                const p2 = Math.max(origin, destination);
-                const pathKey = `${p1}-${p2}`;
-
-                // Calculate distance if portals are available
-                let distance = 0;
-                const portal1 = portals?.[p1];
-                const portal2 = portals?.[p2];
-                if (portal1 && portal2) {
-                    distance = roundToDecimalPlaces(haversineDistance(portal1, portal2), 2);
-                }
-
-                // Initialize path if not present
-                paths[pathKey] ??= {
-                    links: [],
-                    distance
-                };
-
-                const linkTime = h.linkTime ?? h.moveTime;
-                const team = h.team ?? "NEU";
-
-                // Find or create the link on this path
-                let existingLink = paths[pathKey].links.find(l => l.linkTime === linkTime && l.team === team);
-                if (!existingLink) {
-                    existingLink = {
-                        linkTime,
-                        team,
-                        moves: []
-                    };
-                    paths[pathKey].links.push(existingLink);
-                }
-
-                // Add shard move along the link
-                const moveExists = existingLink.moves.some(m => m.shardId === shardId && m.moveTime === h.moveTime);
-                if (!moveExists) {
-                    existingLink.moves.push({
-                        origin,
-                        dest: destination,
-                        shardId,
-                        moveTime: h.moveTime,
-                        points: 0,
-                        ...(h.mismatch && { mismatch: true })
-                    });
-                }
-            }
-        }
+        addShardPathEntries(shardId, filteredHistory, portals, paths);
     }
 
     // Sort links by linkTime, and moves by moveTime
@@ -96,6 +109,47 @@ const countLinkAlignmentMismatches = (pathsRecord: Record<string, ShardPath>): n
         }
     }
     return count;
+};
+
+interface WaveShardMovementCounters {
+    moving: number;
+    nonMoving: number;
+    links: number;
+}
+
+const countWaveShardMovement = (
+    shards: Shard[],
+    wave: { start: number; end: number },
+    counters: WaveShardMovementCounters
+): void => {
+    for (const shard of shards) {
+        const history = shard.history || [];
+
+        // Filter history entries up to the end of this wave
+        const historyUpToWaveEnd = history.filter(h => h.moveTime <= wave.end);
+        if (historyUpToWaveEnd.length === 0) {
+            continue;
+        }
+
+        // Check if it already despawned in a previous wave
+        const latestBeforeWave = historyUpToWaveEnd.at(-1)!;
+        if (latestBeforeWave.action === "despawn" && latestBeforeWave.moveTime < wave.start) {
+            continue;
+        }
+
+        // Check if it moved in this wave
+        const waveHistory = history.filter(h => h.moveTime >= wave.start && h.moveTime <= wave.end);
+        const hasMoved = waveHistory.some(h => h.action === "jump" || h.action === "link");
+
+        if (hasMoved) {
+            counters.moving++;
+        } else {
+            counters.nonMoving++;
+        }
+
+        const shardLinks = waveHistory.filter(h => h.action === "link").length;
+        counters.links += shardLinks;
+    }
 };
 
 export const SiteRecordAnalyser = {
@@ -152,38 +206,8 @@ export const SiteRecordAnalyser = {
 
         if (timeline?.shards) {
             for (const wave of timeline.shards) {
-                let waveMoving = 0;
-                let waveNonMoving = 0;
-                let waveLinks = 0;
-
-                for (const shard of shards) {
-                    const history = shard.history || [];
-
-                    // Filter history entries up to the end of this wave
-                    const historyUpToWaveEnd = history.filter(h => h.moveTime <= wave.end);
-                    if (historyUpToWaveEnd.length === 0) {
-                        continue;
-                    }
-
-                    // Check if it already despawned in a previous wave
-                    const latestBeforeWave = historyUpToWaveEnd.at(-1)!;
-                    if (latestBeforeWave.action === "despawn" && latestBeforeWave.moveTime < wave.start) {
-                        continue;
-                    }
-
-                    // Check if it moved in this wave
-                    const waveHistory = history.filter(h => h.moveTime >= wave.start && h.moveTime <= wave.end);
-                    const hasMoved = waveHistory.some(h => h.action === "jump" || h.action === "link");
-
-                    if (hasMoved) {
-                        waveMoving++;
-                    } else {
-                        waveNonMoving++;
-                    }
-
-                    const shardLinks = waveHistory.filter(h => h.action === "link").length;
-                    waveLinks += shardLinks;
-                }
+                const counters: WaveShardMovementCounters = { moving: 0, nonMoving: 0, links: 0 };
+                countWaveShardMovement(shards, wave, counters);
 
                 const waveShardPaths = buildShardPaths(
                     shardEntries,
@@ -203,10 +227,10 @@ export const SiteRecordAnalyser = {
                     points: wavePoints,
                     counters: {
                         shards: {
-                            moving: waveMoving,
-                            nonMoving: waveNonMoving,
+                            moving: counters.moving,
+                            nonMoving: counters.nonMoving,
                         },
-                        links: waveLinks,
+                        links: counters.links,
                         paths: Object.keys(waveShardPaths).length,
                         linkAlignmentMismatch: countLinkAlignmentMismatches(waveShardPaths),
                     }

@@ -17,6 +17,30 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
         private timestampMs: number = Now.instant().epochMilliseconds
     ) {}
 
+    private parsePortalHistory(ornaments: string[]): any[] {
+        const historyEntries: any[] = [];
+        for (const ornId of ornaments) {
+            const blueprint = this.blueprintOrnaments[ornId];
+            if (!blueprint) {
+                console.warn(`[MapSnapshotAdapter] Ornament "${ornId}" not found in blueprints. Skipping.`);
+                continue;
+            }
+
+            // A blueprint ornament can have multiple tags, we use the first tag that is a valid history type
+            const historyType = blueprint.tags.find((tag): tag is PortalHistoryType => 
+                (PORTAL_HISTORY_TYPES as readonly string[]).includes(tag)
+            );
+            if (historyType) {
+                historyEntries.push({
+                    type: historyType,
+                    timestamp: this.timestampMs,
+                    ornId: ornId
+                });
+            }
+        }
+        return historyEntries;
+    }
+
     public parseAndGroupObservations(input: MapSnapshot, config: EventConfigRegistry): SiteRecord[] {
         const timestampMs = input.timestamp;
         if (timestampMs === undefined) {
@@ -25,7 +49,8 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
         const siteRecordsMap = new Map<SiteId, SiteRecord>();
         const ignoredSites = new Set<SiteId>();
 
-        for (const p of input.portals ?? []) {
+        const portalsInput = input.portals ?? [];
+        for (const p of portalsInput) {
             const match = config.findSiteByCoords(p.latE6, p.lngE6, timestampMs);
             if (!match) continue;
 
@@ -55,29 +80,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             const portals = record.observations!.portals!;
             const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, p.latE6, p.lngE6);
 
-            const historyEntries: any[] = [];
-
-            if (p.ornaments) {
-                for (const ornId of p.ornaments) {
-                    const blueprint = this.blueprintOrnaments[ornId];
-                    if (!blueprint) {
-                        console.warn(`[MapSnapshotAdapter] Ornament "${ornId}" not found in blueprints. Skipping.`);
-                        continue;
-                    }
-
-                    // A blueprint ornament can have multiple tags, we use the first tag that is a valid history type
-                    const historyType = blueprint.tags.find((tag): tag is PortalHistoryType => 
-                        (PORTAL_HISTORY_TYPES as readonly string[]).includes(tag)
-                    );
-                    if (historyType) {
-                        historyEntries.push({
-                            type: historyType,
-                            timestamp: this.timestampMs,
-                            ornId: ornId
-                        });
-                    }
-                }
-            }
+            const historyEntries = p.ornaments ? this.parsePortalHistory(p.ornaments) : [];
 
             // If we found any valid ornament history entries, or if it's an identifiable portal we want to track
             if (historyEntries.length > 0) {
@@ -88,6 +91,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             }
         }
 
-        return [...siteRecordsMap.values()];
+        // eslint-disable-next-line unicorn/prefer-spread
+        return Array.from(siteRecordsMap.values());
     }
 }

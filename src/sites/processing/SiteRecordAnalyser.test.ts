@@ -103,7 +103,7 @@ describe("SiteRecordAnalyser", () => {
             },
         };
 
-        const mockConfig: any = {
+        const mockConfig = {
             getSiteConfig: (siteId: string) => {
                 expect(siteId).toBe("test-site");
                 return {

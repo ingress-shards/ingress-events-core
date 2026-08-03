@@ -5,8 +5,8 @@ import { isWithinSiteRange } from "../common/Geo.js";
 import { parseZonedDateTime } from "../common/Date.js";
 
 export class EventConfigRegistry {
-    public readonly seasons: Record<SeasonId, SeasonConfig> = {};
     private readonly siteToSeasonMap: Map<SiteId, { seasonId: SeasonId; config: SiteConfig }> = new Map<SiteId, { seasonId: SeasonId; config: SiteConfig }>();
+    public readonly seasons: Record<SeasonId, SeasonConfig> = {};
 
     constructor(inputs: {
         eventBlueprints: EventBlueprints;
@@ -101,7 +101,7 @@ export class EventConfigRegistry {
                         ...(targets.length > 0 && { targets })
                     };
 
-                    const shardsConfig = component.mechanics.shards && shardMechanics ? {
+                    const shardsConfig = shardMechanics && component.mechanics.shards ? {
                         shardMechanics,
                         ...(targetMechanics && { targetMechanics }),
                         scoring: {
@@ -153,7 +153,7 @@ export class EventConfigRegistry {
     public findSiteByCoords(latE6: number, lngE6: number, timestampMs: number): { siteId: SiteId; seasonId: SeasonId; config: SiteConfig } | undefined {
         const matches: { siteId: SiteId; seasonId: SeasonId; config: SiteConfig }[] = [];
         
-        for (const [siteId, entry] of this.siteToSeasonMap.entries()) {
+        for (const [siteId, entry] of this.siteToSeasonMap) {
             if (isWithinSiteRange({ latE6, lngE6 }, entry.config.geocode)) {
                 matches.push({ siteId, seasonId: entry.seasonId, config: entry.config });
             }

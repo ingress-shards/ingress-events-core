@@ -2,6 +2,70 @@ import type { ObservedPortal } from "../Portal.js";
 import type { PortalMergeStrategy, PortalMergeResult } from "./PortalMergeStrategy.js";
 
 export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
+    private mergePortalHistory(
+        portal: ObservedPortal,
+        incomingHistory: NonNullable<ObservedPortal["history"]>,
+        getWaveIndex?: (timestamp: number) => number | undefined
+    ): boolean {
+        let hasChanged = false;
+        const mergedHistory = portal.history ? [...portal.history] : [];
+
+        for (const incomingHist of incomingHistory) {
+            const isDuplicate = mergedHistory.some(h => {
+                if (h.type !== incomingHist.type) return false;
+                if (getWaveIndex) {
+                    const existingWave = getWaveIndex(h.timestamp);
+                    const incomingWave = getWaveIndex(incomingHist.timestamp);
+                    if (existingWave !== undefined && incomingWave !== undefined) {
+                        return existingWave === incomingWave;
+                      }
+                }
+                return h.timestamp === incomingHist.timestamp;
+            });
+
+            if (isDuplicate) {
+                continue;
+            }
+
+            // State transition deduplication:
+            // Only append if the state actually changes from the previous entry of this type.
+            const historyOfType = mergedHistory.filter(h => h.type === incomingHist.type);
+            const lastEntry = historyOfType.at(-1);
+
+            let isSameState = false;
+            if (lastEntry) {
+                if (incomingHist.type === "target" && lastEntry.type === "target") {
+                    if (getWaveIndex) {
+                        const lastWave = getWaveIndex(lastEntry.timestamp);
+                        const incomingWave = getWaveIndex(incomingHist.timestamp);
+                        isSameState = (incomingHist.ornId === lastEntry.ornId) && (lastWave === incomingWave);
+                    } else {
+                        isSameState = (incomingHist.ornId === lastEntry.ornId);
+                    }
+                } else if (
+                    (incomingHist.type === "battle-beacon" && lastEntry.type === "battle-beacon") ||
+                    (incomingHist.type === "pre-event" && lastEntry.type === "pre-event")
+                ) {
+                    isSameState = (incomingHist.ornId === lastEntry.ornId);
+                }
+            }
+
+            if (isSameState) {
+                continue;
+            }
+
+            mergedHistory.push(incomingHist);
+            hasChanged = true;
+        }
+
+        if (mergedHistory.length > 0) {
+            mergedHistory.sort((a, b) => a.timestamp - b.timestamp);
+            portal.history = mergedHistory;
+        }
+
+        return hasChanged;
+    }
+
     public merge(
         existingPortals: Record<number, ObservedPortal>,
         incomingPortals: Record<number, ObservedPortal>,
@@ -23,8 +87,9 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
 
             let portal: ObservedPortal;
 
-            if (typeof existingPortalId === "number" && portals[existingPortalId]) {
-                portal = portals[existingPortalId]!;
+            const existingPortal = typeof existingPortalId === "number" ? portals[existingPortalId] : undefined;
+            if (existingPortal) {
+                portal = existingPortal;
                 if (incomingPortal.title && portal.title !== incomingPortal.title) {
                     portal.title = incomingPortal.title;
                     hasChanged = true;
@@ -46,61 +111,10 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
                 hasChanged = true;
             }
 
-            const incomingHistory = incomingPortal.history ?? [];
-            const mergedHistory = portal.history ? [...portal.history] : [];
-
-            // Append history entries (with state transition / duplicate checks)
-            for (const incomingHist of incomingHistory) {
-                // Duplicate timestamp / wave check
-                const isDuplicate = mergedHistory.some(h => {
-                    if (h.type !== incomingHist.type) return false;
-                    if (options.getWaveIndex) {
-                        const existingWave = options.getWaveIndex(h.timestamp);
-                        const incomingWave = options.getWaveIndex(incomingHist.timestamp);
-                        if (existingWave !== undefined && incomingWave !== undefined) {
-                            return existingWave === incomingWave;
-                        }
-                    }
-                    return h.timestamp === incomingHist.timestamp;
-                });
-
-                if (isDuplicate) {
-                    continue;
+            if (incomingPortal.history && incomingPortal.history.length > 0) {
+                if (this.mergePortalHistory(portal, incomingPortal.history, options.getWaveIndex)) {
+                    hasChanged = true;
                 }
-
-                // State transition deduplication:
-                // Only append if the state actually changes from the previous entry of this type.
-                const historyOfType = mergedHistory.filter(h => h.type === incomingHist.type);
-                const lastEntry = historyOfType.at(-1);
-
-                let isSameState = false;
-                if (lastEntry) {
-                    if (incomingHist.type === "target" && lastEntry.type === "target") {
-                        if (options.getWaveIndex) {
-                            const lastWave = options.getWaveIndex(lastEntry.timestamp);
-                            const incomingWave = options.getWaveIndex(incomingHist.timestamp);
-                            isSameState = (incomingHist.ornId === lastEntry.ornId) && (lastWave === incomingWave);
-                        } else {
-                            isSameState = (incomingHist.ornId === lastEntry.ornId);
-                        }
-                    } else if (incomingHist.type === "battle-beacon" && lastEntry.type === "battle-beacon") {
-                        isSameState = (incomingHist.ornId === lastEntry.ornId);
-                    } else if (incomingHist.type === "pre-event" && lastEntry.type === "pre-event") {
-                        isSameState = (incomingHist.ornId === lastEntry.ornId);
-                    }
-                }
-
-                if (isSameState) {
-                    continue;
-                }
-
-                mergedHistory.push(incomingHist);
-                hasChanged = true;
-            }
-
-            if (mergedHistory.length > 0) {
-                mergedHistory.sort((a, b) => a.timestamp - b.timestamp);
-                portal.history = mergedHistory;
             }
         }
 

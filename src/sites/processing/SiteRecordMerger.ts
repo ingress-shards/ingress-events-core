@@ -63,7 +63,7 @@ export class SiteRecordMerger {
 
             // Sync orchestrator's map with strategy's final coordinate mapping for shard ID resolution
             coordToPortalIdMap.clear();
-            for (const [k, v] of result.coordToPortalIdMap.entries()) {
+            for (const [k, v] of result.coordToPortalIdMap) {
                 coordToPortalIdMap.set(k, v);
             }
         }
