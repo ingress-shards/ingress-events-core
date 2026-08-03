@@ -71,7 +71,7 @@
         "tsdown": "^0.21.4",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.65.0",
-        "vitest": "4.1.4"
+        "vitest": "4.1.10"
     },
     "resolutions": {
         "ts-to-zod": "patch:ts-to-zod@npm%3A5.1.0#~/.yarn/patches/ts-to-zod-npm-5.1.0-8f81b27357.patch"
