@@ -53,7 +53,7 @@
         "validate:docker": "docker build -f Dockerfile.validate -t ingress-events-core-validate . && docker run --rm ingress-events-core-validate"
     },
     "dependencies": {
-        "temporal-polyfill": "^1.0.2"
+        "temporal-polyfill": "^1.0.4"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
