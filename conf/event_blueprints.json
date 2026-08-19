@@ -1,68 +1,32 @@
 {
   "events": {
-    "ANOMALY": {
-      "label": "Anomaly"
-    },
-    "SKIRMISH": {
-      "label": "Shard Skirmish"
-    },
-    "INVESTIGATION": {
-      "label": "Shard Investigation"
-    },
-    "SINGULAR": {
-      "label": "Shard Singular"
-    },
-    "STORM": {
-      "label": "Shard Storm"
-    },
-    "SINGLE_SHARD": {
-      "label": "Single Shard"
-    },
-    "MULTIPLE_SHARDS": {
-      "label": "Multiple Shards"
-    },
-    "UNKNOWN": {
-      "label": "Unknown"
-    }
+    "ANOMALY": { "label": "Anomaly" },
+    "SKIRMISH": { "label": "Shard Skirmish" },
+    "INVESTIGATION": { "label": "Shard Investigation" },
+    "SINGULAR": { "label": "Shard Singular" },
+    "STORM": { "label": "Shard Storm" },
+    "SINGLE_SHARD": { "label": "Single Shard" },
+    "MULTIPLE_SHARDS": { "label": "Multiple Shards" },
+    "UNKNOWN": { "label": "Unknown" }
   },
   "ornaments": {
-    "ap1": {
-      "label": "Anomaly Portal",
-      "tags": ["pre-event", "battle-beacon"],
-      "style": { "color": "#F58634" }
-    },
-    "ap2": {
-      "label": "Anomaly Portal",
-      "tags": ["pre-event"],
-      "style": { "color": "#FF32F7" }
-    },
-    "ap3": {
-      "label": "Anomaly Portal",
-      "tags": ["pre-event"],
-      "style": { "color": "#7E14FF" }
-    },
+    "ap1": { "label": "Anomaly Portal", "tags": ["pre-event", "battle-beacon"], "style": { "color": "#F58634" } },
+    "ap2": { "label": "Anomaly Portal", "tags": ["pre-event"], "style": { "color": "#FF32F7" } },
+    "ap3": { "label": "Anomaly Portal", "tags": ["pre-event"], "style": { "color": "#7E14FF" } },
     "nl-1331-2026": {
       "label": "Virtual NL-1331 Tour 2026",
       "tags": ["pre-event"],
-      "style": {
-        "icon": "images/ornament-icons/nl_1331_2026.png"
-      }
+      "style": { "icon": "images/ornament-icons/nl_1331_2026.png" }
     },
     "targetres": {
       "label": "RES Target Portal",
       "tags": ["target"],
-      "style": {
-        "icon": "images/ornament-icons/target-res.png",
-        "size": { "width": 40, "height": 40 }
-      }
+      "style": { "icon": "images/ornament-icons/target-res.png", "size": { "width": 40, "height": 40 } }
     },
     "targetenl": {
       "label": "ENL Target Portal",
       "tags": ["target"],
-      "style": {
-        "icon": "images/ornament-icons/target-enl.png",
-        "size": { "width": 40, "height": 40 }
-      }
+      "style": { "icon": "images/ornament-icons/target-enl.png", "size": { "width": 40, "height": 40 } }
     }
   },
   "shardMechanics": {
@@ -157,13 +121,7 @@
   },
   "targetMechanics": {
     "1w_241m": {
-      "waves": [
-        {
-          "startOffset": -1,
-          "endOffset": 241,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        }
-      ],
+      "waves": [{ "startOffset": -1, "endOffset": 241, "factionQuantity": { "RES": 4, "ENL": 4 } }],
       "waveActions": [
         { "action": "spawn", "time": 0 },
         { "action": "despawn", "time": 241 }
@@ -171,36 +129,12 @@
     },
     "6w_30m_4t": {
       "waves": [
-        {
-          "startOffset": 2,
-          "endOffset": 31,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        },
-        {
-          "startOffset": 32,
-          "endOffset": 61,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        },
-        {
-          "startOffset": 62,
-          "endOffset": 91,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        },
-        {
-          "startOffset": 92,
-          "endOffset": 121,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        },
-        {
-          "startOffset": 122,
-          "endOffset": 151,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        },
-        {
-          "startOffset": 152,
-          "endOffset": 181,
-          "factionQuantity": { "RES": 4, "ENL": 4 }
-        }
+        { "startOffset": 2, "endOffset": 31, "factionQuantity": { "RES": 4, "ENL": 4 } },
+        { "startOffset": 32, "endOffset": 61, "factionQuantity": { "RES": 4, "ENL": 4 } },
+        { "startOffset": 62, "endOffset": 91, "factionQuantity": { "RES": 4, "ENL": 4 } },
+        { "startOffset": 92, "endOffset": 121, "factionQuantity": { "RES": 4, "ENL": 4 } },
+        { "startOffset": 122, "endOffset": 151, "factionQuantity": { "RES": 4, "ENL": 4 } },
+        { "startOffset": 152, "endOffset": 181, "factionQuantity": { "RES": 4, "ENL": 4 } }
       ],
       "waveActions": [
         { "action": "spawn", "time": 0 },
@@ -209,36 +143,12 @@
     },
     "6w_30m_6t": {
       "waves": [
-        {
-          "startOffset": 2,
-          "endOffset": 30,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        },
-        {
-          "startOffset": 32,
-          "endOffset": 60,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        },
-        {
-          "startOffset": 62,
-          "endOffset": 90,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        },
-        {
-          "startOffset": 92,
-          "endOffset": 120,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        },
-        {
-          "startOffset": 122,
-          "endOffset": 150,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        },
-        {
-          "startOffset": 152,
-          "endOffset": 180,
-          "factionQuantity": { "RES": 6, "ENL": 6 }
-        }
+        { "startOffset": 2, "endOffset": 30, "factionQuantity": { "RES": 6, "ENL": 6 } },
+        { "startOffset": 32, "endOffset": 60, "factionQuantity": { "RES": 6, "ENL": 6 } },
+        { "startOffset": 62, "endOffset": 90, "factionQuantity": { "RES": 6, "ENL": 6 } },
+        { "startOffset": 92, "endOffset": 120, "factionQuantity": { "RES": 6, "ENL": 6 } },
+        { "startOffset": 122, "endOffset": 150, "factionQuantity": { "RES": 6, "ENL": 6 } },
+        { "startOffset": 152, "endOffset": 180, "factionQuantity": { "RES": 6, "ENL": 6 } }
       ],
       "waveActions": [
         { "action": "spawn", "time": 0 },
@@ -246,153 +156,45 @@
       ]
     }
   },
-  "scoringRules": {
-    "shards": {
-      "default_jump": {
-        "label": "Shard Jumped",
-        "tooltip": "Shard jump along an eligible Link",
-        "points": 1,
-        "scoreType": "jumps"
-      },
-      "anomaly_zone_arrival_499.5": {
-        "label": "Jump > 499.5m to Zone Portal",
-        "tooltip": "Shard jump along an eligible Link exceeding 499.5m and landing on an Anomaly Zone Portal",
-        "conditions": {
-          "minDistance": 499.5,
-          "ornaments": ["ap1", "ap2", "ap3"]
-        },
-        "points": 1,
-        "scoreType": "jumps"
-      },
-      "secured_target_1-4": {
-        "label": "Shard secured",
-        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
-        "conditions": {
-          "isTarget": true
-        },
-        "maxScoringShardsPerPortal": 4,
-        "teamAttribution": "TARGET_OWNER",
-        "points": 1,
-        "scoreType": "goals"
-      },
-      "secured_target_5-4": {
-        "label": "Shard secured",
-        "tooltip": "Awarded to the Faction to which a Target Portal belongs, regardless of which Faction controlled the Target Portal at the time of the Shard landing. Maximum of 4 scoring shards per target per wave.",
-        "conditions": {
-          "isTarget": true
-        },
-        "maxScoringShardsPerPortal": 4,
-        "teamAttribution": "TARGET_OWNER",
-        "points": 5,
-        "scoreType": "goals"
-      },
-      "secured_target_6-4": {
-        "label": "Shard secured",
-        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
-        "conditions": {
-          "isTarget": true
-        },
-        "maxScoringShardsPerPortal": 4,
-        "teamAttribution": "TARGET_OWNER",
-        "points": 6,
-        "scoreType": "goals"
-      },
-      "secured_target_7-4": {
-        "label": "Shard secured",
-        "tooltip": "Awarded to the Faction to which a Target Portal belongs. Maximum of 4 scoring shards per target per wave.",
-        "conditions": {
-          "isTarget": true
-        },
-        "maxScoringShardsPerPortal": 4,
-        "teamAttribution": "TARGET_OWNER",
-        "points": 7,
-        "scoreType": "goals"
-      },
-      "skirmish_jump_0.5p": {
-        "label": "Skirmish",
-        "tooltip": "Shard jump > 249.5m",
-        "conditions": {
-          "minDistance": 249.5
-        },
-        "points": 0.5,
-        "scoreType": "jumps"
-      },
-      "skirmish_jump_0.7p": {
-        "label": "Skirmish",
-        "tooltip": "Shard jump > 249.5m",
-        "conditions": {
-          "minDistance": 249.5
-        },
-        "points": 0.7,
-        "scoreType": "jumps"
-      },
-      "singular_jump_1-5": {
-        "label": "Jump (1-5km)",
-        "tooltip": "Shard jump between 1km and 5km",
-        "conditions": {
-          "minDistance": 1000,
-          "maxDistance": 5000
-        },
-        "points": 1,
-        "scoreType": "jumps"
-      },
-      "singular_jump_100": {
-        "label": "Jump (>100km)",
-        "tooltip": "Shard jump > 100km. Stops further scoring for this shard.",
-        "conditions": {
-          "minDistance": 100000
-        },
-        "points": 3,
-        "allowFurtherPoints": false,
-        "scoreType": "jumps"
-      },
-      "storm_jump_1-5": {
-        "label": "Jump (1-5km)",
-        "tooltip": "Shard jump between 1km and 5km",
-        "conditions": {
-          "minDistance": 1000,
-          "maxDistance": 5000
-        },
-        "points": 5,
-        "scoreType": "jumps"
-      },
-      "storm_jump_10": {
-        "label": "Jump (>10km)",
-        "tooltip": "Shard jump > 10km. Stops further scoring for this shard.",
-        "conditions": {
-          "minDistance": 10000
-        },
-        "points": 10,
-        "allowFurtherPoints": false,
-        "scoreType": "jumps"
-      },
-      "investigation_jump_500": {
-        "label": "Jump (<500m)",
-        "tooltip": "Shard jump < 500m",
-        "conditions": {
-          "maxDistance": 499.5
-        },
-        "points": 5,
-        "scoreType": "jumps"
-      },
-      "investigation_jump_200": {
-        "label": "Jump (<200m)",
-        "tooltip": "Shard jump < 200m",
-        "conditions": {
-          "maxDistance": 199.5
-        },
-        "points": 5,
-        "scoreType": "jumps"
-      },
-      "nl1331_arrival": {
-        "label": "NL-1331",
-        "tooltip": "Shard secured",
-        "conditions": {
-          "ornaments": ["nl-1331-2026"]
-        },
-        "points": 3,
-        "scoreType": "goals"
-      }
+  "linkScoringRules": {
+    "default_jump": { "label": "Shard Jump", "points": 1 },
+    "anomaly_zone_arrival_499.5": {
+      "label": "Jump > 499.5m to Zone Portal",
+      "conditions": { "minDistance": 499.5, "ornaments": ["ap1", "ap2", "ap3"] },
+      "points": 1
+    },
+    "skirmish_jump_0.5p": { "label": "Shard jump > 249.5m", "conditions": { "minDistance": 249.5 }, "points": 0.5 },
+    "skirmish_jump_0.7p": { "label": "Shard jump > 249.5m", "conditions": { "minDistance": 249.5 }, "points": 0.7 },
+    "singular_jump_1-5": {
+      "label": "Jump (1-5km)",
+      "conditions": { "minDistance": 1000, "maxDistance": 5000 },
+      "points": 1
+    },
+    "singular_jump_100": {
+      "label": "Jump (>100km)",
+      "conditions": { "minDistance": 100000, "allowFurtherPoints": false },
+      "points": 3
+    },
+    "storm_jump_1-5": {
+      "label": "Jump (1-5km)",
+      "conditions": { "minDistance": 1000, "maxDistance": 5000 },
+      "points": 5
+    },
+    "storm_jump_10": {
+      "label": "Jump (>10km)",
+      "conditions": { "minDistance": 10000, "allowFurtherPoints": false },
+      "points": 10
+    },
+    "investigation_jump_500": { "label": "Jump (<500m)", "conditions": { "maxDistance": 499.5 }, "points": 5 },
+    "investigation_jump_200": { "label": "Jump (<200m)", "conditions": { "maxDistance": 199.5 }, "points": 5 },
+    "nl1331_arrival": {
+      "label": "Jump to NL-1331 Portal",
+      "conditions": { "ornaments": ["nl-1331-2026"] },
+      "points": 3
     }
+  },
+  "goalScoringRules": {
+    "secured_target_5-4": { "label": "Shard secured", "conditions": { "maxScoringShardsPerPortal": 4 }, "points": 5 },
+    "secured_target_6-4": { "label": "Shard secured", "conditions": { "maxScoringShardsPerPortal": 4 }, "points": 6 }
   }
 }

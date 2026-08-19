@@ -103,30 +103,37 @@ export interface EventBlueprints {
     shardMechanics: Record<string, ShardMechanics>;
     /** Target behavior patterns indexed by ID */
     targetMechanics: Record<string, TargetMechanics>;
-    /**
-     * Scoring rules grouped by entity type
-     */
-    scoringRules: {
-        shards: Record<string, ShardScoringRule>;
+    /** Shard link scoring rules indexed by ID */
+    linkScoringRules?: Record<string, ShardLinkScoringRule>;
+    /** Shard goal scoring rules indexed by ID */
+    goalScoringRules?: Record<string, ShardGoalScoringRule>;
+}
+
+/**
+ * @strict
+ */
+export interface BaseScoringRule {
+    label: string;
+    points: number;
+}
+
+/**
+ * @strict
+ */
+export interface ShardLinkScoringRule extends BaseScoringRule {
+    conditions?: {
+        minDistance?: number;
+        maxDistance?: number;
+        ornaments?: string[];
+        allowFurtherPoints?: boolean;
     };
 }
 
 /**
  * @strict
  */
-export interface ShardScoringRule {
-    label: string;
-    tooltip: string;
-    points: number;
+export interface ShardGoalScoringRule extends BaseScoringRule {
     conditions?: {
-        minDistance?: number;
-        maxDistance?: number;
-        ornaments?: string[];
-        isTarget?: boolean;
+        maxScoringShardsPerPortal?: number;
     };
-    maxScoringShardsPerPortal?: number;
-    teamAttribution?: "TARGET_OWNER" | "LINK_OWNER";
-    allowFurtherPoints?: boolean;
-    /** Category under which points are bucketed */
-    scoreType: "jumps" | "goals";
 }

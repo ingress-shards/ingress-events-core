@@ -1,4 +1,4 @@
-import type { EventBlueprints, SeasonGeocode, SeasonManifest, ShardScoringRule } from "../types/index.js";
+import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
 import type { SeasonConfig, SiteConfig, EventTimeline, WaveTimeline, ScheduledShardAction } from "../seasons/SeasonConfig.js";
 import { isWithinSiteRange } from "../common/Geo.js";
@@ -101,30 +101,46 @@ export class EventConfigRegistry {
                         ...(targets.length > 0 && { targets })
                     };
 
-                    const shardsConfig = shardMechanics && component.mechanics.shards ? {
-                        shardMechanics,
-                        ...(targetMechanics && { targetMechanics }),
-                        scoring: {
-                            shardScoringRules: (component.mechanics.shards.scoring.rules ?? [])
-                                .reduce<Record<string, ShardScoringRule>>((accumulator, r) => {
-                                    const rule = eventBlueprints.scoringRules.shards[r];
-                                    if (rule) {
-                                        accumulator[r] = {
-                                            ...rule,
-                                            teamAttribution: rule.teamAttribution ?? "LINK_OWNER",
-                                            scoreType: rule.scoreType
-                                        };
-                                    }
-                                    return accumulator;
-                                }, {}),
-                            ...(component.mechanics.shards.scoring.wavePointAggregation && {
-                                wavePointAggregation: component.mechanics.shards.scoring.wavePointAggregation
-                            }),
-                            ...(component.mechanics.shards.scoring.seasonPoints !== undefined && {
-                                seasonPoints: component.mechanics.shards.scoring.seasonPoints
-                            })
+                    let shardsConfig: SiteConfig["mechanics"]["shards"] = undefined;
+                    
+                    if (shardMechanics && component.mechanics.shards) {
+                        shardsConfig = {
+                            shardMechanics,
+                            ...(targetMechanics && { targetMechanics }),
+                            scoring: {
+                                ...(component.mechanics.shards.scoring.wavePointAggregation && {
+                                    wavePointAggregation: component.mechanics.shards.scoring.wavePointAggregation
+                                }),
+                                ...(component.mechanics.shards.scoring.seasonPoints !== undefined && {
+                                    seasonPoints: component.mechanics.shards.scoring.seasonPoints
+                                }),
+                                linkScoringRules: {}
+                            }
+                        };
+
+                        const { linkRules = [], goalRules = [] } = component.mechanics.shards.scoring;
+                        
+                        // Pick out link scoring rules from blueprints
+                        if (linkRules.length > 0) {
+                            for (const ruleId of linkRules) {
+                                const rule = eventBlueprints.linkScoringRules?.[ruleId];
+                                if (rule) {
+                                    shardsConfig.scoring.linkScoringRules[ruleId] = rule;
+                                }
+                            }
                         }
-                    } : undefined;
+
+                        // Pick out goal scoring rules from blueprints
+                        if (goalRules.length > 0) {
+                            shardsConfig.scoring.goalScoringRules = {};
+                            for (const ruleId of goalRules) {
+                                const rule = eventBlueprints.goalScoringRules?.[ruleId];
+                                if (rule) {
+                                    shardsConfig.scoring.goalScoringRules[ruleId] = rule;
+                                }
+                            }
+                        }
+                    }
 
                     const siteConfig: SiteConfig = {
                         geocode: site,

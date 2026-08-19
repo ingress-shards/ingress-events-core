@@ -53,32 +53,61 @@ export interface SiteObservation {
 export interface SiteAnalysis {
     /** Geographic center point of all portals */
     centroid?: Coordinates;
-    /** Complete state of everything at the site for the entire event */
-    siteState: SiteState;
+    /** Official site result/points contributing to season standings and their contributing waves */
+    seasonPoints?: SeasonPointsResult;
+    /** Whether pre-event discovery ornaments were detected on the portals */
+    hasPreEventOrnaments: boolean;
+    /** Whether the event has target mechanics defined */
+    hasTargetMechanics?: boolean;
     /** Periodic snapshots of shard movements (Waves), keyed by wave number */
-    waves: Record<number, SiteState>;
-    /** Official site result/points contributing to season standings */
-    seasonPoints: Points;
-    /** Whether the site has target data */
-    hasTargetData: boolean;
+    waves: Record<number, WaveState>;
+    /** Root-level storage of paths to avoid duplication */
+    siteShardPaths?: Record<string, ShardPath>;
+    /** Site-wide aggregated statistics across all waves (undefined for single-wave events) */
+    siteStatistics?: Statistics;
 }
 
-export interface SiteState {
-    /** Key format: "portalId-portalId" */
-    shardPaths: Record<string, ShardPath>;
-    /** Detailed points snapshot */
+export interface WaveState {
     points: PointsSnapshot;
-    counters: Counters;
+    statistics: Statistics;
+    shardActionWindows: ShardActionWindow[];
 }
 
-/**
- * Detailed breakdown of points scored within a specific category.
- */
-export interface PointsBreakdown {
-    /** Sub-total points for this category */
-    summary: Points;
-    /** Breakdown of points scored by each rule key in this category */
-    detail: Record<string, Points>;
+export interface ShardActionWindow {
+    /** Epoch time of this action window */
+    timestamp: number;
+    /** The type of movement or event (e.g. "spawn", "jump", "despawn") */
+    actionType?: "spawn" | "jump" | "despawn";
+    /** User-friendly display label (e.g. "Spawn", "J1", "J2") */
+    actionLabel?: string;
+    /** Total points scored specifically in this window */
+    points: Points;
+    /** Grouped by faction at the top level */
+    factionBreakdowns?: Partial<Record<FactionId, FactionPointsBreakdown>>;
+    /** Overall number of shard actions (spawns, jumps, despawns, etc.) in this window */
+    actionsCount: number;
+}
+
+export interface GoalActionDetail {
+    portalId: PortalId;
+    scoredCount: number;
+    unscoredCount: number;
+}
+
+export interface SeasonPointsResult {
+    /** Points scored for the season (e.g. { RES: 4.5, ENL: 1.5 }) */
+    points: Points;
+    /** The wave numbers that directly contributed to this final points score, keyed by faction */
+    contributingWaves?: Partial<Record<FactionId, number[]>>;
+}
+
+export interface FactionPointsBreakdown {
+    /** Rule occurrence counts (e.g. "regular" -> 5) */
+    links?: Record<string, number>;
+    /** Goal portal scoring details */
+    goals?: GoalActionDetail[];
+    /** Number of alignment mismatches */
+    linkAlignmentMismatches?: number;
 }
 
 /**
@@ -87,10 +116,10 @@ export interface PointsBreakdown {
 export interface PointsSnapshot {
     /** Faction-wide accumulated total points across all categories */
     total: Points;
-    /** Breakdown of jump-based points */
-    jumps: PointsBreakdown;
-    /** Breakdown of goal/target landing points */
-    goals: PointsBreakdown;
+    /** Flat points from links/jumps */
+    links: Points;
+    /** Flat points from target portal scoring */
+    goals?: Points;
 }
 
 /**
@@ -98,7 +127,7 @@ export interface PointsSnapshot {
  */
 export type Points = Partial<Record<FactionId, number>>;
 
-export interface Counters {
+export interface Statistics {
     shards: {
         moving: number;
         nonMoving: number;
@@ -106,4 +135,7 @@ export interface Counters {
     links: number;
     paths: number;
     linkAlignmentMismatch?: number;
+    /** The number of target portals active in this context */
+    targetsCount: number;
 }
+

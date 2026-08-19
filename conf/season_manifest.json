@@ -9,28 +9,13 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "targetMechanics": "1w_241m",
-              "scoring": {
-                "rules": ["default_jump", "secured_target_1-4"],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 93
-              }
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         },
         {
           "eventType": "SKIRMISH",
           "startTime": "16:00",
           "mechanics": {
-            "shards": {
-              "shardMechanics": "5w_20m_1j",
-              "scoring": {
-                "rules": ["skirmish_jump_0.5p"]
-              }
-            }
+            "shards": { "shardMechanics": "5w_20m_1j", "scoring": { "linkRules": ["skirmish_jump_0.5p"] } }
           }
         }
       ]
@@ -44,28 +29,13 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "targetMechanics": "1w_241m",
-              "scoring": {
-                "rules": ["default_jump", "secured_target_1-4"],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 93
-              }
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         },
         {
           "eventType": "SKIRMISH",
           "startTime": "16:00",
           "mechanics": {
-            "shards": {
-              "shardMechanics": "5w_20m_1j",
-              "scoring": {
-                "rules": ["skirmish_jump_0.5p"]
-              }
-            }
+            "shards": { "shardMechanics": "5w_20m_1j", "scoring": { "linkRules": ["skirmish_jump_0.5p"] } }
           }
         }
       ]
@@ -79,28 +49,13 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "targetMechanics": "1w_241m",
-              "scoring": {
-                "rules": ["default_jump", "secured_target_1-4"],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 93
-              }
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         },
         {
           "eventType": "SKIRMISH",
           "startTime": "16:00",
           "mechanics": {
-            "shards": {
-              "shardMechanics": "5w_20m_1j",
-              "scoring": {
-                "rules": ["skirmish_jump_0.7p"]
-              }
-            }
+            "shards": { "shardMechanics": "5w_20m_1j", "scoring": { "linkRules": ["skirmish_jump_0.7p"] } }
           }
         }
       ]
@@ -114,28 +69,13 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "targetMechanics": "6w_30m_4t",
-              "scoring": {
-                "rules": ["default_jump", "secured_target_7-4"],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 93
-              }
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         },
         {
           "eventType": "SKIRMISH",
           "startTime": "16:00",
           "mechanics": {
-            "shards": {
-              "shardMechanics": "5w_20m_1j",
-              "scoring": {
-                "rules": ["skirmish_jump_0.7p"]
-              }
-            }
+            "shards": { "shardMechanics": "5w_20m_1j", "scoring": { "linkRules": ["skirmish_jump_0.7p"] } }
           }
         },
         {
@@ -145,265 +85,71 @@
             {
               "date": "2025-05-24",
               "sites": [
-                {
-                  "latE6": -25276576,
-                  "lngE6": 152759054,
-                  "name": "Hervey Bay, Australia"
-                },
-                {
-                  "latE6": -42880779,
-                  "lngE6": 147332470,
-                  "name": "Hobart, Australia"
-                },
-                {
-                  "latE6": 37918587,
-                  "lngE6": 139020104,
-                  "name": "Niigata, Japan"
-                },
-                {
-                  "latE6": 34932387,
-                  "lngE6": 138398162,
-                  "name": "Shizuoka, Japan"
-                },
-                {
-                  "latE6": 31396765,
-                  "lngE6": 121508254,
-                  "name": "Shanghai (Baoshan District), China"
-                },
-                {
-                  "latE6": 5988274,
-                  "lngE6": 116078676,
-                  "name": "Kota Kinabalu, Malaysia"
-                },
-                {
-                  "latE6": 22372985,
-                  "lngE6": 113971144,
-                  "name": "Tuen Mun, Hong Kong"
-                },
-                {
-                  "latE6": 1305578,
-                  "lngE6": 103929822,
-                  "name": "Bedok, Singapore"
-                },
-                {
-                  "latE6": -33458729,
-                  "lngE6": -70663691,
-                  "name": "Santiago, Chile"
-                },
-                {
-                  "latE6": -12087701,
-                  "lngE6": -77032791,
-                  "name": "Lima, Peru"
-                },
-                {
-                  "latE6": 43668127,
-                  "lngE6": -79292193,
-                  "name": "Toronto, Canada"
-                },
-                {
-                  "latE6": 9939679,
-                  "lngE6": -84100880,
-                  "name": "San Jose, Costa Rica"
-                },
-                {
-                  "latE6": 25708295,
-                  "lngE6": -100327602,
-                  "name": "Monterrey, Mexico"
-                },
-                {
-                  "latE6": 40771899,
-                  "lngE6": -111905166,
-                  "name": "Salt Lake City, UT, USA"
-                },
-                {
-                  "latE6": 36163786,
-                  "lngE6": -115289995,
-                  "name": "Las Vegas, NV, USA"
-                },
-                {
-                  "latE6": 32708118,
-                  "lngE6": -117170089,
-                  "name": "San Diego, CA, USA"
-                }
+                { "latE6": -25276576, "lngE6": 152759054, "name": "Hervey Bay, Australia" },
+                { "latE6": -42880779, "lngE6": 147332470, "name": "Hobart, Australia" },
+                { "latE6": 37918587, "lngE6": 139020104, "name": "Niigata, Japan" },
+                { "latE6": 34932387, "lngE6": 138398162, "name": "Shizuoka, Japan" },
+                { "latE6": 31396765, "lngE6": 121508254, "name": "Shanghai (Baoshan District), China" },
+                { "latE6": 5988274, "lngE6": 116078676, "name": "Kota Kinabalu, Malaysia" },
+                { "latE6": 22372985, "lngE6": 113971144, "name": "Tuen Mun, Hong Kong" },
+                { "latE6": 1305578, "lngE6": 103929822, "name": "Bedok, Singapore" },
+                { "latE6": -33458729, "lngE6": -70663691, "name": "Santiago, Chile" },
+                { "latE6": -12087701, "lngE6": -77032791, "name": "Lima, Peru" },
+                { "latE6": 43668127, "lngE6": -79292193, "name": "Toronto, Canada" },
+                { "latE6": 9939679, "lngE6": -84100880, "name": "San Jose, Costa Rica" },
+                { "latE6": 25708295, "lngE6": -100327602, "name": "Monterrey, Mexico" },
+                { "latE6": 40771899, "lngE6": -111905166, "name": "Salt Lake City, UT, USA" },
+                { "latE6": 36163786, "lngE6": -115289995, "name": "Las Vegas, NV, USA" },
+                { "latE6": 32708118, "lngE6": -117170089, "name": "San Diego, CA, USA" }
               ]
             },
             {
               "date": "2025-05-31",
               "sites": [
-                {
-                  "latE6": -42459892,
-                  "lngE6": 171188888,
-                  "name": "Greymouth, New Zealand"
-                },
-                {
-                  "latE6": 33968082,
-                  "lngE6": 130922424,
-                  "name": "Shimonoseki, Japan"
-                },
-                {
-                  "latE6": 37473785,
-                  "lngE6": 126596846,
-                  "name": "Incheon, South Korea"
-                },
-                {
-                  "latE6": -5122288,
-                  "lngE6": 119407636,
-                  "name": "Makassar, Indonesia"
-                },
-                {
-                  "latE6": 24415211,
-                  "lngE6": 118287035,
-                  "name": "Kinmen, Taiwan"
-                },
-                {
-                  "latE6": 38931285,
-                  "lngE6": 117695426,
-                  "name": "Tianjin, China"
-                },
-                {
-                  "latE6": 22213466,
-                  "lngE6": 113555130,
-                  "name": "Macao"
-                },
-                {
-                  "latE6": 4172920,
-                  "lngE6": 73505152,
-                  "name": "Male, Maldives"
-                },
-                {
-                  "latE6": 25226669,
-                  "lngE6": 55256325,
-                  "name": "Dubai, United Arab Emirates"
-                },
-                {
-                  "latE6": 42694622,
-                  "lngE6": 23325489,
-                  "name": "Sofia, Bulgaria"
-                },
-                {
-                  "latE6": 49832194,
-                  "lngE6": 18297721,
-                  "name": "Ostrava, Czechia"
-                },
-                {
-                  "latE6": 48144939,
-                  "lngE6": 17211458,
-                  "name": "Bratislava, Slovakia"
-                },
-                {
-                  "latE6": 53336426,
-                  "lngE6": 6928437,
-                  "name": "Delfzijl, Netherlands"
-                },
-                {
-                  "latE6": 58973682,
-                  "lngE6": 5723618,
-                  "name": "Stavanger, Norway"
-                },
-                {
-                  "latE6": 51034742,
-                  "lngE6": 3739230,
-                  "name": "Ghent, Belgium"
-                },
-                {
-                  "latE6": 41654911,
-                  "lngE6": -866423,
-                  "name": "Zaragoza, Spain"
-                }
+                { "latE6": -42459892, "lngE6": 171188888, "name": "Greymouth, New Zealand" },
+                { "latE6": 33968082, "lngE6": 130922424, "name": "Shimonoseki, Japan" },
+                { "latE6": 37473785, "lngE6": 126596846, "name": "Incheon, South Korea" },
+                { "latE6": -5122288, "lngE6": 119407636, "name": "Makassar, Indonesia" },
+                { "latE6": 24415211, "lngE6": 118287035, "name": "Kinmen, Taiwan" },
+                { "latE6": 38931285, "lngE6": 117695426, "name": "Tianjin, China" },
+                { "latE6": 22213466, "lngE6": 113555130, "name": "Macao" },
+                { "latE6": 4172920, "lngE6": 73505152, "name": "Male, Maldives" },
+                { "latE6": 25226669, "lngE6": 55256325, "name": "Dubai, United Arab Emirates" },
+                { "latE6": 42694622, "lngE6": 23325489, "name": "Sofia, Bulgaria" },
+                { "latE6": 49832194, "lngE6": 18297721, "name": "Ostrava, Czechia" },
+                { "latE6": 48144939, "lngE6": 17211458, "name": "Bratislava, Slovakia" },
+                { "latE6": 53336426, "lngE6": 6928437, "name": "Delfzijl, Netherlands" },
+                { "latE6": 58973682, "lngE6": 5723618, "name": "Stavanger, Norway" },
+                { "latE6": 51034742, "lngE6": 3739230, "name": "Ghent, Belgium" },
+                { "latE6": 41654911, "lngE6": -866423, "name": "Zaragoza, Spain" }
               ]
             },
             {
               "date": "2025-06-07",
               "sites": [
-                {
-                  "latE6": 56948074,
-                  "lngE6": 24092924,
-                  "name": "Riga, Latvia"
-                },
-                {
-                  "latE6": -33904627,
-                  "lngE6": 18400743,
-                  "name": "Cape Town, South Africa"
-                },
-                {
-                  "latE6": 52349598,
-                  "lngE6": 16871287,
-                  "name": "Poznań, Poland"
-                },
-                {
-                  "latE6": 41775968,
-                  "lngE6": 12226146,
-                  "name": "Fiumicino, Italy"
-                },
-                {
-                  "latE6": 49402317,
-                  "lngE6": 11098584,
-                  "name": "Nürnberg, Germany"
-                },
-                {
-                  "latE6": 45726344,
-                  "lngE6": 4779117,
-                  "name": "Lyon, France"
-                },
-                {
-                  "latE6": 50361347,
-                  "lngE6": -4167040,
-                  "name": "Plymouth, UK"
-                },
-                {
-                  "latE6": 38744501,
-                  "lngE6": -9097674,
-                  "name": "Lisboa, Portugal"
-                },
-                {
-                  "latE6": -8068132,
-                  "lngE6": -34876334,
-                  "name": "Recife, Brazil"
-                },
-                {
-                  "latE6": -22936512,
-                  "lngE6": -43169418,
-                  "name": "Rio de Janeiro, Brazil"
-                },
-                {
-                  "latE6": 10409280,
-                  "lngE6": -75551662,
-                  "name": "Cartagena, Colombia"
-                },
-                {
-                  "latE6": 28531300,
-                  "lngE6": -81376395,
-                  "name": "Orlando, FL, USA"
-                },
-                {
-                  "latE6": 39965646,
-                  "lngE6": -83018901,
-                  "name": "Columbus, OH, USA"
-                },
-                {
-                  "latE6": 42993764,
-                  "lngE6": -87881050,
-                  "name": "Milwaukee, WI, USA"
-                },
-                {
-                  "latE6": 32763671,
-                  "lngE6": -97314069,
-                  "name": "Fort Worth, TX, USA"
-                },
-                {
-                  "latE6": 49203970,
-                  "lngE6": -122906085,
-                  "name": "Vancouver, Canada"
-                }
+                { "latE6": 56948074, "lngE6": 24092924, "name": "Riga, Latvia" },
+                { "latE6": -33904627, "lngE6": 18400743, "name": "Cape Town, South Africa" },
+                { "latE6": 52349598, "lngE6": 16871287, "name": "Poznań, Poland" },
+                { "latE6": 41775968, "lngE6": 12226146, "name": "Fiumicino, Italy" },
+                { "latE6": 49402317, "lngE6": 11098584, "name": "Nürnberg, Germany" },
+                { "latE6": 45726344, "lngE6": 4779117, "name": "Lyon, France" },
+                { "latE6": 50361347, "lngE6": -4167040, "name": "Plymouth, UK" },
+                { "latE6": 38744501, "lngE6": -9097674, "name": "Lisboa, Portugal" },
+                { "latE6": -8068132, "lngE6": -34876334, "name": "Recife, Brazil" },
+                { "latE6": -22936512, "lngE6": -43169418, "name": "Rio de Janeiro, Brazil" },
+                { "latE6": 10409280, "lngE6": -75551662, "name": "Cartagena, Colombia" },
+                { "latE6": 28531300, "lngE6": -81376395, "name": "Orlando, FL, USA" },
+                { "latE6": 39965646, "lngE6": -83018901, "name": "Columbus, OH, USA" },
+                { "latE6": 42993764, "lngE6": -87881050, "name": "Milwaukee, WI, USA" },
+                { "latE6": 32763671, "lngE6": -97314069, "name": "Fort Worth, TX, USA" },
+                { "latE6": 49203970, "lngE6": -122906085, "name": "Vancouver, Canada" }
               ]
             }
           ],
           "mechanics": {
             "shards": {
               "shardMechanics": "1w_370m_6j",
-              "scoring": {
-                "rules": ["singular_jump_1-5", "singular_jump_100"]
-              }
+              "scoring": { "linkRules": ["singular_jump_1-5", "singular_jump_100"] }
             }
           }
         }
@@ -418,21 +164,7 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "scoring": {
-                "rules": [
-                  "default_jump",
-                  "anomaly_zone_arrival_499.5",
-                  "secured_target_6-4"
-                ],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 100
-              },
-              "targetMechanics": "6w_30m_4t"
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         }
       ]
     },
@@ -445,21 +177,7 @@
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
-          "mechanics": {
-            "shards": {
-              "shardMechanics": "6w_30m_3j",
-              "scoring": {
-                "rules": [
-                  "default_jump",
-                  "anomaly_zone_arrival_499.5",
-                  "secured_target_6-4"
-                ],
-                "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 100
-              },
-              "targetMechanics": "6w_30m_4t"
-            }
-          }
+          "mechanics": { "shards": { "shardMechanics": "6w_30m_3j", "scoring": { "linkRules": ["default_jump"] } } }
         },
         {
           "eventType": "STORM",
@@ -468,270 +186,68 @@
             {
               "date": "2025-12-13",
               "sites": [
-                {
-                  "latE6": -34922550,
-                  "lngE6": 138601888,
-                  "name": "Adelaide, Australia"
-                },
-                {
-                  "latE6": -27497104,
-                  "lngE6": 153012826,
-                  "name": "Brisbane, Australia"
-                },
-                {
-                  "latE6": 34705878,
-                  "lngE6": 135490102,
-                  "name": "Osaka, Japan"
-                },
-                {
-                  "latE6": 37946983,
-                  "lngE6": 139130525,
-                  "name": "Niigata, Japan"
-                },
-                {
-                  "latE6": 37516943,
-                  "lngE6": 127117784,
-                  "name": "Seoul, South Korea"
-                },
-                {
-                  "latE6": 14550500,
-                  "lngE6": 121050378,
-                  "name": "Manilla, Philippines"
-                },
-                {
-                  "latE6": 22623386,
-                  "lngE6": 120300509,
-                  "name": "Kaohsiung, Taiwan"
-                },
-                {
-                  "latE6": 31236418,
-                  "lngE6": 121458607,
-                  "name": "Shanghai, China"
-                },
-                {
-                  "latE6": 23172147,
-                  "lngE6": 113445608,
-                  "name": "Guangzhou, China"
-                },
-                {
-                  "latE6": 30631969,
-                  "lngE6": 104054706,
-                  "name": "Chengdu, China"
-                },
-                {
-                  "latE6": 3135666,
-                  "lngE6": 101622957,
-                  "name": "Kuala Lumpur, Malaysia"
-                },
-                {
-                  "latE6": 45222188,
-                  "lngE6": 10253609,
-                  "name": "Ostiano, Italy"
-                },
-                {
-                  "latE6": 55650551,
-                  "lngE6": 12274338,
-                  "name": "Taastrup, Denmark"
-                },
-                {
-                  "latE6": 47490885,
-                  "lngE6": 19058429,
-                  "name": "Budapest, Hungary"
-                },
-                {
-                  "latE6": 50088688,
-                  "lngE6": 14428944,
-                  "name": "Prague, Czech Republic"
-                },
-                {
-                  "latE6": 51829644,
-                  "lngE6": 5798347,
-                  "name": "Nijmegen, The Netherlands"
-                },
-                {
-                  "latE6": 48779612,
-                  "lngE6": 1959639,
-                  "name": "Élancourt, France"
-                },
-                {
-                  "latE6": 42535709,
-                  "lngE6": 1582107,
-                  "name": "Encamp, Andorra"
-                },
-                {
-                  "latE6": 57131488,
-                  "lngE6": -2103908,
-                  "name": "Aberdeen, Scotland"
-                },
-                {
-                  "latE6": -23530019,
-                  "lngE6": -46667488,
-                  "name": "São Paulo, Brazil"
-                },
-                {
-                  "latE6": -25294743,
-                  "lngE6": -57581991,
-                  "name": "Asuncion, Paraguay"
-                },
-                {
-                  "latE6": -33499172,
-                  "lngE6": -70704768,
-                  "name": "Santiago, Chile"
-                },
-                {
-                  "latE6": 27768118,
-                  "lngE6": -82660363,
-                  "name": "St. Petersburg, FL, USA"
-                },
-                {
-                  "latE6": 40738902,
-                  "lngE6": -73806467,
-                  "name": "New York City, NY, USA"
-                },
-                {
-                  "latE6": 37692087,
-                  "lngE6": -122088108,
-                  "name": "Castro Valley, CA, USA"
-                }
+                { "latE6": -34922550, "lngE6": 138601888, "name": "Adelaide, Australia" },
+                { "latE6": -27497104, "lngE6": 153012826, "name": "Brisbane, Australia" },
+                { "latE6": 34705878, "lngE6": 135490102, "name": "Osaka, Japan" },
+                { "latE6": 37946983, "lngE6": 139130525, "name": "Niigata, Japan" },
+                { "latE6": 37516943, "lngE6": 127117784, "name": "Seoul, South Korea" },
+                { "latE6": 14550500, "lngE6": 121050378, "name": "Manilla, Philippines" },
+                { "latE6": 22623386, "lngE6": 120300509, "name": "Kaohsiung, Taiwan" },
+                { "latE6": 31236418, "lngE6": 121458607, "name": "Shanghai, China" },
+                { "latE6": 23172147, "lngE6": 113445608, "name": "Guangzhou, China" },
+                { "latE6": 30631969, "lngE6": 104054706, "name": "Chengdu, China" },
+                { "latE6": 3135666, "lngE6": 101622957, "name": "Kuala Lumpur, Malaysia" },
+                { "latE6": 45222188, "lngE6": 10253609, "name": "Ostiano, Italy" },
+                { "latE6": 55650551, "lngE6": 12274338, "name": "Taastrup, Denmark" },
+                { "latE6": 47490885, "lngE6": 19058429, "name": "Budapest, Hungary" },
+                { "latE6": 50088688, "lngE6": 14428944, "name": "Prague, Czech Republic" },
+                { "latE6": 51829644, "lngE6": 5798347, "name": "Nijmegen, The Netherlands" },
+                { "latE6": 48779612, "lngE6": 1959639, "name": "Élancourt, France" },
+                { "latE6": 42535709, "lngE6": 1582107, "name": "Encamp, Andorra" },
+                { "latE6": 57131488, "lngE6": -2103908, "name": "Aberdeen, Scotland" },
+                { "latE6": -23530019, "lngE6": -46667488, "name": "São Paulo, Brazil" },
+                { "latE6": -25294743, "lngE6": -57581991, "name": "Asuncion, Paraguay" },
+                { "latE6": -33499172, "lngE6": -70704768, "name": "Santiago, Chile" },
+                { "latE6": 27768118, "lngE6": -82660363, "name": "St. Petersburg, FL, USA" },
+                { "latE6": 40738902, "lngE6": -73806467, "name": "New York City, NY, USA" },
+                { "latE6": 37692087, "lngE6": -122088108, "name": "Castro Valley, CA, USA" }
               ]
             },
             {
               "date": "2025-12-14",
               "sites": [
-                {
-                  "latE6": -41276402,
-                  "lngE6": 174778411,
-                  "name": "Wellington, New Zealand"
-                },
-                {
-                  "latE6": -37821235,
-                  "lngE6": 144964248,
-                  "name": "Melbourne, Australia"
-                },
-                {
-                  "latE6": 35673793,
-                  "lngE6": 139754501,
-                  "name": "Tokyo, Japan"
-                },
-                {
-                  "latE6": 33587325,
-                  "lngE6": 130378273,
-                  "name": "Fukuoka, Japan"
-                },
-                {
-                  "latE6": 26207856,
-                  "lngE6": 127769824,
-                  "name": "Nishihara, Okinawa, Japan"
-                },
-                {
-                  "latE6": 1288061,
-                  "lngE6": 103851967,
-                  "name": "Singapore"
-                },
-                {
-                  "latE6": 24534758,
-                  "lngE6": 118159324,
-                  "name": "Xiamen, China"
-                },
-                {
-                  "latE6": 39982822,
-                  "lngE6": 116489705,
-                  "name": "Bejing, China"
-                },
-                {
-                  "latE6": 13733875,
-                  "lngE6": 100531087,
-                  "name": "Bangkok, Thailand"
-                },
-                {
-                  "latE6": 60201003,
-                  "lngE6": 24861644,
-                  "name": "Helsinki, Finland"
-                },
-                {
-                  "latE6": 59914956,
-                  "lngE6": 10733085,
-                  "name": "Oslo, Norway"
-                },
-                {
-                  "latE6": 49449566,
-                  "lngE6": 7770247,
-                  "name": "Kaiserslautern, Germany"
-                },
-                {
-                  "latE6": 53075904,
-                  "lngE6": 8822793,
-                  "name": "Bremen, Germany"
-                },
-                {
-                  "latE6": 52675691,
-                  "lngE6": 13588255,
-                  "name": "Bernau bei Berlin, Germany"
-                },
-                {
-                  "latE6": 49193149,
-                  "lngE6": 16608733,
-                  "name": "Brno, Czech Republic"
-                },
-                {
-                  "latE6": 44060507,
-                  "lngE6": 12565574,
-                  "name": "Rimini, Italy"
-                },
-                {
-                  "latE6": 52193480,
-                  "lngE6": 135185,
-                  "name": "Cambridge, UK"
-                },
-                {
-                  "latE6": 54979022,
-                  "lngE6": -1614817,
-                  "name": "Newcastle upon Tyne, UK"
-                },
-                {
-                  "latE6": 38896679,
-                  "lngE6": -9039432,
-                  "name": "Alverca do Ribatejo, Portugal"
-                },
-                {
-                  "latE6": -34909343,
-                  "lngE6": -56190921,
-                  "name": "Montevideo, Uruguay"
-                },
-                {
-                  "latE6": -12088177,
-                  "lngE6": -77039010,
-                  "name": "Lima, Peru"
-                },
-                {
-                  "latE6": 4698384,
-                  "lngE6": -74090503,
-                  "name": "Bogotá, Colombia"
-                },
-                {
-                  "latE6": 41560820,
-                  "lngE6": -81443000,
-                  "name": "Cleveland, OH, USA"
-                },
-                {
-                  "latE6": 40522836,
-                  "lngE6": -111854209,
-                  "name": "Draper, UT, USA"
-                },
-                {
-                  "latE6": 48460327,
-                  "lngE6": -123317879,
-                  "name": "Victoria, BC, Canada"
-                }
+                { "latE6": -41276402, "lngE6": 174778411, "name": "Wellington, New Zealand" },
+                { "latE6": -37821235, "lngE6": 144964248, "name": "Melbourne, Australia" },
+                { "latE6": 35673793, "lngE6": 139754501, "name": "Tokyo, Japan" },
+                { "latE6": 33587325, "lngE6": 130378273, "name": "Fukuoka, Japan" },
+                { "latE6": 26207856, "lngE6": 127769824, "name": "Nishihara, Okinawa, Japan" },
+                { "latE6": 1288061, "lngE6": 103851967, "name": "Singapore" },
+                { "latE6": 24534758, "lngE6": 118159324, "name": "Xiamen, China" },
+                { "latE6": 39982822, "lngE6": 116489705, "name": "Bejing, China" },
+                { "latE6": 13733875, "lngE6": 100531087, "name": "Bangkok, Thailand" },
+                { "latE6": 60201003, "lngE6": 24861644, "name": "Helsinki, Finland" },
+                { "latE6": 59914956, "lngE6": 10733085, "name": "Oslo, Norway" },
+                { "latE6": 49449566, "lngE6": 7770247, "name": "Kaiserslautern, Germany" },
+                { "latE6": 53075904, "lngE6": 8822793, "name": "Bremen, Germany" },
+                { "latE6": 52675691, "lngE6": 13588255, "name": "Bernau bei Berlin, Germany" },
+                { "latE6": 49193149, "lngE6": 16608733, "name": "Brno, Czech Republic" },
+                { "latE6": 44060507, "lngE6": 12565574, "name": "Rimini, Italy" },
+                { "latE6": 52193480, "lngE6": 135185, "name": "Cambridge, UK" },
+                { "latE6": 54979022, "lngE6": -1614817, "name": "Newcastle upon Tyne, UK" },
+                { "latE6": 38896679, "lngE6": -9039432, "name": "Alverca do Ribatejo, Portugal" },
+                { "latE6": -34909343, "lngE6": -56190921, "name": "Montevideo, Uruguay" },
+                { "latE6": -12088177, "lngE6": -77039010, "name": "Lima, Peru" },
+                { "latE6": 4698384, "lngE6": -74090503, "name": "Bogotá, Colombia" },
+                { "latE6": 41560820, "lngE6": -81443000, "name": "Cleveland, OH, USA" },
+                { "latE6": 40522836, "lngE6": -111854209, "name": "Draper, UT, USA" },
+                { "latE6": 48460327, "lngE6": -123317879, "name": "Victoria, BC, Canada" }
               ]
             }
           ],
           "mechanics": {
             "shards": {
               "shardMechanics": "1w_480m_4j",
-              "scoring": {
-                "rules": ["storm_jump_1-5", "storm_jump_10"]
-              }
+              "scoring": { "linkRules": ["storm_jump_1-5", "storm_jump_10"] }
             }
           }
         }
@@ -742,7 +258,6 @@
       "name": "+Gamma",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-plusgamma",
-      "defaultView": true,
       "components": [
         {
           "eventType": "ANOMALY",
@@ -751,46 +266,22 @@
             {
               "date": "2026-02-28",
               "sites": [
-                {
-                  "latE6": 38735457,
-                  "lngE6": -9146392,
-                  "name": "Lisbon, Portugal"
-                },
-                {
-                  "latE6": 35227077,
-                  "lngE6": -80840893,
-                  "name": "Charlotte, NC, USA"
-                }
+                { "latE6": 38735457, "lngE6": -9146392, "name": "Lisbon, Portugal" },
+                { "latE6": 35227077, "lngE6": -80840893, "name": "Charlotte, NC, USA" }
               ]
             },
             {
               "date": "2026-03-14",
               "sites": [
-                {
-                  "latE6": 22378599,
-                  "lngE6": 114190263,
-                  "name": "Hong Kong"
-                },
-                {
-                  "latE6": 45815011,
-                  "lngE6": 15981919,
-                  "name": "Zagreb, Croatia"
-                }
+                { "latE6": 22378599, "lngE6": 114190263, "name": "Hong Kong" },
+                { "latE6": 45815011, "lngE6": 15981919, "name": "Zagreb, Croatia" }
               ]
             },
             {
               "date": "2026-03-21",
               "sites": [
-                {
-                  "latE6": 17406498,
-                  "lngE6": 78477244,
-                  "name": "Hyderabad, Telangana, India"
-                },
-                {
-                  "latE6": -34588391,
-                  "lngE6": -58424828,
-                  "name": "Buenos Aires, Argentina"
-                }
+                { "latE6": 17406498, "lngE6": 78477244, "name": "Hyderabad, Telangana, India" },
+                { "latE6": -34588391, "lngE6": -58424828, "name": "Buenos Aires, Argentina" }
               ]
             }
           ],
@@ -798,13 +289,10 @@
             "shards": {
               "shardMechanics": "6w_30m_3j",
               "scoring": {
-                "rules": [
-                  "default_jump",
-                  "anomaly_zone_arrival_499.5",
-                  "secured_target_6-4"
-                ],
                 "wavePointAggregation": [[1, 2, 3, 4, 5, 6]],
-                "seasonPoints": 100
+                "seasonPoints": 100,
+                "linkRules": ["default_jump", "anomaly_zone_arrival_499.5"],
+                "goalRules": ["secured_target_6-4"]
               },
               "targetMechanics": "6w_30m_4t"
             }
@@ -817,24 +305,14 @@
             {
               "date": "2026-02-08",
               "sites": [
-                {
-                  "shardCounts": [6, 6, 6, 6, 6, 6],
-                  "latE6": 41784760,
-                  "lngE6": 123416287,
-                  "name": "Shenyang, China"
-                },
+                { "shardCounts": [6, 6, 6, 6, 6, 6], "latE6": 41784760, "lngE6": 123416287, "name": "Shenyang, China" },
                 {
                   "shardCounts": [10, 10, 10, 10, 10, 10],
                   "latE6": 6024583,
                   "lngE6": 80219353,
                   "name": "Galle, Sri Lanka"
                 },
-                {
-                  "shardCounts": [5, 5, 5, 5, 5, 5],
-                  "latE6": 56647460,
-                  "lngE6": 23716628,
-                  "name": "Jelgava, Latvia"
-                },
+                { "shardCounts": [5, 5, 5, 5, 5, 5], "latE6": 56647460, "lngE6": 23716628, "name": "Jelgava, Latvia" },
                 {
                   "shardCounts": [7, 7, 7, 7, 7, 7],
                   "latE6": 50230430,
@@ -853,37 +331,21 @@
                   "lngE6": 119621994,
                   "name": "Parepare, Indonesia"
                 },
-                {
-                  "shardCounts": [7, 7, 7, 7, 7, 7],
-                  "latE6": 49442104,
-                  "lngE6": 1076852,
-                  "name": "Rouen, France"
-                },
+                { "shardCounts": [7, 7, 7, 7, 7, 7], "latE6": 49442104, "lngE6": 1076852, "name": "Rouen, France" },
                 {
                   "shardCounts": [6, 6, 6, 6, 6, 6],
                   "latE6": -33487538,
                   "lngE6": -70650751,
                   "name": "Santiago, Chile"
                 },
-                {
-                  "shardCounts": [4, 4, 4, 4, 4, 4],
-                  "latE6": 43641359,
-                  "lngE6": -79377360,
-                  "name": "Toronto, Canada"
-                }
+                { "shardCounts": [4, 4, 4, 4, 4, 4], "latE6": 43641359, "lngE6": -79377360, "name": "Toronto, Canada" }
               ]
             }
           ],
           "mechanics": {
             "shards": {
               "shardMechanics": "6w_16m_1j",
-              "scoring": {
-                "rules": [
-                  "investigation_jump_500",
-                  "investigation_jump_200",
-                  "nl1331_arrival"
-                ]
-              }
+              "scoring": { "linkRules": ["investigation_jump_500", "investigation_jump_200", "nl1331_arrival"] }
             }
           }
         }
@@ -902,46 +364,22 @@
             {
               "date": "2026-05-16",
               "sites": [
-                {
-                  "latE6": -33862250,
-                  "lngE6": 151207684,
-                  "name": "Sydney, NSW, Australia"
-                },
-                {
-                  "latE6": 50075538,
-                  "lngE6": 14437800,
-                  "name": "Prague, Czechia"
-                }
+                { "latE6": -33862250, "lngE6": 151207684, "name": "Sydney, NSW, Australia" },
+                { "latE6": 50075538, "lngE6": 14437800, "name": "Prague, Czechia" }
               ]
             },
             {
               "date": "2026-05-30",
               "sites": [
-                {
-                  "latE6": 34248948,
-                  "lngE6": 132565527,
-                  "name": "Kure City, Hiroshima Pref, Japan"
-                },
-                {
-                  "latE6": 40719534,
-                  "lngE6": -74043013,
-                  "name": "Jersey City, New Jersey, USA"
-                }
+                { "latE6": 34248948, "lngE6": 132565527, "name": "Kure City, Hiroshima Pref, Japan" },
+                { "latE6": 40719534, "lngE6": -74043013, "name": "Jersey City, New Jersey, USA" }
               ]
             },
             {
               "date": "2026-06-20",
               "sites": [
-                {
-                  "latE6": 46204391,
-                  "lngE6": 6143158,
-                  "name": "Geneva, Switzerland"
-                },
-                {
-                  "latE6": -12046689,
-                  "lngE6": -77043089,
-                  "name": "Lima, Peru"
-                }
+                { "latE6": 46204391, "lngE6": 6143158, "name": "Geneva, Switzerland" },
+                { "latE6": -12046689, "lngE6": -77043089, "name": "Lima, Peru" }
               ]
             }
           ],
@@ -949,17 +387,14 @@
             "shards": {
               "shardMechanics": "6w_30m_4j",
               "scoring": {
-                "rules": [
-                  "default_jump",
-                  "anomaly_zone_arrival_499.5",
-                  "secured_target_5-4"
-                ],
                 "wavePointAggregation": [
                   [1, 2],
                   [3, 4],
                   [5, 6]
                 ],
-                "seasonPoints": 100
+                "seasonPoints": 100,
+                "linkRules": ["default_jump", "anomaly_zone_arrival_499.5"],
+                "goalRules": ["secured_target_5-4"]
               },
               "targetMechanics": "6w_30m_6t"
             }
@@ -980,17 +415,14 @@
           "mechanics": {
             "shards": {
               "scoring": {
-                "rules": [
-                  "default_jump",
-                  "anomaly_zone_arrival_499.5",
-                  "secured_target_5-4"
-                ],
                 "seasonPoints": 100,
                 "wavePointAggregation": [
                   [1, 2],
                   [3, 4],
                   [5, 6]
-                ]
+                ],
+                "linkRules": ["default_jump", "anomaly_zone_arrival_499.5"],
+                "goalRules": ["secured_target_5-4"]
               },
               "shardMechanics": "6w_30m_4j",
               "targetMechanics": "6w_30m_6t"
@@ -1000,46 +432,22 @@
             {
               "date": "2026-07-18",
               "sites": [
-                {
-                  "name": "Helsinki, Finland",
-                  "latE6": 60169856,
-                  "lngE6": 24938379
-                },
-                {
-                  "name": "Bogotá, Colombia",
-                  "latE6": 4710989,
-                  "lngE6": -74072092
-                }
+                { "name": "Helsinki, Finland", "latE6": 60169856, "lngE6": 24938379 },
+                { "name": "Bogotá, Colombia", "latE6": 4710989, "lngE6": -74072092 }
               ]
             },
             {
               "date": "2026-08-22",
               "sites": [
-                {
-                  "name": "Seoul, South Korea",
-                  "latE6": 37550263,
-                  "lngE6": 126997083
-                },
-                {
-                  "name": "Paris, France",
-                  "latE6": 48857548,
-                  "lngE6": 2351377
-                }
+                { "name": "Seoul, South Korea", "latE6": 37550263, "lngE6": 126997083 },
+                { "name": "Paris, France", "latE6": 48857548, "lngE6": 2351377 }
               ]
             },
             {
               "date": "2026-09-19",
               "sites": [
-                {
-                  "name": "Singapore",
-                  "latE6": 1352083,
-                  "lngE6": 103819836
-                },
-                {
-                  "name": "Denver CO, USA",
-                  "latE6": 39739236,
-                  "lngE6": -104990251
-                }
+                { "name": "Singapore", "latE6": 1352083, "lngE6": 103819836 },
+                { "name": "Denver CO, USA", "latE6": 39739236, "lngE6": -104990251 }
               ]
             }
           ]

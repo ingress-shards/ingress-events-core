@@ -1,4 +1,4 @@
-import type { SeasonMetadata, SiteGeocode, ShardMechanics, TargetMechanics, ShardScoringRule } from "../types/index.js";
+import type { SeasonMetadata, SiteGeocode, ShardMechanics, TargetMechanics, ShardLinkScoringRule, ShardGoalScoringRule } from "../types/index.js";
 import type { SiteId } from "../common/Identifiers.js";
 import type { ShardAction } from "../sites/Shard.js";
 
@@ -27,8 +27,10 @@ export interface SiteConfig {
             /** Target mechanics used at this site */
             targetMechanics?: TargetMechanics;
             scoring: {
-                /** Scoring rules for shards */
-                shardScoringRules: Record<string, ShardScoringRule>;
+                /** Scoring rules for shard links */
+                linkScoringRules: Record<string, ShardLinkScoringRule>;
+                /** Scoring rules for shard goals */
+                goalScoringRules?: Record<string, ShardGoalScoringRule>;
                 /** For each wave, an array of point values for each scoring event within that wave. */
                 wavePointAggregation?: number[][];
                 /** Optional static season points override */
