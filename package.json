@@ -53,24 +53,24 @@
         "validate:docker": "docker build -f Dockerfile.validate -t ingress-events-core-validate . && docker run --rm ingress-events-core-validate"
     },
     "dependencies": {
-        "temporal-polyfill": "^1.0.2"
+        "temporal-polyfill": "^1.0.4"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@semantic-release/exec": "^7.1.0",
-        "@types/node": "^26.1.2",
+        "@types/node": "^26.2.0",
         "@vitest/coverage-v8": "^4.1.10",
-        "conventional-changelog-conventionalcommits": "^10.2.1",
-        "eslint": "^10.8.0",
+        "conventional-changelog-conventionalcommits": "^10.3.0",
+        "eslint": "^10.8.1",
         "eslint-plugin-prefer-arrow-functions": "^3.10.2",
         "eslint-plugin-unicorn": "^72.0.0",
-        "globals": "^17.8.0",
+        "globals": "^17.11.0",
         "semantic-release": "^25.0.9",
         "ts-node": "^10.9.2",
         "ts-to-zod": "^5.1.0",
         "tsdown": "^0.22.14",
         "typescript": "^5.9.3",
-        "typescript-eslint": "^8.65.0",
+        "typescript-eslint": "^8.67.0",
         "vitest": "4.1.10"
     },
     "resolutions": {
