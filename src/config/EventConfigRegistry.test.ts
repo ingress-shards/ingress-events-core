@@ -35,13 +35,11 @@ describe("EventConfigRegistry", () => {
                 waveActions: []
             }
         },
-        scoringRules: {
-            shards: {
-                "default_jump": {
-                    label: "Jumps",
-                    tooltip: "Shard jump along an eligible Link",
-                    points: 1
-                }
+        linkScoringRules: {
+            "default_jump": {
+                label: "Jumps",
+                tooltip: "Shard jump along an eligible Link",
+                points: 1
             }
         }
     };
@@ -62,7 +60,7 @@ describe("EventConfigRegistry", () => {
                                 shardMechanics: "test-shard-mech",
                                 targetMechanics: "test-target-mech",
                                 scoring: {
-                                    rules: ["default_jump"],
+                                    linkRules: ["default_jump"],
                                     wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
                                 }
                             }
@@ -166,17 +164,17 @@ describe("EventConfigRegistry", () => {
         }).toThrow(/after all event scheduled times/);
     });
 
-    it("should output the resulting registry for the Prague Orion anomaly config", () => {
+    it("should output the resulting registry for the Jersey City Orion anomaly config", () => {
         const registry = new EventConfigRegistry({
             eventBlueprints: realBlueprints as any,
             seasonManifest: realManifest as any,
             seasonGeocode: realGeocode as any
         });
 
-        const pragueConfig = registry.getSiteConfig("2026-orion-prague");
+        const pragueConfig = registry.getSiteConfig("2026-orion-jersey-city");
         expect(pragueConfig).toBeDefined();
         
-        console.log("=== PRAGUE CONFIG REGISTRY OUTPUT ===");
+        console.log("=== JERSEY CITY CONFIG REGISTRY OUTPUT ===");
         console.log(JSON.stringify(pragueConfig, undefined, 2));
         console.log("=====================================");
     });

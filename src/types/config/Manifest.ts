@@ -25,7 +25,8 @@ export interface SeasonComponent {
             shardMechanics: string;
             targetMechanics?: string;
             scoring: {
-                rules: string[];
+                linkRules?: string[];
+                goalRules?: string[];
                 wavePointAggregation?: number[][];
                 seasonPoints?: number;
             };

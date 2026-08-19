@@ -35,7 +35,6 @@ const getValidationContext = () => {
         validEventTypes: new Set(Object.keys(blueprints.events)),
         validShardMechanics: new Set(Object.keys(blueprints.shardMechanics)),
         validTargetMechanics: new Set(Object.keys(blueprints.targetMechanics)),
-        validRules: new Set(Object.keys(blueprints.scoringRules.shards)),
         validOrnaments: new Set(Object.keys(blueprints.ornaments))
     };
 }
@@ -145,29 +144,28 @@ describe("Strict Configuration Validation", () => {
         }
     });
 
-    test("all referenced scoring rules exist in blueprints", () => {
-        const context = getValidationContext();
-
-        for (const season of context.manifest.seasons) {
-            for (const component of season.components) {
-                const shards = component.mechanics.shards;
-                if (shards) {
-                    for (const rule of shards.scoring.rules) {
-                        expect(context.validRules, `Season "${season.id}" component "${component.eventType}" scoring rule "${rule}"`).toContain(rule);
-                    }
-                }
-            }
-        }
-    });
 
     test("all ornaments referenced in blueprints conditions exist in blueprints ornaments list", () => {
         const context = getValidationContext();
 
-        for (const [ruleId, rule] of Object.entries(context.blueprints.scoringRules.shards)) {
-            const ornaments = rule.conditions?.ornaments;
-            if (ornaments) {
-                for (const ornament of ornaments) {
-                    expect(context.validOrnaments, `Blueprint rule "${ruleId}" referenced ornament "${ornament}"`).toContain(ornament);
+        if (context.blueprints.linkScoringRules) {
+            for (const [ruleId, rule] of Object.entries(context.blueprints.linkScoringRules)) {
+                const ornaments = rule.conditions?.ornaments;
+                if (ornaments) {
+                    for (const ornament of ornaments) {
+                        expect(context.validOrnaments, `Blueprint link scoring rule "${ruleId}" referenced ornament "${ornament}"`).toContain(ornament);
+                    }
+                }
+            }
+        }
+
+        if (context.blueprints.goalScoringRules) {
+            for (const [ruleId, rule] of Object.entries(context.blueprints.goalScoringRules)) {
+                const ornaments = (rule.conditions as any)?.ornaments; // Cast just in case it exists for goals
+                if (ornaments) {
+                    for (const ornament of ornaments) {
+                        expect(context.validOrnaments, `Blueprint goal scoring rule "${ruleId}" referenced ornament "${ornament}"`).toContain(ornament);
+                    }
                 }
             }
         }

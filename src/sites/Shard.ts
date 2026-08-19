@@ -81,8 +81,8 @@ export interface ShardMove {
     shardId: number;
     /** Epoch time in milliseconds */
     moveTime: number;
-    /** Points awarded */
-    points: number;
+    /** The IDs of any scoring rules this move successfully matched and scored points for */
+    scoredRules?: string[];
     /** Whether there is an alignment mismatch for this move */
     mismatch?: boolean;
 }
