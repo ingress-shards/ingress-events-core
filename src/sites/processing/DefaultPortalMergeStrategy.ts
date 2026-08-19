@@ -120,9 +120,7 @@ export class DefaultPortalMergeStrategy implements PortalMergeStrategy {
 
         // Verify count consistency
         const portalCount = Object.keys(portals).length;
-        if (portalCount === coordToPortalIdMap.size) {
-            console.info(`[Site Observer: Portal Merge] Completed merge: ${portalCount} portals successfully processed.`);
-        } else {
+        if (portalCount !== coordToPortalIdMap.size) {
             console.warn(`[Site Observer: Portal Merge] Consistency mismatch: portals count (${portalCount}) !== coordToPortalIdMap size (${coordToPortalIdMap.size})`);
         }
 

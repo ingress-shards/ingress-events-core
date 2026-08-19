@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { SiteRecordAnalyser } from "./SiteRecordAnalyser.js";
 import type { SiteRecord } from "../Site.js";
-import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
 
 describe("SiteRecordAnalyser", () => {
     it("should handle record with no observations", () => {
@@ -15,13 +15,13 @@ describe("SiteRecordAnalyser", () => {
 
         const analysis = SiteRecordAnalyser.analyze(record);
         expect(analysis.centroid).toBeUndefined();
-        expect(analysis.siteState.counters.shards.moving).toBe(0);
-        expect(analysis.siteState.counters.shards.nonMoving).toBe(0);
-        expect(analysis.siteState.counters.links).toBe(0);
-        expect(analysis.siteState.counters.paths).toBe(0);
+        expect(analysis.hasPreEventOrnaments).toBe(false);
+        expect(analysis.waves).toEqual({});
+        expect(analysis.siteShardPaths).toEqual({});
+        expect(analysis.siteStatistics).toBeUndefined();
     });
 
-    it("should calculate correct centroid and shard/link/path counters", () => {
+    it("should calculate correct centroid and aggregated statistics when no config is provided", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -54,27 +54,18 @@ describe("SiteRecordAnalyser", () => {
 
         // Centroid calculation: avg(10, 20) = 15, avg(20, 40) = 30
         expect(analysis.centroid).toEqual({ latE6: 15000000, lngE6: 30000000 });
-
-        // Shard counts:
-        // Shard 101 moved (action: link) -> moving = 1
-        // Shard 102 did not move -> nonMoving = 1
-        expect(analysis.siteState.counters.shards.moving).toBe(1);
-        expect(analysis.siteState.counters.shards.nonMoving).toBe(1);
-
-        // Links: Shard 101 has 1 link action
-        expect(analysis.siteState.counters.links).toBe(1);
-
-        // Paths: 1 path ("1-2")
-        expect(analysis.siteState.counters.paths).toBe(1);
-        const path = analysis.siteState.shardPaths["1-2"];
-        expect(path).toBeDefined();
-        expect(path!.links.length).toBe(1);
-        expect(path!.links[0]!.team).toBe("RES");
-        expect(path!.links[0]!.moves.length).toBe(1);
-        expect(path!.links[0]!.moves[0]!.shardId).toBe(101);
+        expect(analysis.hasPreEventOrnaments).toBe(false);
+        expect(analysis.siteShardPaths).toBeDefined();
+        
+        const pathObject = analysis.siteShardPaths!["1-2"];
+        expect(pathObject).toBeDefined();
+        expect(pathObject!.links.length).toBe(1);
+        expect(pathObject!.links[0]!.team).toBe("RES");
+        expect(pathObject!.links[0]!.moves.length).toBe(1);
+        expect(pathObject!.links[0]!.moves[0]!.shardId).toBe(101);
     });
 
-    it("should calculate correct wave-by-wave shard, link, and path counts when config is provided", () => {
+    it("should calculate correct wave-by-wave statistics and shardActionWindows when config is provided", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -116,11 +107,19 @@ describe("SiteRecordAnalyser", () => {
                                 waveNumber: 1,
                                 start: 121000,
                                 end: 181000,
+                                shardsActions: [
+                                    { action: "spawn", time: 121000 },
+                                    { action: "jump", time: 150000 }
+                                ]
                             },
                             {
                                 waveNumber: 2,
                                 start: 1921000,
                                 end: 3601000,
+                                shardsActions: [
+                                    { action: "despawn", time: 2000000 },
+                                    { action: "jump", time: 2500000 }
+                                ]
                             }
                         ]
                     }
@@ -134,72 +133,21 @@ describe("SiteRecordAnalyser", () => {
         // Wave 1 checks:
         const w1 = analysis.waves[1]!;
         expect(w1).toBeDefined();
-        expect(w1.counters.shards.moving).toBe(1); // Shard 101 jumped
-        expect(w1.counters.shards.nonMoving).toBe(1); // Shard 102 present but not moving
-        expect(w1.counters.links).toBe(0);
-        expect(w1.counters.paths).toBe(0);
+        expect(w1.statistics.shards.moving).toBe(1); // Shard 101 jumped
+        expect(w1.statistics.shards.nonMoving).toBe(1); // Shard 102 present but not moving
+        expect(w1.statistics.links).toBe(0);
+        expect(w1.statistics.paths).toBe(0);
+        expect(w1.shardActionWindows.length).toBe(1);
+        expect(w1.shardActionWindows[0]!.timestamp).toBe(150000);
+        expect(w1.shardActionWindows[0]!.actionsCount).toBe(1);
 
         // Wave 2 checks:
         const w2 = analysis.waves[2]!;
         expect(w2).toBeDefined();
-        expect(w2.counters.shards.moving).toBe(1); // Shard 102 linked
-        expect(w2.counters.shards.nonMoving).toBe(1); // Shard 101 present but despawned (not jump/link)
-        expect(w2.counters.links).toBe(1); // 1 link from Shard 102
-        expect(w2.counters.paths).toBe(1); // 1 path from Shard 102 link
-        const wavePath = w2.shardPaths["1-2"];
-        expect(wavePath).toBeDefined();
-        expect(wavePath!.links.length).toBe(1);
-        expect(wavePath!.links[0]!.team).toBe("ENL");
-        expect(wavePath!.links[0]!.moves[0]!.shardId).toBe(102);
-    });
-
-    it("should handle parallel links split by team and calculate linkAlignmentMismatch correctly", () => {
-        const record: SiteRecord = {
-            metadata: {
-                siteId: "test-site",
-                seasonId: "test-season",
-                lastUpdated: 1000,
-            },
-            observations: {
-                portals: {
-                    1: { title: "P1", latE6: 10000000, lngE6: 20000000 },
-                    2: { title: "P2", latE6: 20000000, lngE6: 40000000 },
-                },
-                shards: {
-                    101: {
-                        history: [
-                            { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2000, portalId: 1, dest: 2, team: "RES", linkTime: 1500, mismatch: true },
-                        ],
-                    },
-                    102: {
-                        history: [
-                            { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2000, portalId: 1, dest: 2, team: "ENL", linkTime: 1500, mismatch: true },
-                        ],
-                    },
-                },
-            },
-        };
-
-        const analysis = SiteRecordAnalyser.analyze(record);
-        expect(analysis.siteState.counters.links).toBe(2);
-        expect(analysis.siteState.counters.paths).toBe(1);
-        expect(analysis.siteState.counters.linkAlignmentMismatch).toBe(2);
-
-        const path = analysis.siteState.shardPaths["1-2"]!;
-        expect(path.links.length).toBe(2);
-
-        const resistanceLink = path.links.find(l => l.team === "RES")!;
-        expect(resistanceLink).toBeDefined();
-        expect((resistanceLink as any).mismatch).toBeUndefined();
-        expect(resistanceLink.moves[0]!.shardId).toBe(101);
-        expect(resistanceLink.moves[0]!.mismatch).toBe(true);
-
-        const enlightenedLink = path.links.find(l => l.team === "ENL")!;
-        expect(enlightenedLink).toBeDefined();
-        expect((enlightenedLink as any).mismatch).toBeUndefined();
-        expect(enlightenedLink.moves[0]!.shardId).toBe(102);
-        expect(enlightenedLink.moves[0]!.mismatch).toBe(true);
+        expect(w2.statistics.shards.moving).toBe(1); // Shard 102 linked
+        expect(w2.statistics.shards.nonMoving).toBe(1); // Shard 101 present but despawned
+        expect(w2.statistics.links).toBe(1);
+        expect(w2.statistics.paths).toBe(1);
+        expect(w2.shardActionWindows.length).toBe(1); // despawn removed, only link at 2500000 remains
     });
 });

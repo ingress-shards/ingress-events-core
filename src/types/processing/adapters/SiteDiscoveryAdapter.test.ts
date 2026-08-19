@@ -52,7 +52,6 @@ describe("SiteDiscoveryAdapter", () => {
                                 shards: {
                                     shardMechanics: "test-shard-mech",
                                     scoring: {
-                                        rules: ["default_jump"],
                                         wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
                                     }
                                 }

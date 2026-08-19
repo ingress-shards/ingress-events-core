@@ -1,307 +1,147 @@
-import type { SiteRecord, SiteAnalysis, SiteState, Points } from "../Site.js";
-import { calculateCentroid, haversineDistance } from "../../common/Geo.js";
+import type { SiteRecord, SiteAnalysis, WaveState, Points, Statistics, SeasonPointsResult } from "../Site.js";
+import type { Shard, ShardMove, Link, ShardPath } from "../Shard.js";
+import { calculateCentroid } from "../../common/Geo.js";
 import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
-import type { Shard, ShardHistoryEntry, ShardPath } from "../Shard.js";
-import type { PortalId } from "../../common/Identifiers.js";
 import type { FactionId } from "../../common/Factions.js";
-import type { ObservedPortal } from "../Portal.js";
 import { roundToDecimalPlaces } from "../../common/Math.js";
-import { ScoringEngine } from "./ScoringEngine.js";
-
-const addShardPathEntries = (
-    shardId: number,
-    filteredHistory: ShardHistoryEntry[],
-    portals: Record<PortalId, ObservedPortal> | undefined,
-    paths: Record<string, ShardPath>
-): void => {
-    for (const h of filteredHistory) {
-        if (h.action !== "link") {
-            continue;
-        }
-
-        const origin = h.portalId;
-        const destination = h.dest;
-        if (destination === undefined) {
-            continue;
-        }
-
-        // Key is concatenation of the two portal IDs, in numerical order, with a dash
-        const p1 = Math.min(origin, destination);
-        const p2 = Math.max(origin, destination);
-        const pathKey = `${p1}-${p2}`;
-
-        // Calculate distance if portals are available
-        let distance = 0;
-        const portal1 = portals?.[p1];
-        const portal2 = portals?.[p2];
-        if (portal1 && portal2) {
-            distance = roundToDecimalPlaces(haversineDistance(portal1, portal2), 2);
-        }
-
-        // Initialize path if not present
-        paths[pathKey] ??= {
-            links: [],
-            distance
-        };
-
-        const linkTime = h.linkTime ?? h.moveTime;
-        const team = h.team ?? "NEU";
-
-        // Find or create the link on this path
-        let existingLink = paths[pathKey].links.find(l => l.linkTime === linkTime && l.team === team);
-        if (!existingLink) {
-            existingLink = {
-                linkTime,
-                team,
-                moves: []
-            };
-            paths[pathKey].links.push(existingLink);
-        }
-
-        // Add shard move along the link
-        const isMoveExists = existingLink.moves.some(m => m.shardId === shardId && m.moveTime === h.moveTime);
-        if (!isMoveExists) {
-            existingLink.moves.push({
-                origin,
-                dest: destination,
-                shardId,
-                moveTime: h.moveTime,
-                points: 0,
-                ...(h.mismatch && { mismatch: true })
-            });
-        }
-    }
-};
-
-const buildShardPaths = (
-    shardEntries: [string, Shard][],
-    portals: Record<PortalId, ObservedPortal> | undefined,
-    shouldKeepEntry?: (h: ShardHistoryEntry) => boolean
-): Record<string, ShardPath> => {
-    const paths: Record<string, ShardPath> = {};
-
-    for (const [shardIdStr, shard] of shardEntries) {
-        const shardId = Number(shardIdStr);
-        const history = shard.history || [];
-        const filteredHistory = shouldKeepEntry ? history.filter(shouldKeepEntry) : history;
-
-        addShardPathEntries(shardId, filteredHistory, portals, paths);
-    }
-
-    // Sort links by linkTime, and moves by moveTime
-    for (const path of Object.values(paths)) {
-        path.links.sort((a, b) => a.linkTime - b.linkTime);
-        for (const link of path.links) {
-            link.moves.sort((a, b) => a.moveTime - b.moveTime);
-        }
-    }
-
-    return paths;
-};
-
-const countLinkAlignmentMismatches = (pathsRecord: Record<string, ShardPath>): number => {
-    let count = 0;
-    for (const path of Object.values(pathsRecord)) {
-        for (const link of path.links) {
-            for (const move of link.moves) {
-                if (move.mismatch) count++;
-            }
-        }
-    }
-    return count;
-};
-
-interface WaveShardMovementCounters {
-    moving: number;
-    nonMoving: number;
-    links: number;
-}
-
-const countWaveShardMovement = (
-    shards: Shard[],
-    wave: { start: number; end: number },
-    counters: WaveShardMovementCounters
-): void => {
-    for (const shard of shards) {
-        const history = shard.history || [];
-
-        // Filter history entries up to the end of this wave
-        const historyUpToWaveEnd = history.filter(h => h.moveTime <= wave.end);
-        if (historyUpToWaveEnd.length === 0) {
-            continue;
-        }
-
-        // Check if it already despawned in a previous wave
-        const latestBeforeWave = historyUpToWaveEnd.at(-1)!;
-        if (latestBeforeWave.action === "despawn" && latestBeforeWave.moveTime < wave.start) {
-            continue;
-        }
-
-        // Check if it moved in this wave
-        const waveHistory = history.filter(h => h.moveTime >= wave.start && h.moveTime <= wave.end);
-        const hasMoved = waveHistory.some(h => h.action === "jump" || h.action === "link");
-
-        if (hasMoved) {
-            counters.moving++;
-        } else {
-            counters.nonMoving++;
-        }
-
-        const shardLinks = waveHistory.filter(h => h.action === "link").length;
-        counters.links += shardLinks;
-    }
-};
+import { LinkScoringEngine } from "./LinkScoringEngine.js";
+import { ShardPathBuilder } from "./ShardPathBuilder.js";
+import { WaveAnalyser } from "./WaveAnalyser.js";
 
 export const SiteRecordAnalyser = {
-    /**
-     * Enriches a SiteRecord by analyzing its observations to generate SiteAnalysis.
-     * Overwrites or populates the analysis field.
-     */
     analyze: (record: SiteRecord, config?: EventConfigRegistry): SiteAnalysis => {
-        console.log(`[Site Observer: Site Record Analysis] Analysing site ${record.metadata.siteId}, last updated ${record.metadata.lastUpdated}`);
+        console.log(`[Site Observer: Site Record Analysis] Analysing site ${record.metadata.siteId}`);
         
         const portals = record.observations?.portals ? Object.values(record.observations.portals) : [];
         const shardEntries = record.observations?.shards ? Object.entries(record.observations.shards) : [];
-        const shards = shardEntries.map(([, s]) => s);
-        const portalsMap = record.observations?.portals;
+        const shards = new Map<number, Shard>(shardEntries.map(([id, s]) => [Number(id), s]));
+        const portalsMap = record.observations?.portals ?? {};
 
-        // 1. Calculate Centroid
+        // 1. Core aggregates
         const portalCoordinates = portals.map(p => ({ latE6: p.latE6, lngE6: p.lngE6 }));
         const centroid = calculateCentroid(portalCoordinates);
+        const hasPreEventOrnaments = portals.some(p => p.history?.some(h => h.type === "pre-event"));
 
-        // 2. Calculate Shard and Link Counters
-        let movingShards = 0;
-        let nonMovingShards = 0;
-        let totalLinks = 0;
-
-        for (const shard of shards) {
-            const history = shard.history || [];
-            const hasMoved = history.some(h => h.action === "link" || h.action === "jump");
-
-            if (hasMoved) {
-                movingShards++;
-            } else {
-                nonMovingShards++;
-            }
-
-            const shardLinks = history.filter(h => h.action === "link").length;
-            totalLinks += shardLinks;
-        }
-
-        // Calculate Overall Shard Paths
-        const overallShardPaths = buildShardPaths(shardEntries, portalsMap);
-
-        // 3. Resolve configs and active rules
+        // 2. Scoring rules & config
         const siteConfig = config?.getSiteConfig(record.metadata.siteId);
         const timeline = siteConfig?.timeline;
-        const shardScoringRules = siteConfig?.mechanics?.shards?.scoring?.shardScoringRules ?? {};
+        const linkScoringRules = siteConfig?.mechanics?.shards?.scoring?.linkScoringRules ?? {};
+        const goalScoringRules = siteConfig?.mechanics?.shards?.scoring?.goalScoringRules ?? {};
 
-        // Score overall site paths
-        const overallPoints = timeline
-            ? ScoringEngine.scoreShardPaths(overallShardPaths, shardScoringRules, portalsMap ?? {}, timeline)
-            : { total: {}, jumps: { summary: {}, detail: {} }, goals: { summary: {}, detail: {} } };
+        // 3. Build overall shard paths (and score them simultaneously if timeline is available)
+        let linkScorer: undefined | ((move: ShardMove, link: Link, path: ShardPath) => string[]);
+        if (timeline) {
+            linkScorer = LinkScoringEngine.createScorer(linkScoringRules, portalsMap, timeline);
+        }
+
+        const overallShardPaths = ShardPathBuilder.buildShardPaths(shardEntries, portalsMap, linkScorer);
 
         // 4. Calculate Wave Snapshots
-        const waveStates: Record<number, SiteState> = {};
-
+        const waveStates: Record<number, WaveState> = {};
         if (timeline?.shards) {
             for (const wave of timeline.shards) {
-                const counters: WaveShardMovementCounters = { moving: 0, nonMoving: 0, links: 0 };
-                countWaveShardMovement(shards, wave, counters);
-
-                const waveShardPaths = buildShardPaths(
-                    shardEntries,
+                const ws = WaveAnalyser.buildWaveState(
+                    wave.waveNumber,
+                    wave,
+                    shards,
                     portalsMap,
-                    h => h.moveTime >= wave.start && h.moveTime <= wave.end
-                );
-
-                const wavePoints = ScoringEngine.scoreShardPaths(
-                    waveShardPaths,
-                    shardScoringRules,
-                    portalsMap ?? {},
+                    overallShardPaths,
+                    goalScoringRules,
+                    linkScoringRules,
                     timeline
                 );
-
-                waveStates[wave.waveNumber] = {
-                    shardPaths: waveShardPaths,
-                    points: wavePoints,
-                    counters: {
-                        shards: {
-                            moving: counters.moving,
-                            nonMoving: counters.nonMoving,
-                        },
-                        links: counters.links,
-                        paths: Object.keys(waveShardPaths).length,
-                        linkAlignmentMismatch: countLinkAlignmentMismatches(waveShardPaths),
-                    }
-                };
+                if (ws.shardActionWindows.length > 0) {
+                    waveStates[wave.waveNumber] = ws;
+                }
             }
         }
 
-        // 5. Aggregate wave scores and season points
+        // 5. Aggregate Wave scores to get Season Points
         const rawScores: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
+        const contributingWaves: Partial<Record<FactionId, number[]>> = { RES: [], ENL: [] };
         const wavePointAggregation = siteConfig?.mechanics?.shards?.scoring?.wavePointAggregation;
 
         if (wavePointAggregation && timeline?.shards) {
-            // Group maximums aggregation
             for (const group of wavePointAggregation) {
-                let maxResistance = 0;
-                let maxEnlightened = 0;
+                let maxRES = 0, maxENL = 0;
+                let bestResistanceWave = -1, bestEnlightenedWave = -1;
                 for (const waveNum of group) {
-                    const waveState = waveStates[waveNum];
-                    if (waveState) {
-                        maxResistance = Math.max(maxResistance, waveState.points.total.RES ?? 0);
-                        maxEnlightened = Math.max(maxEnlightened, waveState.points.total.ENL ?? 0);
+                    const ws = waveStates[waveNum];
+                    if (ws) {
+                        const resistancePoints = ws.points.total.RES ?? 0;
+                        const enlightenedPoints = ws.points.total.ENL ?? 0;
+                        if (resistancePoints > maxRES) {
+                            maxRES = resistancePoints;
+                            bestResistanceWave = waveNum;
+                        }
+                        if (enlightenedPoints > maxENL) {
+                            maxENL = enlightenedPoints;
+                            bestEnlightenedWave = waveNum;
+                        }
                     }
                 }
-                rawScores.RES = (rawScores.RES ?? 0) + maxResistance;
-                rawScores.ENL = (rawScores.ENL ?? 0) + maxEnlightened;
+                rawScores.RES += maxRES;
+                rawScores.ENL += maxENL;
+                if (bestResistanceWave !== -1) contributingWaves.RES!.push(bestResistanceWave);
+                if (bestEnlightenedWave !== -1) contributingWaves.ENL!.push(bestEnlightenedWave);
             }
         } else {
-            // Default: sum points of all waves
-            for (const waveState of Object.values(waveStates)) {
-                rawScores.RES = (rawScores.RES ?? 0) + (waveState.points.total.RES ?? 0);
-                rawScores.ENL = (rawScores.ENL ?? 0) + (waveState.points.total.ENL ?? 0);
+            for (const [waveNum, ws] of Object.entries(waveStates)) {
+                const waveNumber = Number(waveNum);
+                const resistancePoints = ws.points.total.RES ?? 0;
+                const enlightenedPoints = ws.points.total.ENL ?? 0;
+                rawScores.RES += resistancePoints;
+                rawScores.ENL += enlightenedPoints;
+                if (resistancePoints > 0) contributingWaves.RES!.push(waveNumber);
+                if (enlightenedPoints > 0) contributingWaves.ENL!.push(waveNumber);
             }
         }
 
-        // Calculate Season Points
         const seasonPointsTotal = siteConfig?.mechanics?.shards?.scoring?.seasonPoints;
-        const seasonPoints: Points = {};
+        const finalPoints: Points = {};
+        let seasonPointsResult: SeasonPointsResult | undefined;
 
-        if (seasonPointsTotal === undefined) {
-            if (rawScores.RES && rawScores.RES > 0) seasonPoints.RES = rawScores.RES;
-            if (rawScores.ENL && rawScores.ENL > 0) seasonPoints.ENL = rawScores.ENL;
-        } else {
-            const totalRaw = (rawScores.RES ?? 0) + (rawScores.ENL ?? 0);
+        if (seasonPointsTotal !== undefined) {
+            const totalRaw = rawScores.RES + rawScores.ENL;
             if (totalRaw > 0) {
-                const resistancePoints = roundToDecimalPlaces((seasonPointsTotal * (rawScores.RES ?? 0)) / totalRaw, 1);
-                const enlightenedPoints = roundToDecimalPlaces((seasonPointsTotal * (rawScores.ENL ?? 0)) / totalRaw, 1);
-                if (resistancePoints > 0) seasonPoints.RES = resistancePoints;
-                if (enlightenedPoints > 0) seasonPoints.ENL = enlightenedPoints;
+                const resistancePoints = roundToDecimalPlaces((seasonPointsTotal * rawScores.RES) / totalRaw, 1);
+                const enlightenedPoints = roundToDecimalPlaces((seasonPointsTotal * rawScores.ENL) / totalRaw, 1);
+                if (resistancePoints > 0) finalPoints.RES = resistancePoints;
+                if (enlightenedPoints > 0) finalPoints.ENL = enlightenedPoints;
             }
+            
+            seasonPointsResult = {
+                points: finalPoints,
+                ...((contributingWaves.RES!.length > 0 || contributingWaves.ENL!.length > 0) && { contributingWaves })
+            };
         }
 
-        const hasTargetData = portals.some(p => p.history?.some(h => h.type === "target"));
+        // 6. Aggregate Site-wide statistics for multi-wave events
+        let siteStatistics: Statistics | undefined;
+        if (timeline?.shards && timeline.shards.length > 1) {
+            const counters = { moving: 0, nonMoving: 0, links: 0 };
+            const fullWaveWindow = { start: timeline.shards[0]!.start, end: timeline.shards.at(-1)!.end };
+            WaveAnalyser.countWaveShardMovement(shards, fullWaveWindow, counters);
+
+            siteStatistics = {
+                shards: {
+                    moving: counters.moving,
+                    nonMoving: counters.nonMoving
+                },
+                links: counters.links,
+                paths: Object.keys(overallShardPaths).length,
+                linkAlignmentMismatch: ShardPathBuilder.countLinkAlignmentMismatches(overallShardPaths),
+                targetsCount: portals.filter(p => p.history?.some(h => h.type === "target")).length
+            };
+        }
 
         return {
             ...(centroid && { centroid }),
-            siteState: {
-                shardPaths: overallShardPaths,
-                points: overallPoints,
-                counters: {
-                    shards: {
-                        moving: movingShards,
-                        nonMoving: nonMovingShards,
-                    },
-                    links: totalLinks,
-                    paths: Object.keys(overallShardPaths).length,
-                    linkAlignmentMismatch: countLinkAlignmentMismatches(overallShardPaths),
-                },
-            },
+            ...(seasonPointsResult && { seasonPoints: seasonPointsResult }),
+            hasPreEventOrnaments,
             waves: waveStates,
-            seasonPoints,
-            hasTargetData,
+            siteShardPaths: overallShardPaths,
+            ...(siteStatistics && { siteStatistics })
         };
     }
 };
