@@ -51,7 +51,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.Scheduled,
                     timeRemaining,
                 }),
-            ).toBe("starts in<br />1h 30m");
+            ).toBe("Starts in 1h 30m");
         });
 
         it("should format Active status", () => {
@@ -61,7 +61,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.Active,
                     timeRemaining,
                 }),
-            ).toBe("<strong>Active</strong>, ends in<br />45m");
+            ).toBe("Active · 45m");
         });
 
         it("should format status without time remaining", () => {
@@ -70,14 +70,14 @@ describe("Site Manager", () => {
                     phase: SitePhase.Scheduled,
                     timeRemaining: undefined,
                 }),
-            ).toBe("starts soon");
+            ).toBe("Starts soon");
 
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Active,
                     timeRemaining: undefined,
                 }),
-            ).toBe("<strong>Active</strong>");
+            ).toBe("Active");
         });
 
         it("should return display name for other phases", () => {
@@ -100,7 +100,7 @@ describe("Site Manager", () => {
                     phase: SitePhase.NoData,
                     timeRemaining: undefined,
                 }),
-            ).toBe("No Shard Data");
+            ).toBe("No Data");
         });
     });
 });
