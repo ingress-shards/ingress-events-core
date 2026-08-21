@@ -101,17 +101,17 @@ export const SiteManager = {
         // 1. Scheduled / Discovery
         if (phase === SitePhase.Scheduled || phase === SitePhase.Discovery) {
             if (timeRemaining) {
-                return `starts in<br />${formatDuration(timeRemaining)}`;
+                return `Starts in ${formatDuration(timeRemaining)}`;
             }
-            return "starts soon";
+            return "Starts soon";
         }
 
         // 2. Active
         if (phase === SitePhase.Active) {
             if (timeRemaining) {
-                return `<strong>Active</strong>, ends in<br />${formatDuration(timeRemaining)}`;
+                return `Active · ${formatDuration(timeRemaining)}`;
             }
-            return "<strong>Active</strong>";
+            return "Active";
         }
 
         // 3. Fallback to display names for other phases (Complete, Processing, etc.)
