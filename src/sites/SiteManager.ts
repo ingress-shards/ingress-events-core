@@ -1,7 +1,12 @@
-import * as Instant from "temporal-polyfill/fns/Instant";
-import * as ZonedDateTime from "temporal-polyfill/fns/ZonedDateTime";
-import * as Now from "temporal-polyfill/fns/Now";
-import * as Duration from "temporal-polyfill/fns/Duration";
+import { toZonedDateTimeISO } from "temporal-polyfill/fns/Instant";
+import {
+    add as zdtAdd,
+    subtract as zdtSubtract,
+    compare as zdtCompare,
+    type Record as ZonedDateTimeRecord,
+} from "temporal-polyfill/fns/ZonedDateTime";
+import { instant } from "temporal-polyfill/fns/Now";
+import { fromFields as durationFromFields } from "temporal-polyfill/fns/Duration";
 import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
 import { PhaseDisplayNames, SitePhase } from "./Site.js";
 import type { Temporal } from "temporal-polyfill";
@@ -9,7 +14,7 @@ import { formatDuration } from "../common/Date.js";
 
 export interface CalculateSitePhaseParameters {
     /** The start time of the event zoned to the site's coordinates */
-    startTime: ZonedDateTime.Record;
+    startTime: ZonedDateTimeRecord;
     /** Duration of the event in minutes */
     eventDurationMins: number;
     /** Shard collection counters */
@@ -27,26 +32,26 @@ export const SiteManager = {
      */
     calculatePhase: (
         { startTime, eventDurationMins, shards, hasOrnaments }: CalculateSitePhaseParameters,
-        currentTime = Now.instant(),
+        currentTime = instant(),
     ): SitePhase => {
-        const endTime = ZonedDateTime.add(startTime, Duration.fromFields({ minutes: eventDurationMins }));
-        const standbyThreshold = ZonedDateTime.subtract(startTime, Duration.fromFields({ hours: 2 }));
-        const staleThreshold = ZonedDateTime.add(endTime, Duration.fromFields({ hours: 24 }));
-        const nowZoned = Instant.toZonedDateTimeISO(currentTime, startTime.timeZoneId);
+        const endTime = zdtAdd(startTime, durationFromFields({ minutes: eventDurationMins }));
+        const standbyThreshold = zdtSubtract(startTime, durationFromFields({ hours: 2 }));
+        const staleThreshold = zdtAdd(endTime, durationFromFields({ hours: 24 }));
+        const nowZoned = toZonedDateTimeISO(currentTime, startTime.timeZoneId);
 
-        if (ZonedDateTime.compare(nowZoned, startTime) >= 0 && ZonedDateTime.compare(nowZoned, endTime) <= 0) {
+        if (zdtCompare(nowZoned, startTime) >= 0 && zdtCompare(nowZoned, endTime) <= 0) {
             return SitePhase.Active;
         }
-        if (ZonedDateTime.compare(nowZoned, standbyThreshold) >= 0 && ZonedDateTime.compare(nowZoned, startTime) < 0) {
+        if (zdtCompare(nowZoned, standbyThreshold) >= 0 && zdtCompare(nowZoned, startTime) < 0) {
             return SitePhase.StandBy;
         }
-        if (ZonedDateTime.compare(nowZoned, startTime) < 0) {
+        if (zdtCompare(nowZoned, startTime) < 0) {
             return hasOrnaments ? SitePhase.Discovery : SitePhase.Scheduled;
         }
         if (shards.actual >= shards.expected) {
             return SitePhase.Complete;
         }
-        if (shards.actual === 0 && ZonedDateTime.compare(nowZoned, staleThreshold) >= 0) {
+        if (shards.actual === 0 && zdtCompare(nowZoned, staleThreshold) >= 0) {
             return SitePhase.NoData;
         }
         return SitePhase.Processing;
