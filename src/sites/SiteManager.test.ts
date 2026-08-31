@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as Duration from "temporal-polyfill/fns/Duration";
+import { fromFields as durationFromFields } from "temporal-polyfill/fns/Duration";
 import { SiteManager } from "./SiteManager.js";
 import { SitePhase } from "../sites/Site.js";
 import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
@@ -45,7 +45,7 @@ describe("Site Manager", () => {
 
     describe("formatSiteStatus", () => {
         it("should format Scheduled status", () => {
-            const timeRemaining = Duration.fromFields({ hours: 1, minutes: 30 });
+            const timeRemaining = durationFromFields({ hours: 1, minutes: 30 });
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Scheduled,
@@ -55,7 +55,7 @@ describe("Site Manager", () => {
         });
 
         it("should format Active status", () => {
-            const timeRemaining = Duration.fromFields({ minutes: 45 });
+            const timeRemaining = durationFromFields({ minutes: 45 });
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Active,

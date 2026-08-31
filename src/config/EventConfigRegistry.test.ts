@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import { EventConfigRegistry } from "./EventConfigRegistry.js";
 import { parseZonedDateTime } from "../common/Date.js";
 import type { SeasonGeocode, SeasonManifest } from "../types/index.js";
-import * as ZonedDateTime from "temporal-polyfill/fns/ZonedDateTime";
+import { fromString as zdtFromString } from "temporal-polyfill/fns/ZonedDateTime";
 import { getBasic } from "temporal-polyfill/fns/Calendar";
 
 import realBlueprints from "../../conf/event_blueprints.json" with { type: "json" };
 import realManifest from "../../conf/season_manifest.json" with { type: "json" };
-import realGeocode from "../../gen/conf/recent/season_geocode.json" with { type: "json" };
+import realGeocode from "../../gen/conf/season_geocode.json" with { type: "json" };
 
 describe("EventConfigRegistry", () => {
     const mockBlueprints: any = {
@@ -106,7 +106,7 @@ describe("EventConfigRegistry", () => {
         expect(londonConfig?.geocode.name).toBe("London");
 
         // London startTime: "2026-06-01T12:00:00Z[UTC]" -> 1777723200000 ms
-        const startMs = ZonedDateTime.fromString("2026-06-01T12:00:00Z[UTC]", getBasic).epochMilliseconds;
+        const startMs = zdtFromString("2026-06-01T12:00:00Z[UTC]", getBasic).epochMilliseconds;
         const schedule = londonConfig!.timeline;
         expect(schedule.start).toBe(startMs);
         expect(schedule.preEventCutoff).toBe(startMs - 2 * 60 * 60 * 1000);

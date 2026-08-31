@@ -6,7 +6,7 @@ import type { Ornament } from "../../config/EventBlueprints.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
-import * as Now from "temporal-polyfill/fns/Now";
+import { instant } from "temporal-polyfill/fns/Now";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
@@ -14,7 +14,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
     constructor(
         private blueprintOrnaments: Record<string, Ornament>,
-        private timestampMs: number = Now.instant().epochMilliseconds
+        private timestampMs: number = instant().epochMilliseconds
     ) {}
 
     private parsePortalHistory(ornaments: string[]): any[] {
