@@ -45,12 +45,21 @@ The following canonical actions are recorded in a shard's history:
 
 ## Scoring Logic
 
-Scoring is derived from two primary outcomes, with values specified in the [Scoring Evolution](../SCORING.md) document:
+Scoring is derived from two primary outcomes, with values specified in the [Scoring Mechanics](../ScoringMechanics.md) document:
 
 1.  **Jump**: Moving a shard to a new portal via a valid link. Points can be earnt either by the length of the link, or if the destination if designated as applicable to this event e.g. Anomaly Zone Portal.
 2.  **Arrival**: Securing a shard at a Target Portal.
 
+## Mechanic Variations
+
+The shard mechanic is deployed across different event formats with tailored operational parameters:
+
+- **Standard Anomaly:** Features multiple waves, zone jump scoring, and arrival scoring at faction-aligned Target Portals.
+- **[Shard Storm](./ShardStorm.md):** An operational variant that eliminates target portals entirely, scoring exclusively via distance-tiered link traversals across scheduled movement windows.
+
 ### **Related Documentation**
 
-- [Architecture & Lifecycle](../Architecture.md)
+- [Shard Storm](./ShardStorm.md)
+- [Portal Immunity Instability](./PortalImmunityInstability.md)
+- [Architecture & Lifecycle](../architecture/README.md)
 - [Data Schema](../Schema.md)

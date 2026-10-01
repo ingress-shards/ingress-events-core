@@ -26,8 +26,11 @@ The following event formats lack tangible, programmatic mechanic data and theref
 
 - **[Game Mechanics](./mechanics/README.md)**
     - [Flash Shards](./mechanics/FlashShards.md)
+        - [Shard Storm (Variant)](./mechanics/ShardStorm.md)
     - [Battle Beacons](./mechanics/BattleBeacons.md)
     - [Recursive State Portals](./mechanics/RecursiveStatePortals.md)
+    - [Portal Immunity Instability](./mechanics/PortalImmunityInstability.md)
+- **[Scoring Mechanics](./ScoringMechanics.md)**
 - **[Project Architecture](./architecture/README.md)**
     - [Seven-Stage Data Lifecycle](./architecture/README.md#classic-data-lifecycle)
     - [Processing Details](./architecture/Processing.md)
