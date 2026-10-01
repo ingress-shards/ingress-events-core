@@ -407,7 +407,6 @@
       "name": "Apollo",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-apollo",
-      "defaultView": true,
       "components": [
         {
           "eventType": "ANOMALY",
@@ -449,6 +448,49 @@
                 { "name": "Singapore", "latE6": 1352083, "lngE6": 103819836 },
                 { "name": "Denver CO, USA", "latE6": 39739236, "lngE6": -104990251 }
               ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-cygnus",
+      "name": "Cygnus",
+      "year": 2026,
+      "overviewUrl": "https://ingress.com/news/2026-cygnus",
+      "defaultView": true,
+      "components": [
+        {
+          "eventType": "STORM",
+          "startTime": "14:00",
+          "mechanics": {
+            "shards": {
+              "shardMechanics": "1w_420m_18j",
+              "scoring": {
+                "linkRules": ["storm_jump_1-5", "storm_jump_10"],
+                "seasonPoints": 105
+              }
+            }
+          },
+          "schedule": [
+            {
+              "date": "2026-10-17",
+              "sites": [
+                { "name": "Suzhou, China", "latE6": 31311123, "lngE6": 120621288 },
+                { "name": "Colombo, Sri Lanka", "latE6": 6938861, "lngE6": 79854201 },
+                { "name": "Sofia, Bulgaria", "latE6": 42697703, "lngE6": 23321736 },
+                { "name": "Magdeburg, Germany", "latE6": 52131478, "lngE6": 11640079 },
+                { "name": "Toronto, ON, Canada", "latE6": 43653482, "lngE6": -79383935 },
+                { "name": "Las Vegas, NV, USA", "latE6": 36167426, "lngE6": -115148413 }
+              ]
+            },
+            {
+              "date": "2026-10-24",
+              "sites": []
+            },
+            {
+              "date": "2026-11-21",
+              "sites": []
             }
           ]
         }
