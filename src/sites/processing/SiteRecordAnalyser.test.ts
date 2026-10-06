@@ -65,7 +65,7 @@ describe("SiteRecordAnalyser", () => {
         expect(pathObject!.links[0]!.moves[0]!.shardId).toBe(101);
     });
 
-    it("should calculate correct wave-by-wave statistics and shardActionWindows when config is provided", () => {
+    it("should calculate correct wave-by-wave statistics and shardJumpWindows when config is provided", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -137,9 +137,10 @@ describe("SiteRecordAnalyser", () => {
         expect(w1.statistics.shards.nonMoving).toBe(1); // Shard 102 present but not moving
         expect(w1.statistics.links).toBe(0);
         expect(w1.statistics.paths).toBe(0);
-        expect(w1.shardActionWindows.length).toBe(1);
-        expect(w1.shardActionWindows[0]!.timestamp).toBe(150000);
-        expect(w1.shardActionWindows[0]!.actionsCount).toBe(1);
+        expect(w1.shardJumpWindows.length).toBe(1);
+        expect(w1.shardJumpWindows[0]!.timestamp).toBe(150000);
+        expect(w1.shardJumpWindows[0]!.jumpNumber).toBe(1);
+        expect(w1.shardJumpWindows[0]!.historyCount).toBe(1);
 
         // Wave 2 checks:
         const w2 = analysis.waves[2]!;
@@ -148,6 +149,6 @@ describe("SiteRecordAnalyser", () => {
         expect(w2.statistics.shards.nonMoving).toBe(1); // Shard 101 present but despawned
         expect(w2.statistics.links).toBe(1);
         expect(w2.statistics.paths).toBe(1);
-        expect(w2.shardActionWindows.length).toBe(1); // despawn removed, only link at 2500000 remains
+        expect(w2.shardJumpWindows.length).toBe(1); // despawn removed, only link at 2500000 remains
     });
 });

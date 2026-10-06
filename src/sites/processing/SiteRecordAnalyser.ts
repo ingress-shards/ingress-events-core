@@ -50,7 +50,7 @@ export const SiteRecordAnalyser = {
                     linkScoringRules,
                     timeline
                 );
-                if (ws.shardActionWindows.length > 0) {
+                if (ws.shardJumpWindows.length > 0) {
                     waveStates[wave.waveNumber] = ws;
                 }
             }

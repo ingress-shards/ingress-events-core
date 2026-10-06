@@ -6,7 +6,7 @@ import type { FactionId } from "../../common/Factions.js";
 import type { ShardGoalScoringRule, ShardLinkScoringRule } from "../../types/index.js";
 import type { EventTimeline } from "../../seasons/SeasonConfig.js";
 import { ShardPathBuilder } from "./ShardPathBuilder.js";
-import { WaveActionLogBuilder } from "./WaveActionLogBuilder.js";
+import { WaveShardJumpBuilder } from "./WaveShardJumpBuilder.js";
 import { GoalScoringEngine } from "./GoalScoringEngine.js";
 import { roundToDecimalPlaces } from "../../common/Math.js";
 
@@ -100,7 +100,7 @@ export const WaveAnalyser = {
         }
 
         // Generate UI log breakdown
-        const shardActionWindows = WaveActionLogBuilder.buildShardActionWindows(
+        const shardJumpWindows = WaveShardJumpBuilder.build(
             wave,
             shards,
             portals,
@@ -149,7 +149,7 @@ export const WaveAnalyser = {
         return {
             points: totalPoints,
             statistics,
-            shardActionWindows
+            shardJumpWindows
         };
     }
 };
