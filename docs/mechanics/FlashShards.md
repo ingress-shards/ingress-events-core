@@ -33,24 +33,45 @@ Configuration can vary significantly between sites and events.
 - **Wave Persistence**: An event involving shards will always have at least one wave, even if it is not explicitly referred to as such; the entire event may essentially be treated as one shard wave.
 - **Jump/Wave Balance**: "Single Shard" events tend to have one wave with multiple jumps occurring over multiple hours. "Multi-Shard" events tend to have multiple waves with multiple jumps each, and are typically shorter in overall length.
 
-## Shard Actions
+## Shard Actions & Telemetry
 
-The following canonical actions are recorded in a shard's history:
+In Ingress shard events, the interaction between scheduled server behavior and observed shard telemetry is governed by the following core concepts:
 
-- **Spawn**: The initial appearance of the shard.
-- **Link**: The shard successfully travels because the conditions were met to travel along a viable link (L4+).
-- **No Move**: The conditions for travel were not met; either no valid link existed or a randomly selected link was ineligible.
-- **Randomly Teleport**: If a shard has not travelled along any link within its specific **Idle Period**, it will randomly teleport to a nearby portal during the next movement window.
-- **Despawn**: Removal of the shard from play at the end of a wave.
+- **Window**: The discrete time slice (~1 minute) during which Niantic servers interrogate active shards and evaluate movements.
+- **Action**: The scheduled lifecycle command executed during a window (`spawn`, `jump`, `despawn`).
+- **Action Reason**: The observable outcome reported in raw Niantic telemetry (`shard-jump-times-*.json`) via the `reason` field:
+
+| Term | Domain Concept | Niantic Raw Telemetry (`reason`) | Description |
+| :--- | :--- | :--- | :--- |
+| **Window** | Interrogation Window | *(Window timestamp)* | The discrete time slice during which Niantic servers interrogate active shards and execute actions. |
+| **Action** | Server Command | `spawn`, `jump`, `despawn` | The scheduled lifecycle action triggered during the window. |
+| **Action Reason** | Observed Telemetry | `reason` field in history | The actual outcome recorded for each shard: |
+| &nbsp;&nbsp;↳ *Spawn* | Appearance | `spawn` | Shard manifests at designated portal. Zero score. |
+| &nbsp;&nbsp;↳ *Link Traversal* | Successful Move | `link` | Shard traverses an eligible link (L4+). Primary scoring mechanism. |
+| &nbsp;&nbsp;↳ *Random Teleport* | Idle Teleport | `jump` | Idle period elapsed without valid move; shard teleports to a nearby portal. |
+| &nbsp;&nbsp;↳ *No Move* | Stationary | `no move` | No viable link or random link selection failed; shard remains at portal. |
+| &nbsp;&nbsp;↳ *Despawn* | Removal | `despawn` | Shard removed from network at wave/event close. Zero score. |
+
+> [!NOTE]
+> Only **`jump`** actions contribute towards the score for a site (link traversals and goal arrivals). While **`spawn`** and **`despawn`** actions are recorded in shard history for complete lifecycle traceability, they generate zero points.
 
 ## Scoring Logic
 
-Scoring is derived from two primary outcomes, with values specified in the [Scoring Evolution](../SCORING.md) document:
+Scoring is derived from two primary outcomes, with values specified in the [Scoring Mechanics](../ScoringMechanics.md) document:
 
 1.  **Jump**: Moving a shard to a new portal via a valid link. Points can be earnt either by the length of the link, or if the destination if designated as applicable to this event e.g. Anomaly Zone Portal.
 2.  **Arrival**: Securing a shard at a Target Portal.
 
+## Mechanic Variations
+
+The shard mechanic is deployed across different event formats with tailored operational parameters:
+
+- **Standard Anomaly:** Features multiple waves, zone jump scoring, and arrival scoring at faction-aligned Target Portals.
+- **[Shard Storm](./ShardStorm.md):** An operational variant that eliminates target portals entirely, scoring exclusively via distance-tiered link traversals across scheduled movement windows.
+
 ### **Related Documentation**
 
-- [Architecture & Lifecycle](../Architecture.md)
+- [Shard Storm](./ShardStorm.md)
+- [Portal Immunity Instability](./PortalImmunityInstability.md)
+- [Architecture & Lifecycle](../architecture/README.md)
 - [Data Schema](../Schema.md)

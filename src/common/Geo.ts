@@ -4,9 +4,14 @@
 export const EARTH_RADIUS_METERS = 6371000;
 
 /**
- * Distance in meters for aggregating portals into a site.
+ * Distance in meters for aggregating portals into a site (25 km metropolitan radius).
  */
-const SITE_AGGREGATION_DISTANCE_METERS = 10000;
+export const SITE_AGGREGATION_DISTANCE_METERS = 25000;
+
+/**
+ * Maximum distance in meters to scan for nearby upcoming sites in diagnostic warnings (50 km).
+ */
+export const SITE_PROXIMITY_WARNING_DISTANCE_METERS = 50000;
 
 /**
  * Opaque type for coordinates multiplied by 1,000,000.
@@ -56,10 +61,21 @@ export const haversineDistance = (coords1: Coordinates, coords2: Coordinates): n
 };
 
 /**
- * Checks if a target location is within the site aggregation distance from a site centroid.
+ * Checks if a target location is within a specified distance range from a site centroid.
+ * @param siteCoords Centroid coordinates of the site.
+ * @param targetCoords Target coordinates to check.
+ * @param minDistanceMeters Minimum distance in meters (inclusive, defaults to 0).
+ * @param maxDistanceMeters Maximum distance in meters (inclusive, defaults to SITE_AGGREGATION_DISTANCE_METERS = 25,000).
+ * @returns True if distance falls within [minDistanceMeters, maxDistanceMeters].
  */
-export const isWithinSiteRange = (siteCoords: Coordinates, targetCoords: Coordinates): boolean => {
-    return haversineDistance(siteCoords, targetCoords) <= SITE_AGGREGATION_DISTANCE_METERS;
+export const isWithinSiteRange = (
+    siteCoords: Coordinates,
+    targetCoords: Coordinates,
+    minDistanceMeters: number = 0,
+    maxDistanceMeters: number = SITE_AGGREGATION_DISTANCE_METERS
+): boolean => {
+    const distanceMeters = haversineDistance(siteCoords, targetCoords);
+    return distanceMeters >= minDistanceMeters && distanceMeters <= maxDistanceMeters;
 };
 
 /**

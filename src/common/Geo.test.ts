@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { haversineDistance, calculateCentroid } from "./Geo.js";
+import { haversineDistance, calculateCentroid, isWithinSiteRange } from "./Geo.js";
 
 describe("geo utils", () => {
     describe("haversineDistance", () => {
@@ -38,6 +38,29 @@ describe("geo utils", () => {
                 { latE6: 11, lngE6: 21 }
             ];
             expect(calculateCentroid(coords)).toEqual({ latE6: 11, lngE6: 21 });
+        });
+    });
+
+    describe("isWithinSiteRange", () => {
+        const siteCenter = { latE6: 51500000, lngE6: -100000 };
+        // Point ~15 km away
+        const insidePoint = { latE6: 51630000, lngE6: -100000 };
+        // Point ~35 km away
+        const midpoint = { latE6: 51810000, lngE6: -100000 };
+        // Point ~60 km away
+        const outsidePoint = { latE6: 52040000, lngE6: -100000 };
+
+        it("should return true for points within default range [0, 25km] and false beyond", () => {
+            expect(isWithinSiteRange(siteCenter, siteCenter)).toBe(true);
+            expect(isWithinSiteRange(siteCenter, insidePoint)).toBe(true);
+            expect(isWithinSiteRange(siteCenter, midpoint)).toBe(false);
+            expect(isWithinSiteRange(siteCenter, outsidePoint)).toBe(false);
+        });
+
+        it("should respect custom min and max bounds [25km, 50km]", () => {
+            expect(isWithinSiteRange(siteCenter, insidePoint, 25000, 50000)).toBe(false);
+            expect(isWithinSiteRange(siteCenter, midpoint, 25000, 50000)).toBe(true);
+            expect(isWithinSiteRange(siteCenter, outsidePoint, 25000, 50000)).toBe(false);
         });
     });
 });

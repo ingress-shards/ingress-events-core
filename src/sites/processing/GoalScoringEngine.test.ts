@@ -74,4 +74,29 @@ describe("GoalScoringEngine", () => {
         expect(wavePoints.RES).toBe(5);
         expect(wavePoints.ENL).toBe(0);
     });
+
+    it("should score a single jump window using JumpWindowBounds", () => {
+        const shards = new Map<number, Shard>([
+            [1, {
+                history: [
+                    { action: "jump", moveTime: 1500, portalId: 1, dest: 2 }
+                ]
+            }]
+        ]);
+
+        const waveScoredGoals = new Map<number, Set<number>>();
+        const result = GoalScoringEngine.scoreJumpWindow(
+            shards,
+            portals,
+            rules,
+            timeline,
+            waveScoredGoals,
+            { windowStart: 1500, waveStart: 1000, waveEnd: 2000 }
+        );
+
+        expect(result.jumpWindowPoints.RES).toBe(5);
+        expect(result.goalsBreakdown.RES).toEqual([
+            { portalId: 2, scoredCount: 1, unscoredCount: 0 }
+        ]);
+    });
 });

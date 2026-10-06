@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { EventConfigRegistry } from "./EventConfigRegistry.js";
 import { parseZonedDateTime } from "../common/Date.js";
 import type { SeasonGeocode, SeasonManifest } from "../types/index.js";
@@ -132,7 +132,7 @@ describe("EventConfigRegistry", () => {
         expect(w1.shardsActions![1]!.time).toBe(w1.start + 2 * 60 * 1000);
     });
 
-    it("should find sites by coordinates chronologically and throw on past events", () => {
+    it("should find sites by coordinates chronologically, warn on near-miss upcoming sites, and handle past events gracefully", () => {
         const registry = new EventConfigRegistry({
             eventBlueprints: mockBlueprints,
             seasonManifest: mockManifest,
@@ -159,9 +159,21 @@ describe("EventConfigRegistry", () => {
         expect(matchRecent?.siteId).toBe("site-london");
 
         // 4. Stale/Expired past event (> 60 mins after end)
-        expect(() => {
-            registry.findSiteByCoords(lat, lng, endMs + 90 * 60 * 1000);
-        }).toThrow(/after all event scheduled times/);
+        const errorSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+        const matchExpired = registry.findSiteByCoords(lat, lng, endMs + 90 * 60 * 1000);
+        expect(matchExpired).toBeUndefined();
+        expect(errorSpy).toHaveBeenCalled();
+        errorSpy.mockRestore();
+
+        // 5. Zero-match but near upcoming event (~35 km away)
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+        const nearMissLat = 51810000;
+        const nearMissMatch = registry.findSiteByCoords(nearMissLat, lng, startMs - 5 * 24 * 60 * 60 * 1000);
+        expect(nearMissMatch).toBeUndefined();
+        expect(warnSpy).toHaveBeenCalledWith(
+            expect.stringContaining("upcoming site(s) nearby: site-london")
+        );
+        warnSpy.mockRestore();
     });
 
     it("should output the resulting registry for the Jersey City Orion anomaly config", () => {

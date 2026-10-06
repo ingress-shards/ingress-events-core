@@ -70,22 +70,30 @@ export interface SiteAnalysis {
 export interface WaveState {
     points: PointsSnapshot;
     statistics: Statistics;
-    shardActionWindows: ShardActionWindow[];
+    shardJumpWindows: ShardJumpWindow[];
 }
 
-export interface ShardActionWindow {
-    /** Epoch time of this action window */
+export interface ShardJumpWindow {
+    /** Epoch time of this jump window */
     timestamp: number;
-    /** The type of movement or event (e.g. "spawn", "jump", "despawn") */
-    actionType?: "spawn" | "jump" | "despawn";
-    /** User-friendly display label (e.g. "Spawn", "J1", "J2") */
-    actionLabel?: string;
+    /** Sequential jump number within the wave (1, 2, 3...) */
+    jumpNumber: number;
     /** Total points scored specifically in this window */
     points: Points;
     /** Grouped by faction at the top level */
     factionBreakdowns?: Partial<Record<FactionId, FactionPointsBreakdown>>;
-    /** Overall number of shard actions (spawns, jumps, despawns, etc.) in this window */
-    actionsCount: number;
+    /** Overall number of raw shard history items in this window */
+    historyCount: number;
+}
+
+/**
+ * A logical collection of discrete ShardJumpWindows for presentation grouping.
+ * All metrics (timestamps, points, desyncs) are derived from the constituent windows.
+ */
+export interface ShardJumpGroup {
+    groupIndex: number;
+    label: string;
+    windows: ShardJumpWindow[];
 }
 
 export interface GoalActionDetail {

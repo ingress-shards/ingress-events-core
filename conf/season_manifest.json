@@ -407,7 +407,6 @@
       "name": "Apollo",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-apollo",
-      "defaultView": true,
       "components": [
         {
           "eventType": "ANOMALY",
@@ -450,6 +449,51 @@
                 { "name": "Denver CO, USA", "latE6": 39739236, "lngE6": -104990251 }
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-cygnus",
+      "name": "Cygnus",
+      "year": 2026,
+      "overviewUrl": "https://ingress.com/news/2026-cygnus",
+      "defaultView": true,
+      "components": [
+        {
+          "eventType": "STORM",
+          "startTime": "14:00",
+          "mechanics": {
+            "shards": {
+              "shardMechanics": "1w_420m_18j",
+              "scoring": { "linkRules": ["storm_jump_1-5", "storm_jump_10"], "seasonPoints": 105 }
+            }
+          },
+          "display": { "shards": { "jumpGroupSize": 3 } },
+          "schedule": [
+            {
+              "date": "2026-10-17",
+              "sites": [
+                { "name": "Suzhou, China", "latE6": 31305614, "lngE6": 120729282 },
+                { "name": "Colombo, Sri Lanka", "latE6": 6847632, "lngE6": 79861746 },
+                { "name": "Sofia, Bulgaria", "latE6": 42697703, "lngE6": 23321736 },
+                { "name": "Magdeburg, Germany", "latE6": 52131478, "lngE6": 11640079 },
+                { "name": "Toronto, ON, Canada", "latE6": 43648801, "lngE6": -79523518 },
+                { "name": "Las Vegas, NV, USA", "latE6": 36111861, "lngE6": -115175036 }
+              ]
+            },
+            {
+              "date": "2026-10-24",
+              "sites": [
+                { "name": "Kōchi, Japan", "latE6": 33558848, "lngE6": 133531092 },
+                { "name": "Gurugram, India", "latE6": 28464615, "lngE6": 77029919 },
+                { "name": "Warsaw, Poland", "latE6": 52229676, "lngE6": 21012229 },
+                { "name": "Norwich, UK", "latE6": 52628558, "lngE6": 1292395 },
+                { "name": "Asunción, Paraguay", "latE6": -25294743, "lngE6": -57581991 },
+                { "name": "Nashville, TN, USA", "latE6": 36162664, "lngE6": -86781602 }
+              ]
+            },
+            { "date": "2026-11-21", "sites": [] }
           ]
         }
       ]
