@@ -10,9 +10,9 @@
     "UNKNOWN": { "label": "Unknown" }
   },
   "ornaments": {
-    "ap1": { "label": "Anomaly Portal", "tags": ["pre-event", "battle-beacon"], "style": { "color": "#F58634" } },
-    "ap2": { "label": "Anomaly Portal", "tags": ["pre-event"], "style": { "color": "#FF32F7" } },
-    "ap3": { "label": "Anomaly Portal", "tags": ["pre-event"], "style": { "color": "#7E14FF" } },
+    "ap1": { "label": "Ornamented Portal", "tags": ["pre-event", "battle-beacon"], "style": { "color": "#F58634" } },
+    "ap2": { "label": "Ornamented Portal", "tags": ["pre-event"], "style": { "color": "#FF32F7" } },
+    "ap3": { "label": "Ornamented Portal", "tags": ["pre-event"], "style": { "color": "#7E14FF" } },
     "nl-1331-2026": {
       "label": "Virtual NL-1331 Tour 2026",
       "tags": ["pre-event"],
