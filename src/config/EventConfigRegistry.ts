@@ -1,7 +1,7 @@
 import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
 import type { SeasonConfig, SiteConfig, EventTimeline, WaveTimeline, ScheduledShardAction } from "../seasons/SeasonConfig.js";
-import { isWithinSiteRange } from "../common/Geo.js";
+import { isWithinSiteRange, haversineDistance, SITE_AGGREGATION_DISTANCE_METERS, SITE_PROXIMITY_WARNING_DISTANCE_METERS } from "../common/Geo.js";
 import { parseZonedDateTime } from "../common/Date.js";
 
 export class EventConfigRegistry {
@@ -147,7 +147,8 @@ export class EventConfigRegistry {
                         timeline,
                         mechanics: {
                             ...(shardsConfig && { shards: shardsConfig })
-                        }
+                        },
+                        ...(component.display && { display: component.display })
                     };
 
                     siteConfigCache[site.id] = siteConfig;
@@ -156,6 +157,21 @@ export class EventConfigRegistry {
                 }
             }
         }
+    }
+
+    private getNearbyUpcomingSites(latE6: number, lngE6: number, timestampMs: number): string[] {
+        const candidates: { siteId: SiteId; distanceMeters: number }[] = [];
+        for (const [siteId, entry] of this.siteToSeasonMap) {
+            if (entry.config.timeline.start <= timestampMs) {
+                continue;
+            }
+            if (isWithinSiteRange({ latE6, lngE6 }, entry.config.geocode, SITE_AGGREGATION_DISTANCE_METERS, SITE_PROXIMITY_WARNING_DISTANCE_METERS)) {
+                const distanceMeters = haversineDistance({ latE6, lngE6 }, entry.config.geocode);
+                candidates.push({ siteId, distanceMeters });
+            }
+        }
+        candidates.sort((a, b) => a.distanceMeters - b.distanceMeters);
+        return candidates.map(c => `${c.siteId} (${(c.distanceMeters / 1000).toFixed(1)} km away)`);
     }
 
     public getSeasonIdForSite(siteId: SiteId): SeasonId | undefined {
@@ -176,6 +192,14 @@ export class EventConfigRegistry {
         }
 
         if (matches.length === 0) {
+            const nearbyUpcoming = this.getNearbyUpcomingSites(latE6, lngE6, timestampMs);
+            if (nearbyUpcoming.length > 0) {
+                const obsLat = (latE6 / 1e6).toFixed(6);
+                const obsLng = (lngE6 / 1e6).toFixed(6);
+                console.warn(
+                    `[EventConfigRegistry] Coordinates (${obsLat}, ${obsLng}) do not match any site within ${SITE_AGGREGATION_DISTANCE_METERS / 1000} km, but found upcoming site(s) nearby: ${nearbyUpcoming.join(", ")}. Check and adjust the site centroid in season_manifest.json.`
+                );
+            }
             return undefined;
         }
 
@@ -197,6 +221,17 @@ export class EventConfigRegistry {
         }
 
         // 3. Fallback: all coordinate-matching events are in the past
-        throw new Error(`Coordinates match site(s) ${matches.map(m => m.siteId).join(", ")}, but the observations are at ${new Date(timestampMs).toISOString()}, which is after all event scheduled times (past 60 minutes post-event window).`);
+        const pastSites = matches.map(m => m.siteId).join(", ");
+        const obsDate = new Date(timestampMs).toISOString();
+        const obsLat = (latE6 / 1e6).toFixed(6);
+        const obsLng = (lngE6 / 1e6).toFixed(6);
+
+        const nearbyUpcoming = this.getNearbyUpcomingSites(latE6, lngE6, timestampMs);
+        const hint = nearbyUpcoming.length > 0
+            ? ` Found upcoming site(s) nearby: ${nearbyUpcoming.join(", ")}. Check and adjust the site centroid in season_manifest.json to encompass these coordinates.`
+            : ` If this observation is for an upcoming event, verify that the site centroid in season_manifest.json is within ${SITE_AGGREGATION_DISTANCE_METERS / 1000} km of (${obsLat}, ${obsLng}).`;
+
+        console.error(`[EventConfigRegistry] Coordinates (${obsLat}, ${obsLng}) match past site(s) ${pastSites}, but the observation at ${obsDate} is after all scheduled times.${hint}`);
+        return undefined;
     }
 }

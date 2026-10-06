@@ -11,6 +11,13 @@ export interface SiteManifestMetadata extends SiteLocation {
     shardCounts?: number[];
 }
 
+export interface SeasonComponentDisplay {
+    shards?: {
+        /** Number of consecutive jump windows to group together in presentation views (default 1) */
+        jumpGroupSize?: number;
+    };
+}
+
 /**
  * Component of an Anomaly season, defining specific shard/target behavior.
  * @strict
@@ -32,6 +39,8 @@ export interface SeasonComponent {
             };
         };
     };
+    /** Optional presentation/display settings for UI consumers */
+    display?: SeasonComponentDisplay;
     /** Optional specific dates and locations for this component */
     schedule?: {
         /** ISO date (YYYY-MM-DD) */

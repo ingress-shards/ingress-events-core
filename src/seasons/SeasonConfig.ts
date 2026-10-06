@@ -12,6 +12,12 @@ export interface SeasonConfig {
     sites: Record<SiteId, SiteConfig>;
 }
 
+export interface SiteDisplayConfig {
+    shards?: {
+        jumpGroupSize?: number;
+    };
+}
+
 /**
  * Site specific configuration (Build-time).
  */
@@ -37,7 +43,9 @@ export interface SiteConfig {
                 seasonPoints?: number;
             }
         }
-    }
+    };
+    /** Optional presentation/display configuration */
+    display?: SiteDisplayConfig;
 }
 
 export interface EventTimeline {
