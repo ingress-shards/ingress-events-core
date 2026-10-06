@@ -106,10 +106,22 @@ The operational cadence, number of shards, and temporal structures have evolved 
 
 ---
 
-## 6. Related Documentation
+## 6. Grouped Jumps & Presentation Architecture
+
+In multi-shard staggered events (such as `1w_420m_18j`), discrete action offsets (`+15m, +17m, +19m`) are preserved in `waveActions` to support exact real-time plugin polling (e.g. `ObserverScheduler` triggering fetches 1 minute after each movement).
+
+To prevent presentation bloat (e.g. 20-column wide tables), presentation grouping is decoupled from domain blueprints:
+- **`display.shards.jumpGroupSize` on Season Component:** Configures how many consecutive jump windows to group together in presentation views (e.g. `3` for Cygnus 2026, defaulting to `1`).
+- **Presentation Grouping Helper:** `ShardJumpGrouper.getShardJumpGroups()` chunks consecutive `ShardJumpWindow` items by `jumpGroupSize` and dynamically derives concise range labels (`J1-3`, `J4-6`) and formatted time ranges (`14:15–19`).
+- **Transposed Presentation:** UIs render jumps as rows, standardizing display width (~340px) across mobile and desktop without horizontal scroll.
+
+---
+
+## 7. Related Documentation
 
 - [Flash Shards](./FlashShards.md)
 - [Portal Immunity Instability](./PortalImmunityInstability.md)
 - [Scoring Mechanics](../ScoringMechanics.md)
 - [Data Schema](../Schema.md)
 - [Architecture & Lifecycle](../architecture/README.md)
+

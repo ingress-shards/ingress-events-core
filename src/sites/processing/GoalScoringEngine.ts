@@ -6,30 +6,31 @@ import type { ShardGoalScoringRule } from "../../types/index.js";
 import type { GoalActionDetail } from "../Site.js";
 import type { EventTimeline } from "../../seasons/SeasonConfig.js";
 
-export interface TickGoalScoringResult {
-    tickPoints: Record<FactionId, number>;
+import { isMovementInWindow, type JumpWindowBounds } from "./JumpWindowUtilities.js";
+
+export interface JumpWindowGoalResult {
+    jumpWindowPoints: Record<FactionId, number>;
     goalsBreakdown: Partial<Record<FactionId, GoalActionDetail[]>>;
 }
 
 export const GoalScoringEngine = {
-
-    scoreTick: (
-        timestamp: number,
+    scoreJumpWindow: (
         shards: Map<number, Shard>,
         portals: Record<PortalId, ObservedPortal>,
         rules: Record<string, ShardGoalScoringRule>,
         timeline: EventTimeline,
         waveScoredGoals: Map<PortalId, Set<number>>,
-        isMatch: (h: { action: string; moveTime: number }) => boolean
-    ): TickGoalScoringResult => {
-        const tickPoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
+        windowBounds: JumpWindowBounds
+    ): JumpWindowGoalResult => {
+        const jumpWindowPoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
         const goalsBreakdown: Partial<Record<FactionId, GoalActionDetail[]>> = {};
 
-        const targetWave = timeline.targets?.find(tw => timestamp >= tw.start && timestamp <= tw.end);
+        const { windowStart } = windowBounds;
+        const targetWave = timeline.targets?.find(tw => windowStart >= tw.start && windowStart <= tw.end);
         const targetRule = Object.values(rules)[0];
 
         if (!targetWave || !targetRule) {
-            return { tickPoints, goalsBreakdown };
+            return { jumpWindowPoints, goalsBreakdown };
         }
 
         const activeTargets = Object.entries(portals).filter(([, p]) => {
@@ -59,7 +60,7 @@ export const GoalScoringEngine = {
             const shardsOnPortal: number[] = [];
             for (const [sId, s] of shards) {
                 const hasJumpToPortal = s.history?.some(h => 
-                    isMatch(h) && 
+                    isMovementInWindow(h, windowBounds) && 
                     (h.action === "jump" || h.action === "link") && 
                     h.dest === portalId
                 );
@@ -89,7 +90,7 @@ export const GoalScoringEngine = {
                 
                 if (willScore) {
                     scoredCount++;
-                    tickPoints[targetOwner] = (tickPoints[targetOwner] ?? 0) + targetRule.points;
+                    jumpWindowPoints[targetOwner] = (jumpWindowPoints[targetOwner] ?? 0) + targetRule.points;
                 } else {
                     unscoredCount++;
                 }
@@ -105,7 +106,7 @@ export const GoalScoringEngine = {
             }
         }
 
-        return { tickPoints, goalsBreakdown };
+        return { jumpWindowPoints, goalsBreakdown };
     },
 
     scoreWave: (
@@ -121,20 +122,25 @@ export const GoalScoringEngine = {
         const allActions = wave.shardsActions ?? [];
         const jumpActions = allActions.filter((a: any) => a.action === "jump");
 
-        for (const act of jumpActions) {
-            const time = Number(act.time);
-            const isMatch = (h: { action: string; moveTime: number }) => {
-                if (h.moveTime < wave.start || h.moveTime > wave.end) return false;
-                if (!["jump", "link", "no move"].includes(h.action)) return false;
-                const startedJumps = jumpActions.filter((j: any) => h.moveTime >= Number(j.time));
-                if (startedJumps.length === 0) return false;
-                const lastStartedJump = startedJumps.at(-1)!;
-                return Number((lastStartedJump).time) === time;
+        for (const [i, act] of jumpActions.entries()) {
+            const nextAction = i + 1 < jumpActions.length ? jumpActions[i + 1] : undefined;
+            const windowBounds: JumpWindowBounds = {
+                windowStart: Number(act.time),
+                ...(nextAction && {nextWindowStart: Number(nextAction.time)}),
+                waveStart: wave.start,
+                waveEnd: wave.end
             };
 
-            const tickResult = GoalScoringEngine.scoreTick(time, shards, portals, rules, timeline, waveScoredGoals, isMatch);
+            const jumpResult = GoalScoringEngine.scoreJumpWindow(
+                shards,
+                portals,
+                rules,
+                timeline,
+                waveScoredGoals,
+                windowBounds
+            );
             for (const f of ["RES", "ENL", "MAC", "NEU"] as FactionId[]) {
-                wavePoints[f] = (wavePoints[f] ?? 0) + (tickResult.tickPoints[f] ?? 0);
+                wavePoints[f] = (wavePoints[f] ?? 0) + (jumpResult.jumpWindowPoints[f] ?? 0);
             }
         }
         return wavePoints;
