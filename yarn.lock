@@ -301,7 +301,7 @@ __metadata:
     eslint-plugin-unicorn: "npm:^72.0.0"
     globals: "npm:^17.11.0"
     semantic-release: "npm:^25.0.9"
-    temporal-polyfill: "npm:^1.0.4"
+    temporal-polyfill: "npm:^1.0.5"
     ts-node: "npm:^10.9.2"
     ts-to-zod: "npm:^5.1.0"
     tsdown: "npm:^0.23.0"
@@ -6096,7 +6096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"temporal-polyfill@npm:^1.0.4":
+"temporal-polyfill@npm:^1.0.5":
   version: 1.0.5
   resolution: "temporal-polyfill@npm:1.0.5"
   dependencies:
