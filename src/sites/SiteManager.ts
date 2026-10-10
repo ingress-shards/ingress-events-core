@@ -35,7 +35,7 @@ export const SiteManager = {
         currentTime = instant(),
     ): SitePhase => {
         const endTime = zdtAdd(startTime, durationFromFields({ minutes: eventDurationMins }));
-        const standbyThreshold = zdtSubtract(startTime, durationFromFields({ hours: 2 }));
+        const standbyThreshold = zdtSubtract(startTime, durationFromFields({ minutes: 15 }));
         const staleThreshold = zdtAdd(endTime, durationFromFields({ hours: 24 }));
         const nowZoned = toZonedDateTimeISO(currentTime, startTime.timeZoneId);
 
@@ -111,7 +111,15 @@ export const SiteManager = {
             return "Starts soon";
         }
 
-        // 2. Active
+        // 2. Stand By
+        if (phase === SitePhase.StandBy) {
+            if (timeRemaining) {
+                return `Stand By · ${formatDuration(timeRemaining)}`;
+            }
+            return "Stand By";
+        }
+
+        // 3. Active
         if (phase === SitePhase.Active) {
             if (timeRemaining) {
                 return `Active · ${formatDuration(timeRemaining)}`;
@@ -119,7 +127,7 @@ export const SiteManager = {
             return "Active";
         }
 
-        // 3. Fallback to display names for other phases (Complete, Processing, etc.)
+        // 4. Fallback to display names for other phases (Complete, Processing, etc.)
         return PhaseDisplayNames[phase] || "Unknown";
     },
 };
