@@ -7,7 +7,7 @@ import path from "node:path";
 
 import realBlueprints from "../../conf/event_blueprints.json" with { type: "json" };
 import realManifest from "../../conf/season_manifest.json" with { type: "json" };
-import realGeocode from "../../gen/conf/recent/season_geocode.json" with { type: "json" };
+import realGeocode from "../../gen/conf/season_geocode.json" with { type: "json" };
 
 describe("Helsinki Integration Analysis", () => {
     it("should verify real-world integration analysis on Helsinki site record using real registry", () => {
