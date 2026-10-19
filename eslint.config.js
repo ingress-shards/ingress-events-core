@@ -114,6 +114,7 @@ const config = tseslint.config(
             "unicorn/consistent-optional-chaining": "off",
             "unicorn/no-unsafe-string-replacement": "off",
             "unicorn/no-useless-undefined": "off",
+            "unicorn/prefer-iterator-to-array": "off",
         },
     },
 );

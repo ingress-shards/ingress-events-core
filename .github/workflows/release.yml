@@ -37,6 +37,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Cache geocode database
+        uses: actions/cache@v4
+        with:
+          path: cache.sqlite
+          key: ${{ runner.os }}-geocode-${{ hashFiles('conf/season_manifest.json', 'conf/event_blueprints.json') }}
+          restore-keys: |
+            ${{ runner.os }}-geocode-
+
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
