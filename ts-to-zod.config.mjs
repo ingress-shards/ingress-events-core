@@ -34,11 +34,6 @@ export default [
         output: "gen/zod-schemas/EventBlueprints.zod.ts",
     },
     {
-        name: "SeasonEvent",
-        input: "src/seasons/Season.ts",
-        output: "gen/zod-schemas/SeasonEvent.zod.ts",
-    },
-    {
         name: "Portal",
         input: "src/sites/Portal.ts",
         output: "gen/zod-schemas/Portal.zod.ts",

@@ -1,6 +1,18 @@
 import type { SeasonId } from "../../common/Identifiers.js";
-import type { SeasonEvent } from "../../seasons/Season.js";
 import type { SiteLocation } from "../../common/Geo.js";
+
+/**
+ * Supported Ingress event types.
+ */
+export type EventType =
+    | "ANOMALY"
+    | "SKIRMISH"
+    | "INVESTIGATION"
+    | "SINGULAR"
+    | "STORM"
+    | "SINGLE_SHARD"
+    | "MULTIPLE_SHARDS"
+    | "UNKNOWN";
 
 /**
  * Site specific metadata within a scheduled season component.
@@ -11,19 +23,12 @@ export interface SiteManifestMetadata extends SiteLocation {
     shardCounts?: number[];
 }
 
-export interface SeasonComponentDisplay {
-    shards?: {
-        /** Number of consecutive jump windows to group together in presentation views (default 1) */
-        jumpGroupSize?: number;
-    };
-}
-
 /**
  * Component of an Anomaly season, defining specific shard/target behavior.
  * @strict
  */
 export interface SeasonComponent {
-    eventType: SeasonEvent;
+    eventType: EventType;
     /** Default local start time (HH:mm) */
     startTime: string;
     /** Event mechanics configuration, including shards and their scoring rules */
@@ -31,6 +36,8 @@ export interface SeasonComponent {
         shards?: {
             shardMechanics: string;
             targetMechanics?: string;
+            /** Number of consecutive jump windows to group together in presentation views (default 1) */
+            jumpGroupSize?: number;
             scoring: {
                 linkRules?: string[];
                 goalRules?: string[];
@@ -39,8 +46,6 @@ export interface SeasonComponent {
             };
         };
     };
-    /** Optional presentation/display settings for UI consumers */
-    display?: SeasonComponentDisplay;
     /** Optional specific dates and locations for this component */
     schedule?: {
         /** ISO date (YYYY-MM-DD) */

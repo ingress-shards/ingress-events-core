@@ -466,10 +466,10 @@
           "mechanics": {
             "shards": {
               "shardMechanics": "1w_420m_18j",
+              "jumpGroupSize": 3,
               "scoring": { "linkRules": ["storm_jump_1-5", "storm_jump_10"] }
             }
           },
-          "display": { "shards": { "jumpGroupSize": 3 } },
           "schedule": [
             {
               "date": "2026-10-17",
