@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { WaveShardJumpBuilder } from "./WaveShardJumpBuilder.js";
 import type { ShardPath, Shard } from "../Shard.js";
-import type { EventTimeline, ScheduledShardAction } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline, ScheduledShardAction } from "../../config/SiteConfig.js";
 import type { ObservedPortal } from "../Portal.js";
 import type { ShardGoalScoringRule, ShardLinkScoringRule } from "../../types/index.js";
 
@@ -31,7 +31,7 @@ describe("WaveShardJumpBuilder", () => {
             }
         };
 
-        const timeline: EventTimeline = { start: 1000, preEventCutoff: 500, end: 2000, shards: [wave as any] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave as any] };
 
         const windows = WaveShardJumpBuilder.build(wave, shards, {}, siteShardPaths, {}, {}, timeline);
 
@@ -66,7 +66,7 @@ describe("WaveShardJumpBuilder", () => {
             ]}]
         ]);
 
-        const timeline: EventTimeline = { start: 1000, preEventCutoff: 500, end: 2000, shards: [wave as any] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave as any] };
 
         const windows = WaveShardJumpBuilder.build(wave, shards, {}, {}, {}, {}, timeline);
 
@@ -108,7 +108,7 @@ describe("WaveShardJumpBuilder", () => {
             jump_rule: { label: "Jump Rule", points: 2 }
         };
 
-        const timeline: EventTimeline = { start: 1000, preEventCutoff: 500, end: 2000, shards: [wave as any] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave as any] };
 
         const windows = WaveShardJumpBuilder.build(wave, shards, {}, siteShardPaths, {}, linkRules, timeline);
 
@@ -138,10 +138,11 @@ describe("WaveShardJumpBuilder", () => {
             target_secured: { label: "Target Secured", points: 5 }
         };
 
-        const timeline: EventTimeline = {
+        const timeline: SiteTimeline = {
             start: 1000,
             preEventCutoff: 500,
             end: 2000,
+            durationMinutes: 17,
             shards: [wave as any],
             targets: [{ waveNumber: 1, start: 1000, end: 2000 }]
         };

@@ -7,6 +7,7 @@ import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
 import { instant } from "temporal-polyfill/fns/Now";
+import { findSiteByCoords } from "../../../common/Geo.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
@@ -51,11 +52,13 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
         const portalsInput = input.portals ?? [];
         for (const p of portalsInput) {
-            const match = config.findSiteByCoords(p.latE6, p.lngE6, timestampMs);
-            if (!match) continue;
+            const matchedSite = findSiteByCoords(config.getAllSites(), p.latE6, p.lngE6, timestampMs);
+            if (!matchedSite) continue;
 
-            const { siteId, seasonId } = match;
+            const siteId = matchedSite.geocode.id;
             if (ignoredSites.has(siteId)) continue;
+
+            const seasonId = matchedSite.seasonId;
 
             const siteConfig = config.getSiteConfig(siteId);
             const cutoff = siteConfig?.timeline?.preEventCutoff;

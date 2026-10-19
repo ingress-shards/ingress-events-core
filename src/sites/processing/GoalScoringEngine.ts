@@ -4,7 +4,7 @@ import type { PortalId } from "../../common/Identifiers.js";
 import type { FactionId } from "../../common/Factions.js";
 import type { ShardGoalScoringRule } from "../../types/index.js";
 import type { GoalActionDetail } from "../Site.js";
-import type { EventTimeline } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline } from "../../config/SiteConfig.js";
 
 import { isMovementInWindow, type JumpWindowBounds } from "./JumpWindowUtilities.js";
 
@@ -18,7 +18,7 @@ export const GoalScoringEngine = {
         shards: Map<number, Shard>,
         portals: Record<PortalId, ObservedPortal>,
         rules: Record<string, ShardGoalScoringRule>,
-        timeline: EventTimeline,
+        timeline: SiteTimeline,
         waveScoredGoals: Map<PortalId, Set<number>>,
         windowBounds: JumpWindowBounds
     ): JumpWindowGoalResult => {
@@ -114,7 +114,7 @@ export const GoalScoringEngine = {
         shards: Map<number, Shard>,
         portals: Record<PortalId, ObservedPortal>,
         rules: Record<string, ShardGoalScoringRule>,
-        timeline: EventTimeline
+        timeline: SiteTimeline
     ): Record<FactionId, number> => {
         const wavePoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
         const waveScoredGoals = new Map<PortalId, Set<number>>();

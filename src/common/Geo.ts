@@ -1,3 +1,5 @@
+import type { SiteConfig } from "../config/SiteConfig.js";
+
 /**
  * Earth's radius in meters.
  */
@@ -8,10 +10,6 @@ export const EARTH_RADIUS_METERS = 6371000;
  */
 export const SITE_AGGREGATION_DISTANCE_METERS = 25000;
 
-/**
- * Maximum distance in meters to scan for nearby upcoming sites in diagnostic warnings (50 km).
- */
-export const SITE_PROXIMITY_WARNING_DISTANCE_METERS = 50000;
 
 /**
  * Opaque type for coordinates multiplied by 1,000,000.
@@ -123,3 +121,46 @@ export const calculateCentroid = (coords: Coordinates[]): Coordinates | undefine
         lngE6: Math.round(sumLng / coords.length),
     };
 };
+
+/**
+ * Resolves real-world coordinates and observation timestamps to an active or upcoming event SiteConfig.
+ * Matches active events first (within event duration + 60 mins buffer), then upcoming events by earliest start time.
+ */
+export const findSiteByCoords = (
+    sites: Iterable<SiteConfig>,
+    latE6: number,
+    lngE6: number,
+    timestampMs: number
+): SiteConfig | undefined => {
+    const matches: SiteConfig[] = [];
+
+    for (const site of sites) {
+        if (isWithinSiteRange({ latE6, lngE6 }, site.geocode)) {
+            matches.push(site);
+        }
+    }
+
+    if (matches.length === 0) {
+        return undefined;
+    }
+
+    // 1. Check for active/recent event matching (start <= timestampMs <= end + 60 mins)
+    const activeMatch = matches.find(m => {
+        const { start, end } = m.timeline;
+        return timestampMs >= start && timestampMs <= end + 60 * 60 * 1000;
+    });
+    if (activeMatch) {
+        return activeMatch;
+    }
+
+    // 2. Check for upcoming event matching (start > timestampMs) sorted by earliest start
+    const upcomingMatches = matches.filter(m => m.timeline.start > timestampMs);
+    upcomingMatches.sort((a, b) => a.timeline.start - b.timeline.start);
+
+    if (upcomingMatches.length > 0) {
+        return upcomingMatches[0];
+    }
+
+    return undefined;
+};
+

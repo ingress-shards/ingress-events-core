@@ -4,7 +4,7 @@ import type { ObservedPortal } from "../Portal.js";
 import type { PortalId } from "../../common/Identifiers.js";
 import type { FactionId } from "../../common/Factions.js";
 import type { ShardGoalScoringRule, ShardLinkScoringRule } from "../../types/index.js";
-import type { EventTimeline } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline } from "../../config/SiteConfig.js";
 import { ShardPathBuilder } from "./ShardPathBuilder.js";
 import { WaveShardJumpBuilder } from "./WaveShardJumpBuilder.js";
 import { GoalScoringEngine } from "./GoalScoringEngine.js";
@@ -48,7 +48,7 @@ export const WaveAnalyser = {
         siteShardPaths: Record<string, ShardPath>,
         goalRules: Record<string, ShardGoalScoringRule>,
         linkRules: Record<string, ShardLinkScoringRule>,
-        timeline: EventTimeline
+        timeline: SiteTimeline
     ): WaveState => {
         const waveEndLimit = wave.shardsActions?.some(a => a.action === "despawn") ? wave.end + 55000 : wave.end;
         // Paths are now passed in globally scored (`siteShardPaths`)

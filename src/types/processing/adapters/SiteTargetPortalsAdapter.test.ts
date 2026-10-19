@@ -1,68 +1,12 @@
 import { describe, test, expect } from "vitest";
 import { SiteTargetPortalsAdapter } from "./SiteTargetPortalsAdapter.js";
-import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { SiteTargetPortals } from "../../data-files/SiteTargetPortals.js";
 import type { TargetHistoryEntry } from "../../../sites/Portal.js";
+import { createMockEventConfigRegistry } from "../../../../test/fixtures/MockConfigRegistry.js";
 
 describe("SiteTargetPortalsAdapter", () => {
     const adapter = new SiteTargetPortalsAdapter();
-
-    const activeSites = [
-        {
-            id: "test-site",
-            name: "Test Site",
-            latE6: 10000000,
-            lngE6: 20000000,
-            eventType: "ANOMALY" as const,
-            startTime: "2026-06-18T12:00:00Z[UTC]",
-            timeZone: "UTC",
-            countryCode: "US"
-        }
-    ];
-
-    const geocode = {
-        seasons: [
-            {
-                id: "test-season",
-                sites: activeSites
-            }
-        ]
-    };
-
-    const mockRegistry = new EventConfigRegistry({
-        eventBlueprints: {
-            events: { "ANOMALY": { label: "Anomaly" } },
-            ornaments: {},
-            shardMechanics: {},
-            targetMechanics: {},
-            scoring: {}
-        } as any,
-        seasonManifest: {
-            seasons: [
-                {
-                    id: "test-season",
-                    name: "Test Season",
-                    year: 2026,
-                    overviewUrl: "",
-                    components: [
-                        {
-                            eventType: "ANOMALY",
-                            startTime: "12:00",
-                            mechanics: {
-                                shards: {
-                                    shardMechanics: "test-shard-mech",
-                                    scoring: {
-                                        wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        seasonGeocode: geocode
-    });
+    const mockRegistry = createMockEventConfigRegistry();
 
     test("should parse and group target portals correctly", () => {
         const input: SiteTargetPortals = {

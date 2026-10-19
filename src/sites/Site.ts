@@ -37,6 +37,11 @@ export interface SiteRecord {
     analysis?: SiteAnalysis;
 }
 
+/**
+ * Collection of site records keyed by site ID.
+ */
+export type SiteRecordMap = Record<SiteId, SiteRecord>;
+
 export interface SiteRecordMetadata {
     siteId: SiteId;
     seasonId: SeasonId;

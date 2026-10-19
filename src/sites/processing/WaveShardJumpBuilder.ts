@@ -4,7 +4,7 @@ import type { ObservedPortal } from "../Portal.js";
 import type { PortalId } from "../../common/Identifiers.js";
 import type { FactionId } from "../../common/Factions.js";
 import type { ShardGoalScoringRule, ShardLinkScoringRule } from "../../types/index.js";
-import type { EventTimeline, ScheduledShardAction } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline, ScheduledShardAction } from "../../config/SiteConfig.js";
 import { roundToDecimalPlaces } from "../../common/Math.js";
 import { GoalScoringEngine } from "./GoalScoringEngine.js";
 import { isMovementInWindow, type JumpWindowBounds } from "./JumpWindowUtilities.js";
@@ -108,7 +108,7 @@ export const WaveShardJumpBuilder = {
         siteShardPaths: Record<string, ShardPath>,
         goalRules: Record<string, ShardGoalScoringRule>,
         linkRules: Record<string, ShardLinkScoringRule>,
-        timeline: EventTimeline
+        timeline: SiteTimeline
     ): ShardJumpWindow[] => {
         if (!wave.shardsActions) {
             throw new Error("shardsActions must be provided in the event blueprint.");

@@ -10,7 +10,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
 
     public parseAndGroupObservations(input: SiteDiscovery, config: EventConfigRegistry): SiteRecord[] {
         const siteId = input.siteId;
-        const foundSeasonId = config.getSeasonIdForSite(siteId);
+        const foundSeasonId = config.getSiteConfig(siteId)?.seasonId;
 
         if (!foundSeasonId) {
             console.warn(`[SiteDiscoveryAdapter] SiteId "${siteId}" not found in season config. Skipping.`);

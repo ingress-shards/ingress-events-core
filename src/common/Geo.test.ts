@@ -63,4 +63,66 @@ describe("geo utils", () => {
             expect(isWithinSiteRange(siteCenter, outsidePoint, 25000, 50000)).toBe(false);
         });
     });
+
+    describe("findSiteByCoords", () => {
+        // London coordinates: lat 51.5074, lng -0.1278 (E6: 51507400, -127800)
+        const londonSite = {
+            seasonId: "season-2026",
+            geocode: {
+                id: "site-london",
+                name: "London",
+                eventType: "SKIRMISH" as const,
+                latE6: 51507400,
+                lngE6: -127800,
+                startTime: "2026-06-01T12:00:00Z[UTC]",
+                timeZone: "UTC",
+                countryCode: "GB",
+            },
+            timeline: {
+                start: 1777723200000, // 12:00
+                preEventCutoff: 1777716000000, // 10:00
+                end: 1777725900000, // 12:45
+                durationMinutes: 45,
+                shards: [],
+            },
+        };
+
+        const sites = [londonSite];
+
+        it("matches an active event during its timeline", async () => {
+            const { findSiteByCoords } = await import("./Geo.js");
+            const activeTime = londonSite.timeline.start + 20 * 60 * 1000;
+            const match = findSiteByCoords(sites, 51500000, -100000, activeTime);
+            expect(match?.geocode.id).toBe("site-london");
+        });
+
+        it("matches a recent event within the 60-minute post-event buffer", async () => {
+            const { findSiteByCoords } = await import("./Geo.js");
+            const recentTime = londonSite.timeline.end + 30 * 60 * 1000;
+            const match = findSiteByCoords(sites, 51500000, -100000, recentTime);
+            expect(match?.geocode.id).toBe("site-london");
+        });
+
+        it("matches an upcoming event when before start time", async () => {
+            const { findSiteByCoords } = await import("./Geo.js");
+            const upcomingTime = londonSite.timeline.start - 24 * 60 * 60 * 1000;
+            const match = findSiteByCoords(sites, 51500000, -100000, upcomingTime);
+            expect(match?.geocode.id).toBe("site-london");
+        });
+
+        it("returns undefined for coordinates beyond the 25km radius", async () => {
+            const { findSiteByCoords } = await import("./Geo.js");
+            // ~50km away
+            const match = findSiteByCoords(sites, 51810000, -100000, londonSite.timeline.start);
+            expect(match).toBeUndefined();
+        });
+
+        it("returns undefined when the event is expired beyond the 60-minute buffer", async () => {
+            const { findSiteByCoords } = await import("./Geo.js");
+            const expiredTime = londonSite.timeline.end + 90 * 60 * 1000;
+            const match = findSiteByCoords(sites, 51500000, -100000, expiredTime);
+            expect(match).toBeUndefined();
+        });
+    });
 });
+

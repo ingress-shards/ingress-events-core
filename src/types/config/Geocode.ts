@@ -1,5 +1,5 @@
 import type { SeasonId, SiteId } from "../../common/Identifiers.js";
-import type { SeasonEvent } from "../../seasons/Season.js";
+import type { EventType } from "./Manifest.js";
 import type { SiteLocation } from "../../common/Geo.js";
 
 /**
@@ -9,7 +9,7 @@ export interface SiteGeocode extends SiteLocation {
     /** Unique ID for the site (e.g. '2025-plusalpha-singapore') */
     id: SiteId;
     /** The event type this site belongs to (for blueprint matching) */
-    eventType: SeasonEvent;
+    eventType: EventType;
     /** Full ISO start time with [TimeZone] suffix */
     startTime: string;
     /** IANA time zone identifier (e.g. 'Asia/Singapore') */

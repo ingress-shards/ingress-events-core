@@ -2,13 +2,13 @@ import type { ShardPath, Link, ShardMove } from "../Shard.js";
 import type { ShardLinkScoringRule } from "../../types/index.js";
 import type { PortalId } from "../../common/Identifiers.js";
 import type { ObservedPortal, PortalHistoryEntry } from "../Portal.js";
-import type { EventTimeline } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline } from "../../config/SiteConfig.js";
 
 export const LinkScoringEngine = {
     createScorer: (
         rules: Record<string, ShardLinkScoringRule>,
         portals: Record<PortalId, ObservedPortal>,
-        timeline: EventTimeline
+        timeline: SiteTimeline
     ) => {
         const scoreLocked = new Map<number, Set<number>>();
 

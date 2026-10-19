@@ -10,7 +10,7 @@ export class SiteTargetPortalsAdapter implements DataObservationAdapter<SiteTarg
 
     public parseAndGroupObservations(input: SiteTargetPortals, config: EventConfigRegistry): SiteRecord[] {
         const siteId = input.siteId;
-        const foundSeasonId = config.getSeasonIdForSite(siteId);
+        const foundSeasonId = config.getSiteConfig(siteId)?.seasonId;
 
         if (!foundSeasonId) {
             console.warn(`[SiteTargetPortalsAdapter] SiteId "${siteId}" not found in season config. Skipping.`);

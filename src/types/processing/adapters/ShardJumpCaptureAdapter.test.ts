@@ -1,76 +1,24 @@
 import { describe, test, expect } from "vitest";
 import { ShardJumpCaptureAdapter } from "./ShardJumpCaptureAdapter.js";
-import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
+import { createMockEventConfigRegistry } from "../../../../test/fixtures/MockConfigRegistry.js";
 
 describe("ShardJumpCaptureAdapter", () => {
     const adapter = new ShardJumpCaptureAdapter();
 
-    const activeSites = [
-        {
-            id: "test-site",
-            name: "Test Site",
-            latE6: 10000000,
-            lngE6: 20000000,
-            eventType: "ANOMALY" as const,
-            startTime: "2026-06-18T12:00:00Z[UTC]",
-            timeZone: "UTC",
-            countryCode: "US"
-        },
-        {
-            id: "helsinki",
-            name: "Helsinki, Finland",
-            latE6: 60169856,
-            lngE6: 24938379,
-            eventType: "ANOMALY" as const,
-            startTime: "2026-07-18T12:00:00Z[UTC]",
-            timeZone: "UTC",
-            countryCode: "FI"
-        }
-    ];
-
-    const geocode = {
-        seasons: [
+    const mockRegistry = createMockEventConfigRegistry({
+        extraSites: [
             {
-                id: "test-season",
-                sites: activeSites
+                id: "helsinki",
+                name: "Helsinki, Finland",
+                latE6: 60169856,
+                lngE6: 24938379,
+                eventType: "ANOMALY",
+                startTime: "2026-07-18T12:00:00Z[UTC]",
+                timeZone: "UTC",
+                countryCode: "FI"
             }
         ]
-    };
-
-    const mockRegistry = new EventConfigRegistry({
-        eventBlueprints: {
-            events: { "ANOMALY": { label: "Anomaly" } },
-            ornaments: {},
-            shardMechanics: {},
-            targetMechanics: {},
-            scoring: {}
-        } as any,
-        seasonManifest: {
-            seasons: [
-                {
-                    id: "test-season",
-                    name: "Test Season",
-                    year: 2026,
-                    overviewUrl: "",
-                    components: [
-                        {
-                            eventType: "ANOMALY",
-                            startTime: "12:00",
-                            mechanics: {
-                                shards: {
-                                    shardMechanics: "test-shard-mech",
-                                    scoring: {
-                                        wavePointAggregation: [[1, 2, 3, 4, 5, 6]]
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        seasonGeocode: geocode
     });
 
     test("should parse fragment jumps correctly", () => {

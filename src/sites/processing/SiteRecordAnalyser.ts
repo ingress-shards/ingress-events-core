@@ -7,6 +7,7 @@ import { roundToDecimalPlaces } from "../../common/Math.js";
 import { LinkScoringEngine } from "./LinkScoringEngine.js";
 import { ShardPathBuilder } from "./ShardPathBuilder.js";
 import { WaveAnalyser } from "./WaveAnalyser.js";
+import type { ShardLinkScoringRule, ShardGoalScoringRule } from "../../types/config/EventBlueprints.js";
 
 export const SiteRecordAnalyser = {
     analyze: (record: SiteRecord, config?: EventConfigRegistry): SiteAnalysis => {
@@ -25,8 +26,32 @@ export const SiteRecordAnalyser = {
         // 2. Scoring rules & config
         const siteConfig = config?.getSiteConfig(record.metadata.siteId);
         const timeline = siteConfig?.timeline;
-        const linkScoringRules = siteConfig?.mechanics?.shards?.scoring?.linkScoringRules ?? {};
-        const goalScoringRules = siteConfig?.mechanics?.shards?.scoring?.goalScoringRules ?? {};
+        const linkScoringRules: Record<string, ShardLinkScoringRule> = {};
+        const goalScoringRules: Record<string, ShardGoalScoringRule> = {};
+        let wavePointAggregation: number[][] | undefined;
+        let seasonPointsTotal: number | undefined;
+
+        if (siteConfig && config) {
+            const season = config.getSeasonMetadata(siteConfig.seasonId);
+            const component = season?.components?.find(c => c.eventType === siteConfig.geocode?.eventType);
+            const scoring = component?.mechanics?.shards?.scoring;
+            if (scoring) {
+                wavePointAggregation = scoring.wavePointAggregation;
+                seasonPointsTotal = scoring.seasonPoints;
+                if (scoring.linkRules) {
+                    for (const ruleId of scoring.linkRules) {
+                        const rule = config.blueprints?.linkScoringRules?.[ruleId];
+                        if (rule) linkScoringRules[ruleId] = rule;
+                    }
+                }
+                if (scoring.goalRules) {
+                    for (const ruleId of scoring.goalRules) {
+                        const rule = config.blueprints?.goalScoringRules?.[ruleId];
+                        if (rule) goalScoringRules[ruleId] = rule;
+                    }
+                }
+            }
+        }
 
         // 3. Build overall shard paths (and score them simultaneously if timeline is available)
         let linkScorer: undefined | ((move: ShardMove, link: Link, path: ShardPath) => string[]);
@@ -59,7 +84,6 @@ export const SiteRecordAnalyser = {
         // 5. Aggregate Wave scores to get Season Points
         const rawScores: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
         const contributingWaves: Partial<Record<FactionId, number[]>> = { RES: [], ENL: [] };
-        const wavePointAggregation = siteConfig?.mechanics?.shards?.scoring?.wavePointAggregation;
 
         if (wavePointAggregation && timeline?.shards) {
             for (const group of wavePointAggregation) {
@@ -97,7 +121,6 @@ export const SiteRecordAnalyser = {
             }
         }
 
-        const seasonPointsTotal = siteConfig?.mechanics?.shards?.scoring?.seasonPoints;
         const finalPoints: Points = {};
         let seasonPointsResult: SeasonPointsResult | undefined;
 

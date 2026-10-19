@@ -98,10 +98,12 @@ describe("SiteRecordAnalyser", () => {
             getSiteConfig: (siteId: string) => {
                 expect(siteId).toBe("test-site");
                 return {
+                    seasonId: "test-season",
                     timeline: {
                         start: 1000,
                         preEventCutoff: 0,
                         end: 4000000,
+                        durationMinutes: 66,
                         shards: [
                             {
                                 waveNumber: 1,
@@ -124,7 +126,8 @@ describe("SiteRecordAnalyser", () => {
                         ]
                     }
                 };
-            }
+            },
+            getSeasonMetadata: () => undefined
         };
 
         const analysis = SiteRecordAnalyser.analyze(record, mockConfig as unknown as EventConfigRegistry);

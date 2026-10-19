@@ -3,13 +3,14 @@ import { GoalScoringEngine } from "./GoalScoringEngine.js";
 import type { Shard } from "../Shard.js";
 import type { ShardGoalScoringRule } from "../../types/index.js";
 import type { ObservedPortal } from "../Portal.js";
-import type { EventTimeline } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline } from "../../config/SiteConfig.js";
 
 describe("GoalScoringEngine", () => {
-    const timeline: EventTimeline = {
+    const timeline: SiteTimeline = {
         start: 1000,
         preEventCutoff: 500,
         end: 5000,
+        durationMinutes: 67,
         shards: [
             {
                 waveNumber: 1,

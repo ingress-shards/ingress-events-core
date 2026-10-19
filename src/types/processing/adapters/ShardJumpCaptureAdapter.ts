@@ -5,6 +5,7 @@ import type { ShardJumpCapture, Fragment, FragmentHistoryType, TargetArtifact } 
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { fromNianticId, type FactionId } from "../../../common/Factions.js";
+import { findSiteByCoords } from "../../../common/Geo.js";
 import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
 import type { ShardHistoryEntry } from "../../../sites/Shard.js";
 
@@ -41,10 +42,11 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         if (!referencePortal) return;
 
         const firstTimeMs = Number(firstItem.moveTimeMs);
-        const match = config.findSiteByCoords(referencePortal.latE6, referencePortal.lngE6, firstTimeMs);
-        if (!match) return;
+        const matchedSite = findSiteByCoords(config.getAllSites(), referencePortal.latE6, referencePortal.lngE6, firstTimeMs);
+        if (!matchedSite) return;
 
-        const { siteId, seasonId } = match;
+        const siteId = matchedSite.geocode.id;
+        const seasonId = matchedSite.seasonId;
         const record = getOrCreateRecord(siteId, seasonId);
         const obs = record.observations!;
 
@@ -166,10 +168,11 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         const targets = art.target ?? [];
         for (const t of targets) {
             const info = t.portalInfo;
-            const match = config.findSiteByCoords(info.latE6, info.lngE6, timestampMs);
-            if (!match) continue;
+            const matchedSite = findSiteByCoords(config.getAllSites(), info.latE6, info.lngE6, timestampMs);
+            if (!matchedSite) continue;
 
-            const { siteId, seasonId } = match;
+            const siteId = matchedSite.geocode.id;
+            const seasonId = matchedSite.seasonId;
             const record = getOrCreateRecord(siteId, seasonId);
             const obs = record.observations!;
             const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, info.latE6, info.lngE6);

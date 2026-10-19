@@ -3,13 +3,14 @@ import { LinkScoringEngine } from "./LinkScoringEngine.js";
 import type { ShardPath, ShardMove, Link } from "../Shard.js";
 import type { ShardLinkScoringRule } from "../../types/index.js";
 import type { ObservedPortal } from "../Portal.js";
-import type { EventTimeline } from "../../seasons/SeasonConfig.js";
+import type { SiteTimeline } from "../../config/SiteConfig.js";
 
 describe("LinkScoringEngine", () => {
-    const timeline: EventTimeline = {
+    const timeline: SiteTimeline = {
         start: 1000,
         preEventCutoff: 500,
         end: 5000,
+        durationMinutes: 67,
         shards: [
             {
                 waveNumber: 1,

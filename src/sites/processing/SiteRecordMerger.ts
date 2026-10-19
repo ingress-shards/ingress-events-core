@@ -5,7 +5,7 @@ import { instant } from "temporal-polyfill/fns/Now";
 import type { PortalMergeStrategy } from "./PortalMergeStrategy.js";
 import { DefaultPortalMergeStrategy } from "./DefaultPortalMergeStrategy.js";
 import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
-import type { WaveTimeline } from "../../seasons/SeasonConfig.js";
+import type { WaveTimeline } from "../../config/SiteConfig.js";
 
 export class SiteRecordMerger {
     /**
