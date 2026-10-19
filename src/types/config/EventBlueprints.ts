@@ -1,5 +1,5 @@
 import type { PortalHistoryType } from "../../sites/Portal.js";
-import type { SeasonEvent } from "../../seasons/Season.js";
+import type { EventType } from "./Manifest.js";
 import type { ShardAction } from "../../sites/Shard.js";
 
 /**
@@ -96,7 +96,7 @@ export interface TargetMechanics {
  */
 export interface EventBlueprints {
     /** Display branding for each event type */
-    events: Record<SeasonEvent, EventMetadata>;
+    events: Record<EventType, EventMetadata>;
     /** Metadata for ornaments indexed by their ID (e.g., "ap1") */
     ornaments: Record<string, Ornament>;
     /** Shard behavior patterns indexed by ID */
@@ -137,3 +137,15 @@ export interface ShardGoalScoringRule extends BaseScoringRule {
         maxScoringShardsPerPortal?: number;
     };
 }
+
+/**
+ * Returns all ornament IDs in the blueprints that include the given history tag.
+ */
+export const getOrnamentIdsByTag = (
+    blueprints: EventBlueprints,
+    tag: PortalHistoryType
+): string[] => {
+    return Object.entries(blueprints.ornaments)
+        .filter(([_, data]) => data.tags.includes(tag))
+        .map(([id]) => id);
+};

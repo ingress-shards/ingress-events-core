@@ -20,11 +20,11 @@ describe("Helsinki Integration Analysis", () => {
         const rawData = fs.readFileSync(fixturePath, "utf8");
         const record = JSON.parse(rawData) as SiteRecord;
 
-        const registry = new EventConfigRegistry({
-            eventBlueprints: realBlueprints as any,
-            seasonManifest: realManifest as any,
-            seasonGeocode: realGeocode as any
-        });
+        const registry = new EventConfigRegistry(
+            realBlueprints as any,
+            realManifest as any,
+            realGeocode as any
+        );
 
         const helsinkiConfig = registry.getSiteConfig("2026-apollo-helsinki");
         expect(helsinkiConfig).toBeDefined();
@@ -46,6 +46,7 @@ describe("Helsinki Integration Analysis", () => {
 
             for (const pathKey of Object.keys(analysis.siteShardPaths)) {
                 const path = analysis.siteShardPaths[pathKey];
+                if (!path) continue;
                 for (const link of path.links) {
                     for (const move of link.moves) {
                         if (move.mismatch) {
