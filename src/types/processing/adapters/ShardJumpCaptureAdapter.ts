@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-array-sort */
 import type { SiteId, PortalId } from "../../../common/Identifiers.js";
 import type { SiteRecord } from "../../../sites/Site.js";
 import type { ShardJumpCapture, Fragment, FragmentHistoryType, TargetArtifact } from "../../capture/ShardJumps.js";

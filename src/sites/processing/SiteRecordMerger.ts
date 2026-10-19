@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/no-array-sort */
 import type { SiteRecord, SiteObservation } from "../Site.js";
 import type { ShardHistoryEntry } from "../Shard.js";
 import { instant } from "temporal-polyfill/fns/Now";
