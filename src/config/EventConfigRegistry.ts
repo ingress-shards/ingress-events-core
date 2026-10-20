@@ -1,6 +1,6 @@
 import type { EventBlueprints, SeasonGeocode, SeasonManifest, SeasonMetadata, SeasonComponent, SiteGeocode, SiteManifestMetadata } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
-import type { SiteConfig, SiteTimeline, WaveTimeline, ScheduledShardAction } from "./SiteConfig.js";
+import { DEFAULT_SITE_DURATION_MINUTES, type SiteConfig, type SiteTimeline, type ShardWaveTimeline, type TargetWaveTimeline, type ScheduledShardAction } from "./SiteConfig.js";
 import { parseZonedDateTime } from "../common/Date.js";
 
 export class EventConfigRegistry {
@@ -63,7 +63,7 @@ export class EventConfigRegistry {
             }
         }
 
-        const shards: WaveTimeline[] = shardWaves.map((w, index) => {
+        const shards: ShardWaveTimeline[] = shardWaves.map((w, index) => {
             const waveStart = startMs + w.startOffset * 60 * 1000;
             const waveEnd = startMs + w.endOffset * 60 * 1000;
 
@@ -93,7 +93,7 @@ export class EventConfigRegistry {
             };
         });
 
-        const targets: WaveTimeline[] = targetWaves.map((w, index) => {
+        const targets: TargetWaveTimeline[] = targetWaves.map((w, index) => {
             const waveStart = startMs + w.startOffset * 60 * 1000;
             const waveEnd = startMs + w.endOffset * 60 * 1000;
 
@@ -126,6 +126,14 @@ export class EventConfigRegistry {
 
     public getSiteConfig(siteId: SiteId): SiteConfig | undefined {
         return this.sites.get(siteId);
+    }
+
+    /**
+     * Retrieves the duration of a site event in minutes.
+     * Returns the site's configured timeline duration if present, falling back to DEFAULT_SITE_DURATION_MINUTES (240).
+     */
+    public getSiteDurationMinutes(siteId: SiteId): number {
+        return this.getSiteConfig(siteId)?.timeline.durationMinutes ?? DEFAULT_SITE_DURATION_MINUTES;
     }
 
     public getAllSites(): SiteConfig[] {

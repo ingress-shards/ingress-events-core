@@ -16,6 +16,7 @@ describe("LinkScoringEngine", () => {
                 waveNumber: 1,
                 start: 1000,
                 end: 2000,
+                expectedShards: 5,
             }
         ],
         targets: []

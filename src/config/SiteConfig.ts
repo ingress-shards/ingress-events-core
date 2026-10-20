@@ -3,6 +3,11 @@ import type { SeasonId } from "../common/Identifiers.js";
 import type { ShardAction } from "../sites/Shard.js";
 
 /**
+ * Default fallback site duration in minutes (4 hours) when specific timeline mechanics cannot be resolved.
+ */
+export const DEFAULT_SITE_DURATION_MINUTES = 240;
+
+/**
  * Site specific configuration.
  */
 export interface SiteConfig {
@@ -26,26 +31,28 @@ export interface SiteTimeline {
     /** Number of consecutive jump windows to group together in presentation views */
     jumpGroupSize?: number;
     /** Ordered timeline of shard waves and their scheduled movements */
-    shards: WaveTimeline[];
+    shards: ShardWaveTimeline[];
     /** Ordered timeline of target waves and their active windows */
-    targets?: WaveTimeline[];
+    targets?: TargetWaveTimeline[];
 }
 
-/** @deprecated Use SiteTimeline */
-export type EventTimeline = SiteTimeline;
-
-export interface WaveTimeline {
+export interface BaseWaveTimeline {
     /** 1-indexed wave number (e.g. 1, 2, 3) */
     waveNumber: number;
     /** Start of the wave window in epoch milliseconds */
     start: number;
     /** End of the wave window in epoch milliseconds */
     end: number;
-    /** Expected number of shards for this wave (from site override or shard wave quantity) */
-    expectedShards?: number;
     /** Fully resolved absolute timestamps for actions (spawns, jumps) in this wave */
     shardsActions?: ScheduledShardAction[];
 }
+
+export interface ShardWaveTimeline extends BaseWaveTimeline {
+    /** Expected number of shards for this wave (from site override or shard wave quantity) */
+    expectedShards: number;
+}
+
+export type TargetWaveTimeline = BaseWaveTimeline;
 
 export interface ScheduledShardAction {
     /** The type of movement or event (e.g. "spawn", "jump", "link") */

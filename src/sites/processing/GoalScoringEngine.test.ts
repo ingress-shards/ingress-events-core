@@ -16,6 +16,7 @@ describe("GoalScoringEngine", () => {
                 waveNumber: 1,
                 start: 1000,
                 end: 2000,
+                expectedShards: 5,
                 shardsActions: [
                     { action: "spawn", time: 1000 },
                     { action: "jump", time: 1500 }

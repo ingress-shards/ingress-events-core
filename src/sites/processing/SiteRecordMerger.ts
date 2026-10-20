@@ -4,7 +4,7 @@ import { instant } from "temporal-polyfill/fns/Now";
 import type { PortalMergeStrategy } from "./PortalMergeStrategy.js";
 import { DefaultPortalMergeStrategy } from "./DefaultPortalMergeStrategy.js";
 import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
-import type { WaveTimeline } from "../../config/SiteConfig.js";
+import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
 
 export class SiteRecordMerger {
     /**
@@ -50,7 +50,7 @@ export class SiteRecordMerger {
                 getWaveIndex: (timestamp: number) => {
                     if (!waves) return;
                     // Check if timestamp falls in [start, end + 59999] of any wave
-                    const index = waves.findIndex((w: WaveTimeline) => timestamp >= w.start && timestamp <= w.end + 59999);
+                    const index = waves.findIndex((w: ShardWaveTimeline) => timestamp >= w.start && timestamp <= w.end + 59999);
                     return index === -1 ? undefined : index;
                 }
             });

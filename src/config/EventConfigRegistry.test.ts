@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { EventConfigRegistry } from "./EventConfigRegistry.js";
+import { DEFAULT_SITE_DURATION_MINUTES } from "./SiteConfig.js";
 import { parseZonedDateTime } from "../common/Date.js";
 import { findSiteByCoords } from "../common/Geo.js";
 import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
@@ -263,5 +264,23 @@ describe("EventConfigRegistry", () => {
         console.log("=== JERSEY CITY CONFIG REGISTRY OUTPUT ===");
         console.log(JSON.stringify(pragueConfig, undefined, 2));
         console.log("=====================================");
+    });
+
+    it("should return configured site duration or default fallback duration", () => {
+        const registry = new EventConfigRegistry(
+            realBlueprints as EventBlueprints,
+            realManifest as SeasonManifest,
+            realGeocode as SeasonGeocode
+        );
+
+        // Configured site
+        const configuredDuration = registry.getSiteDurationMinutes("2026-orion-jersey-city");
+        expect(configuredDuration).toBeGreaterThan(0);
+        expect(configuredDuration).toBe(registry.getSiteConfig("2026-orion-jersey-city")!.timeline.durationMinutes);
+
+        // Unknown / unconfigured site fallback
+        const fallbackDuration = registry.getSiteDurationMinutes("unknown-site-id");
+        expect(fallbackDuration).toBe(DEFAULT_SITE_DURATION_MINUTES);
+        expect(fallbackDuration).toBe(240);
     });
 });
