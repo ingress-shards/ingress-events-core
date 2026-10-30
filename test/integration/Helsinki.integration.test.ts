@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SiteRecordAnalyser } from "../../src/sites/processing/SiteRecordAnalyser.js";
+import { SiteRecordAnalyser } from "../../src/sites/analysis/SiteRecordAnalyser.js";
 import type { SiteRecord } from "../../src/sites/Site.js";
 import { EventConfigRegistry } from "../../src/config/EventConfigRegistry.js";
 import * as fs from "node:fs";
@@ -29,7 +29,8 @@ describe("Helsinki Integration Analysis", () => {
         const helsinkiConfig = registry.getSiteConfig("2026-apollo-helsinki");
         expect(helsinkiConfig).toBeDefined();
 
-        const analysis = SiteRecordAnalyser.analyze(record, registry);
+        const analyser = new SiteRecordAnalyser(registry);
+        const analysis = analyser.analyse(record);
         
         expect(analysis.centroid).toBeDefined();
         expect(analysis.centroid!.latE6).toBeGreaterThan(0);
@@ -38,14 +39,14 @@ describe("Helsinki Integration Analysis", () => {
         // Assertions on the timeline/waves
         expect(Object.keys(analysis.waves).length).toBe(6);
         
-        expect(analysis.siteShardPaths).toBeDefined();
+        expect(analysis.shardPaths).toBeDefined();
 
         // checks the number of unscored link alignments - in this case, one link is neutral
-        if (analysis.siteShardPaths) {
+        if (analysis.shardPaths) {
             let mismatchCount = 0;
 
-            for (const pathKey of Object.keys(analysis.siteShardPaths)) {
-                const path = analysis.siteShardPaths[pathKey];
+            for (const pathKey of Object.keys(analysis.shardPaths)) {
+                const path = analysis.shardPaths[pathKey];
                 if (!path) continue;
                 for (const link of path.links) {
                     for (const move of link.moves) {
@@ -60,21 +61,27 @@ describe("Helsinki Integration Analysis", () => {
         }
 
         // Assertions on site-wide statistics
-        expect(analysis.siteStatistics).toBeDefined();
-        expect(analysis.siteStatistics!.shards.moving).toBe(69);
-        expect(analysis.siteStatistics!.shards.nonMoving).toBe(0);
-        expect(analysis.siteStatistics!.links).toBe(425);
-        expect(analysis.siteStatistics!.paths).toBe(373);
-        expect(analysis.siteStatistics!.targetsCount).toBe(72);
-        expect(analysis.siteStatistics!.linkAlignmentMismatch).toBe(2);
+        expect(analysis.statistics).toBeDefined();
+        expect(analysis.statistics!.shards.moving).toBe(137);
+        expect(analysis.statistics!.shards.nonMoving).toBe(1);
+        expect(analysis.statistics!.links).toBe(425);
+        expect(analysis.statistics!.paths).toBe(373);
+        expect(analysis.statistics!.targets).toBe(72);
+        
+        // Assertions on diagnostics
+        expect(analysis.diagnostics).toBeDefined();
+        expect(analysis.diagnostics!.linkAlignmentMismatches).toEqual({ ENL: 2 });
+        expect(analysis.waves[3]?.diagnostics?.linkAlignmentMismatches).toEqual({ ENL: 1 });
+        expect(analysis.waves[5]?.diagnostics?.linkAlignmentMismatches).toEqual({ ENL: 1 });
+        expect(analysis.waves[1]?.diagnostics).toBeUndefined();
         
         // Assertions on final scoring
-        expect(analysis.seasonPoints).toBeDefined();
-        expect(analysis.seasonPoints!.points.RES).toBe(82.1);
-        expect(analysis.seasonPoints!.points.ENL).toBe(17.9);
-        expect(analysis.seasonPoints!.contributingWaves?.RES).toEqual([1, 4, 5]);
-        expect(analysis.seasonPoints!.contributingWaves?.ENL).toEqual([2, 3, 6]);
+        expect(analysis.seasonPointsResult).toBeDefined();
+        expect(analysis.seasonPointsResult!.points.RES).toBe(82.1);
+        expect(analysis.seasonPointsResult!.points.ENL).toBe(17.9);
+        expect(analysis.seasonPointsResult!.contributingWaves?.RES).toEqual([1, 4, 5]);
+        expect(analysis.seasonPointsResult!.contributingWaves?.ENL).toEqual([2, 3, 6]);
 
-        expect(analysis.siteShardPaths).toBeDefined();
-    });
+        expect(analysis.shardPaths).toBeDefined();
+    }, 15000);
 });

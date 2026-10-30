@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { SiteRecordAnalyser } from "./SiteRecordAnalyser.js";
 import type { SiteRecord } from "../Site.js";
-import { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import { createMockEventConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
 
 describe("SiteRecordAnalyser", () => {
     it("should handle record with no observations", () => {
@@ -13,15 +14,16 @@ describe("SiteRecordAnalyser", () => {
             },
         };
 
-        const analysis = SiteRecordAnalyser.analyze(record);
+        const mockRegistry = createMockEventConfigRegistry();
+        const analyser = new SiteRecordAnalyser(mockRegistry);
+        const analysis = analyser.analyse(record);
         expect(analysis.centroid).toBeUndefined();
-        expect(analysis.hasPreEventOrnaments).toBe(false);
         expect(analysis.waves).toEqual({});
-        expect(analysis.siteShardPaths).toEqual({});
-        expect(analysis.siteStatistics).toBeUndefined();
+        expect(analysis.shardPaths).toEqual({});
+        expect(analysis.statistics).toBeUndefined();
     });
 
-    it("should calculate correct centroid and aggregated statistics when no config is provided", () => {
+    it("should calculate correct centroid and aggregated statistics when empty config is provided", () => {
         const record: SiteRecord = {
             metadata: {
                 siteId: "test-site",
@@ -37,7 +39,7 @@ describe("SiteRecordAnalyser", () => {
                     101: {
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2000, portalId: 1, dest: 2, team: "RES" },
+                            { action: "link", moveTime: 2000, portalId: 1, dest: 2, align: "RES" },
                         ],
                     },
                     102: {
@@ -50,17 +52,18 @@ describe("SiteRecordAnalyser", () => {
             },
         };
 
-        const analysis = SiteRecordAnalyser.analyze(record);
+        const mockRegistry = createMockEventConfigRegistry();
+        const analyser = new SiteRecordAnalyser(mockRegistry);
+        const analysis = analyser.analyse(record);
 
         // Centroid calculation: avg(10, 20) = 15, avg(20, 40) = 30
         expect(analysis.centroid).toEqual({ latE6: 15000000, lngE6: 30000000 });
-        expect(analysis.hasPreEventOrnaments).toBe(false);
-        expect(analysis.siteShardPaths).toBeDefined();
+        expect(analysis.shardPaths).toBeDefined();
         
-        const pathObject = analysis.siteShardPaths!["1-2"];
+        const pathObject = analysis.shardPaths!["1-2"];
         expect(pathObject).toBeDefined();
         expect(pathObject!.links.length).toBe(1);
-        expect(pathObject!.links[0]!.team).toBe("RES");
+        expect(pathObject!.links[0]!.align).toBe("RES");
         expect(pathObject!.links[0]!.moves.length).toBe(1);
         expect(pathObject!.links[0]!.moves[0]!.shardId).toBe(101);
     });
@@ -87,7 +90,7 @@ describe("SiteRecordAnalyser", () => {
                     102: {
                         history: [
                             { action: "spawn", moveTime: 1000, portalId: 1 },
-                            { action: "link", moveTime: 2500000, portalId: 1, dest: 2, team: "ENL" }
+                            { action: "link", moveTime: 2500000, portalId: 1, dest: 2, align: "ENL" }
                         ] as any,
                     },
                 },
@@ -130,7 +133,8 @@ describe("SiteRecordAnalyser", () => {
             getSeasonMetadata: () => undefined
         };
 
-        const analysis = SiteRecordAnalyser.analyze(record, mockConfig as unknown as EventConfigRegistry);
+        const analyser = new SiteRecordAnalyser(mockConfig as unknown as EventConfigRegistry);
+        const analysis = analyser.analyse(record);
         expect(Object.keys(analysis.waves).length).toBe(2);
 
         // Wave 1 checks:

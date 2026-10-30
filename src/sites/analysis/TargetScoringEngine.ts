@@ -1,39 +1,41 @@
 import type { Shard } from "../Shard.js";
 import type { ObservedPortal } from "../Portal.js";
 import type { PortalId } from "../../common/Identifiers.js";
-import type { FactionId } from "../../common/Factions.js";
+import type { FactionId } from "../../common/Alignment.js";
 import type { ShardGoalScoringRule } from "../../types/index.js";
-import type { GoalActionDetail } from "../Site.js";
+import type { TargetGoalDetail } from "../Scoring.js";
 import type { SiteTimeline } from "../../config/SiteConfig.js";
 
 import { isMovementInWindow, type JumpWindowBounds } from "./JumpWindowUtilities.js";
 
 export interface JumpWindowGoalResult {
     jumpWindowPoints: Record<FactionId, number>;
-    goalsBreakdown: Partial<Record<FactionId, GoalActionDetail[]>>;
+    goalsBreakdown: Partial<Record<FactionId, TargetGoalDetail[]>>;
 }
 
-export const GoalScoringEngine = {
-    scoreJumpWindow: (
-        shards: Map<number, Shard>,
-        portals: Record<PortalId, ObservedPortal>,
-        rules: Record<string, ShardGoalScoringRule>,
-        timeline: SiteTimeline,
-        waveScoredGoals: Map<PortalId, Set<number>>,
-        windowBounds: JumpWindowBounds
-    ): JumpWindowGoalResult => {
-        const jumpWindowPoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
-        const goalsBreakdown: Partial<Record<FactionId, GoalActionDetail[]>> = {};
+export class TargetScoringEngine {
+    private readonly scoredGoalsPerPortal = new Map<PortalId, Set<number>>();
+
+    constructor(
+        private readonly rules: Record<string, ShardGoalScoringRule>,
+        private readonly timeline: SiteTimeline | undefined,
+        private readonly shards: Map<number, Shard>,
+        private readonly portals: Record<PortalId, ObservedPortal>
+    ) {}
+
+    public scoreJumpWindow(windowBounds: JumpWindowBounds): JumpWindowGoalResult {
+        const jumpWindowPoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0 };
+        const goalsBreakdown: Partial<Record<FactionId, TargetGoalDetail[]>> = {};
 
         const { windowStart } = windowBounds;
-        const targetWave = timeline.targets?.find(tw => windowStart >= tw.start && windowStart <= tw.end);
-        const targetRule = Object.values(rules)[0];
+        const targetWave = this.timeline?.targets?.find(tw => windowStart >= tw.start && windowStart <= tw.end);
+        const targetRule = Object.values(this.rules)[0];
 
         if (!targetWave || !targetRule) {
             return { jumpWindowPoints, goalsBreakdown };
         }
 
-        const activeTargets = Object.entries(portals).filter(([, p]) => {
+        const activeTargets = Object.entries(this.portals).filter(([, p]) => {
             return p.history?.some(h => 
                 h.type === "target" && h.timestamp >= targetWave.start && h.timestamp <= targetWave.end
             );
@@ -58,8 +60,8 @@ export const GoalScoringEngine = {
             if (!targetOwner) continue;
 
             const shardsOnPortal: number[] = [];
-            for (const [sId, s] of shards) {
-                const hasJumpToPortal = s.history?.some(h => 
+            for (const [sId, s] of this.shards) {
+                const hasJumpToPortal = s.history.some(h => 
                     isMovementInWindow(h, windowBounds) && 
                     (h.action === "jump" || h.action === "link") && 
                     h.dest === portalId
@@ -77,10 +79,10 @@ export const GoalScoringEngine = {
             for (const sId of shardsOnPortal) {
                 let willScore = true;
                 if (targetRule.conditions?.maxScoringShardsPerPortal !== undefined) {
-                    if (!waveScoredGoals.has(portalId)) {
-                        waveScoredGoals.set(portalId, new Set());
+                    if (!this.scoredGoalsPerPortal.has(portalId)) {
+                        this.scoredGoalsPerPortal.set(portalId, new Set());
                     }
-                    const scoredSet = waveScoredGoals.get(portalId)!;
+                    const scoredSet = this.scoredGoalsPerPortal.get(portalId)!;
                     if (scoredSet.size >= targetRule.conditions.maxScoringShardsPerPortal && !scoredSet.has(sId)) {
                         willScore = false;
                     } else {
@@ -100,49 +102,12 @@ export const GoalScoringEngine = {
                 goalsBreakdown[targetOwner] ??= [];
                 goalsBreakdown[targetOwner]!.push({
                     portalId,
-                    scoredCount,
-                    unscoredCount
+                    ...(scoredCount > 0 && { scoredCount }),
+                    ...(unscoredCount > 0 && { unscoredCount })
                 });
             }
         }
 
         return { jumpWindowPoints, goalsBreakdown };
-    },
-
-    scoreWave: (
-        wave: { start: number; end: number; shardsActions?: any[] },
-        shards: Map<number, Shard>,
-        portals: Record<PortalId, ObservedPortal>,
-        rules: Record<string, ShardGoalScoringRule>,
-        timeline: SiteTimeline
-    ): Record<FactionId, number> => {
-        const wavePoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0, NEU: 0 };
-        const waveScoredGoals = new Map<PortalId, Set<number>>();
-
-        const allActions = wave.shardsActions ?? [];
-        const jumpActions = allActions.filter((a: any) => a.action === "jump");
-
-        for (const [i, act] of jumpActions.entries()) {
-            const nextAction = i + 1 < jumpActions.length ? jumpActions[i + 1] : undefined;
-            const windowBounds: JumpWindowBounds = {
-                windowStart: Number(act.time),
-                ...(nextAction && {nextWindowStart: Number(nextAction.time)}),
-                waveStart: wave.start,
-                waveEnd: wave.end
-            };
-
-            const jumpResult = GoalScoringEngine.scoreJumpWindow(
-                shards,
-                portals,
-                rules,
-                timeline,
-                waveScoredGoals,
-                windowBounds
-            );
-            for (const f of ["RES", "ENL", "MAC", "NEU"] as FactionId[]) {
-                wavePoints[f] = (wavePoints[f] ?? 0) + (jumpResult.jumpWindowPoints[f] ?? 0);
-            }
-        }
-        return wavePoints;
     }
-};
+}

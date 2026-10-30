@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { LinkScoringEngine } from "./LinkScoringEngine.js";
-import type { ShardPath, ShardMove, Link } from "../Shard.js";
 import type { ShardLinkScoringRule } from "../../types/index.js";
+import type { Link, ShardMove, ShardPath } from "../Shard.js";
 import type { ObservedPortal } from "../Portal.js";
 import type { SiteTimeline } from "../../config/SiteConfig.js";
 
@@ -16,7 +16,7 @@ describe("LinkScoringEngine", () => {
                 waveNumber: 1,
                 start: 1000,
                 end: 2000,
-                expectedShards: 5,
+                expectedShards: 5
             }
         ],
         targets: []
@@ -31,22 +31,13 @@ describe("LinkScoringEngine", () => {
             label: "Zone Link",
             points: 2,
             conditions: {
-                minDistance: 250,
-                maxDistance: 5000000,
-                ornaments: ["ap1", "ap2"]
-            }
-        },
-        "Cross Zone Link": {
-            label: "Cross Zone Link",
-            points: 3,
-            conditions: {
-                minDistance: 5000000,
-                ornaments: ["ap1", "ap2"]
+                minDistance: 500,
+                ornaments: ["ap1"]
             }
         }
     };
 
-    it("should score basic moves and return array of matched rules", () => {
+    it("should score a regular link move when conditions match", () => {
         const move: ShardMove = {
             origin: 1,
             dest: 2,
@@ -55,7 +46,7 @@ describe("LinkScoringEngine", () => {
         };
         const link: Link = {
             linkTime: 1200,
-            team: "RES",
+            align: "RES",
             moves: [move]
         };
         const path: ShardPath = {
@@ -68,11 +59,11 @@ describe("LinkScoringEngine", () => {
             2: { title: "Portal 2", latE6: 0, lngE6: 0 }
         };
 
-        const scorer = LinkScoringEngine.createScorer(rules, portals, timeline);
-        const result = scorer(move, link, path);
+        const engine = new LinkScoringEngine(rules, portals, timeline);
+        engine.scorePaths({ "1-2": path });
 
         // Basic move matches "Regular Link" (points = 1)
-        expect(result).toEqual(["Regular Link"]);
+        expect(move.scoredRules).toEqual(["Regular Link"]);
     });
 
     it("should correctly handle link alignment mismatches (opposing faction link)", () => {
@@ -85,7 +76,7 @@ describe("LinkScoringEngine", () => {
         };
         const link: Link = {
             linkTime: 1200,
-            team: "RES",
+            align: "RES",
             moves: [move]
         };
         const path: ShardPath = {
@@ -98,11 +89,11 @@ describe("LinkScoringEngine", () => {
             2: { title: "Portal 2", latE6: 0, lngE6: 0 }
         };
 
-        const scorer = LinkScoringEngine.createScorer(rules, portals, timeline);
-        const result = scorer(move, link, path);
+        const engine = new LinkScoringEngine(rules, portals, timeline);
+        engine.scorePaths({ "1-2": path });
 
         // Mismatched move still scores points for the link owner
-        expect(result).toEqual(["Regular Link"]);
+        expect(move.scoredRules).toEqual(["Regular Link"]);
     });
 
     it("should evaluate conditions like minDistance and ornaments correctly", () => {
@@ -114,7 +105,7 @@ describe("LinkScoringEngine", () => {
         };
         const link: Link = {
             linkTime: 1200,
-            team: "ENL",
+            align: "ENL",
             moves: [move]
         };
         const path: ShardPath = {
@@ -134,14 +125,14 @@ describe("LinkScoringEngine", () => {
             }
         };
 
-        const scorer = LinkScoringEngine.createScorer(rules, portals, timeline);
-        const result = scorer(move, link, path);
+        const engine = new LinkScoringEngine(rules, portals, timeline);
+        engine.scorePaths({ "1-2": path });
 
         // Both rules match
-        expect(result).toEqual(["Regular Link", "Zone Link"]);
+        expect(move.scoredRules).toEqual(["Regular Link", "Zone Link"]);
     });
 
-    it("should return empty array if minDistance condition fails", () => {
+    it("should omit scoredRules if minDistance condition fails", () => {
         const move: ShardMove = {
             origin: 1,
             dest: 2,
@@ -150,7 +141,7 @@ describe("LinkScoringEngine", () => {
         };
         const link: Link = {
             linkTime: 1200,
-            team: "ENL",
+            align: "ENL",
             moves: [move]
         };
         const path: ShardPath = {
@@ -174,9 +165,34 @@ describe("LinkScoringEngine", () => {
             "Zone Link": rules["Zone Link"]!
         };
 
-        const scorer = LinkScoringEngine.createScorer(rulesOnlyZone, portals, timeline);
-        const result = scorer(move, link, path);
+        const engine = new LinkScoringEngine(rulesOnlyZone, portals, timeline);
+        engine.scorePaths({ "1-2": path });
+        expect(move.scoredRules).toBeUndefined();
+    });
 
-        expect(result).toEqual([]);
+    it("should score all paths and assign scoredRules to moves in chronological order", () => {
+        const move1: ShardMove = { origin: 1, dest: 2, shardId: 101, moveTime: 1250 };
+        const move2: ShardMove = { origin: 1, dest: 2, shardId: 102, moveTime: 1300 };
+        const paths: Record<string, ShardPath> = {
+            "1-2": {
+                distance: 100,
+                links: [{
+                    linkTime: 1200,
+                    align: "RES",
+                    moves: [move1, move2]
+                }]
+            }
+        };
+
+        const portals: Record<number, ObservedPortal> = {
+            1: { title: "Portal 1", latE6: 0, lngE6: 0 },
+            2: { title: "Portal 2", latE6: 0, lngE6: 0 }
+        };
+
+        const engine = new LinkScoringEngine(rules, portals, timeline);
+        engine.scorePaths(paths);
+
+        expect(move1.scoredRules).toEqual(["Regular Link"]);
+        expect(move2.scoredRules).toEqual(["Regular Link"]);
     });
 });
