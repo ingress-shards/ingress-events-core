@@ -1,8 +1,11 @@
-import type { FactionId } from "../common/Factions.js";
+import type { Alignment, FactionId } from "../common/Alignment.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId, SiteId, SeasonId } from "../common/Identifiers.js";
 import type { ObservedPortal } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
+import type { PointsSummary, SeasonPointsResult, TargetGoalDetail } from "./Scoring.js";
+
+export * from "./Scoring.js";
 
 /**
  * Represents the current lifecycle phase of an Ingress site.
@@ -54,28 +57,27 @@ export interface SiteObservation {
     shards?: Record<ShardId, Shard>;
 }
 
-
 export interface SiteAnalysis {
     /** Geographic center point of all portals */
     centroid?: Coordinates;
     /** Official site result/points contributing to season standings and their contributing waves */
-    seasonPoints?: SeasonPointsResult;
-    /** Whether pre-event discovery ornaments were detected on the portals */
-    hasPreEventOrnaments: boolean;
-    /** Whether the event has target mechanics defined */
-    hasTargetMechanics?: boolean;
+    seasonPointsResult?: SeasonPointsResult;
     /** Periodic snapshots of shard movements (Waves), keyed by wave number */
     waves: Record<number, WaveState>;
     /** Root-level storage of paths to avoid duplication */
-    siteShardPaths?: Record<string, ShardPath>;
+    shardPaths?: Record<string, ShardPath>;
     /** Site-wide aggregated statistics across all waves (undefined for single-wave events) */
-    siteStatistics?: Statistics;
+    statistics?: Statistics;
+    /** Optional telemetry anomalies or data quality issues detected across the site */
+    diagnostics?: Diagnostics;
 }
 
 export interface WaveState {
-    points: PointsSnapshot;
+    points: PointsSummary;
     statistics: Statistics;
     shardJumpWindows: ShardJumpWindow[];
+    /** Optional telemetry anomalies or data quality issues detected in this wave */
+    diagnostics?: Diagnostics;
 }
 
 export interface ShardJumpWindow {
@@ -83,12 +85,16 @@ export interface ShardJumpWindow {
     timestamp: number;
     /** Sequential jump number within the wave (1, 2, 3...) */
     jumpNumber: number;
-    /** Total points scored specifically in this window */
-    points: Points;
-    /** Grouped by faction at the top level */
-    factionBreakdowns?: Partial<Record<FactionId, FactionPointsBreakdown>>;
     /** Overall number of raw shard history items in this window */
     historyCount: number;
+    /** Points scored in this jump window (total, links, goals by faction) */
+    points?: PointsSummary;
+    /** Link rule occurrence counts keyed by faction (e.g. { RES: { jump_rule: 2 } }) */
+    linksBreakdown?: Partial<Record<FactionId, Record<string, number>>>;
+    /** Target portal scoring details keyed by faction */
+    goalsBreakdown?: Partial<Record<FactionId, TargetGoalDetail[]>>;
+    /** Optional telemetry anomalies or data quality issues detected in this jump window */
+    diagnostics?: Diagnostics;
 }
 
 /**
@@ -101,44 +107,13 @@ export interface ShardJumpGroup {
     windows: ShardJumpWindow[];
 }
 
-export interface GoalActionDetail {
-    portalId: PortalId;
-    scoredCount: number;
-    unscoredCount: number;
-}
-
-export interface SeasonPointsResult {
-    /** Points scored for the season (e.g. { RES: 4.5, ENL: 1.5 }) */
-    points: Points;
-    /** The wave numbers that directly contributed to this final points score, keyed by faction */
-    contributingWaves?: Partial<Record<FactionId, number[]>>;
-}
-
-export interface FactionPointsBreakdown {
-    /** Rule occurrence counts (e.g. "regular" -> 5) */
-    links?: Record<string, number>;
-    /** Goal portal scoring details */
-    goals?: GoalActionDetail[];
-    /** Number of alignment mismatches */
-    linkAlignmentMismatches?: number;
-}
-
 /**
- * Detailed snapshot of points scored at a site or wave.
+ * Quality and anomaly diagnostics detected during event analysis.
  */
-export interface PointsSnapshot {
-    /** Faction-wide accumulated total points across all categories */
-    total: Points;
-    /** Flat points from links/jumps */
-    links: Points;
-    /** Flat points from target portal scoring */
-    goals?: Points;
+export interface Diagnostics {
+    /** Number of alignment mismatches between link creator and portal alignments, keyed by alignment */
+    linkAlignmentMismatches?: Partial<Record<Alignment, number>>;
 }
-
-/**
- * Raw point tallies or rule-based results mapped by FactionId.
- */
-export type Points = Partial<Record<FactionId, number>>;
 
 export interface Statistics {
     shards: {
@@ -147,8 +122,6 @@ export interface Statistics {
     };
     links: number;
     paths: number;
-    linkAlignmentMismatch?: number;
-    /** The number of target portals active in this context */
-    targetsCount: number;
+    /** The number of target portals active in this context (optional, omitted if 0) */
+    targets?: number;
 }
-

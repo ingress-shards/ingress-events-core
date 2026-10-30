@@ -1,4 +1,4 @@
-import type { FactionId } from "../common/Factions.js";
+import type { Alignment } from "../common/Alignment.js";
 import type { PortalId } from "../common/Identifiers.js";
 
 /**
@@ -9,7 +9,17 @@ export interface Shard {
 }
 
 /**
- * Shard movement history entry (Analyzed).
+ * Detailed faction alignment mismatch information for a shard link move.
+ */
+export interface ShardMismatch {
+    /** Origin portal capturer alignment at the time of movement */
+    originAlign?: Alignment;
+    /** Destination portal capturer alignment at the time of movement */
+    destAlign?: Alignment;
+}
+
+/**
+ * Shard movement history entry (Analysed).
  */
 export interface ShardHistoryEntry {
     action: ShardAction;
@@ -19,36 +29,18 @@ export interface ShardHistoryEntry {
     portalId: PortalId;
     /** Internal Destination portal ID (only for "link" or "jump" actions) */
     dest?: PortalId;
-    /** Team that controlled the action (if applicable) */
-    team?: FactionId;
+    /** Alignment that controlled the action (if applicable) */
+    align?: Alignment;
     /** Epoch time in milliseconds when the link was created */
     linkTime?: number;
-    /** Whether there is a faction mismatch between link creator, origin, and destination */
-    mismatch?: boolean;
+    /** Detailed mismatch information if faction alignment conflict exists */
+    mismatch?: ShardMismatch;
 }
 
 /**
  * Unified shard action type covering all possible shard state changes.
  */
 export type ShardAction = "spawn" | "link" | "jump" | "no move" | "despawn";
-
-/**
- * Capture of a single shard jump event (Simplified for storage).
- */
-export interface ShardJumpObservation {
-    portalGuid: string;
-    /** Epoch time in milliseconds */
-    timestamp: number;
-    action: string;
-    destGuid?: string;
-}
-
-/**
- * Collection of jump history for all shards.
- * Key: Shard ID
- * Value: Array of jump events
- */
-export type ShardJumpHistory = Record<string, ShardJumpObservation[]>;
 
 /**
  * Shard path between two portals.
@@ -61,19 +53,19 @@ export interface ShardPath {
 }
 
 /**
- * Link information (Analyzed).
+ * Link information (Analysed).
  */
 export interface Link {
     /** Epoch time in milliseconds when link was created */
     linkTime: number;
-    /** Team that created the link */
-    team: FactionId;
+    /** Alignment that created the link */
+    align: Alignment;
     /** Shard movements that occurred on this link */
     moves: ShardMove[];
 }
 
 /**
- * Shard movement along a link (Analyzed).
+ * Shard movement along a link (Analysed).
  */
 export interface ShardMove {
     origin: PortalId;
@@ -83,6 +75,8 @@ export interface ShardMove {
     moveTime: number;
     /** The IDs of any scoring rules this move successfully matched and scored points for */
     scoredRules?: string[];
+    /** Total points scored by this move across all matched rules */
+    totalPoints?: number;
     /** Whether there is an alignment mismatch for this move */
     mismatch?: boolean;
 }
