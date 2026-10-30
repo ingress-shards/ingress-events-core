@@ -3,7 +3,6 @@ import type { SiteRecord } from "../Site.js";
 import type { SiteId } from "../../common/Identifiers.js";
 import type { DataObservationAdapter } from "../../types/processing/DataObservationAdapter.js";
 import type { SiteRecordMerger } from "./SiteRecordMerger.js";
-import { SiteRecordAnalyser } from "./SiteRecordAnalyser.js";
 
 export class SiteDataProcessor {
     constructor(private merger: SiteRecordMerger) {}
@@ -19,7 +18,7 @@ export class SiteDataProcessor {
         config: EventConfigRegistry;
         resolveRecord: (siteId: SiteId) => Promise<SiteRecord | undefined> | SiteRecord | undefined;
     }): Promise<SiteRecord[]> {
-        const newSiteRecords = adapter.parseAndGroupObservations(input, config);
+        const newSiteRecords = adapter.parseAndGroupObservations(input);
         const processedRecords: SiteRecord[] = [];
 
         for (const incomingRecord of newSiteRecords) {
@@ -31,14 +30,14 @@ export class SiteDataProcessor {
                 observations: { portals: {}, shards: {} }
             };
 
+            const siteConfig = config.getSiteConfig(siteId);
             const { record: updatedRecord, hasChanged } = this.merger.merge(
                 baseRecord, 
                 incomingRecord.observations ?? {},
-                config
+                siteConfig
             );
 
             if (hasChanged || !existingRecord) {
-                updatedRecord.analysis = SiteRecordAnalyser.analyze(updatedRecord, config);
                 processedRecords.push(updatedRecord);
             }
         }

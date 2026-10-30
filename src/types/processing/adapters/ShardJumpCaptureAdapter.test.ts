@@ -4,8 +4,6 @@ import type { ShardJumpCapture } from "../../capture/ShardJumps.js";
 import { createMockEventConfigRegistry } from "../../../../test/fixtures/MockConfigRegistry.js";
 
 describe("ShardJumpCaptureAdapter", () => {
-    const adapter = new ShardJumpCaptureAdapter();
-
     const mockRegistry = createMockEventConfigRegistry({
         extraSites: [
             {
@@ -20,6 +18,8 @@ describe("ShardJumpCaptureAdapter", () => {
             }
         ]
     });
+
+    const adapter = new ShardJumpCaptureAdapter(mockRegistry.getAllSites());
 
     test("should parse fragment jumps correctly", () => {
         const input: ShardJumpCapture = {
@@ -52,7 +52,7 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         console.log("--- ShardJumpCaptureAdapter Input ---");
         console.log(JSON.stringify(input, undefined, 2));
         console.log("--- ShardJumpCaptureAdapter Output ---");
@@ -111,7 +111,7 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         expect(result.length).toBe(1);
 
         const record = result[0]!;
@@ -122,7 +122,7 @@ describe("ShardJumpCaptureAdapter", () => {
         expect(shard.history[0]!.action).toBe("spawn");
         expect(shard.history[1]!.action).toBe("no move");
         expect(shard.history[1]!.portalId).toBe(shard.history[0]!.portalId);
-        expect(shard.history[1]!.team).toBeUndefined();
+        expect(shard.history[1]!.align).toBeUndefined();
     });
 
     test("should map portalId in no move directly after a link to the destination portal", () => {
@@ -182,7 +182,7 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         expect(result.length).toBe(1);
 
         const record = result[0]!;
@@ -299,7 +299,7 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         expect(result).toHaveLength(1);
         const record = result[0]!;
         expect(record.metadata.siteId).toBe("helsinki");
@@ -310,27 +310,27 @@ describe("ShardJumpCaptureAdapter", () => {
 
         // spawn
         expect(shard.history[0]!.action).toBe("spawn");
-        expect(shard.history[0]!.team).toBe("RES");
+        expect(shard.history[0]!.align).toBe("RES");
 
         // no move
         expect(shard.history[1]!.action).toBe("no move");
-        expect(shard.history[1]!.team).toBeUndefined();
+        expect(shard.history[1]!.align).toBeUndefined();
 
         // no move
         expect(shard.history[2]!.action).toBe("no move");
-        expect(shard.history[2]!.team).toBeUndefined();
+        expect(shard.history[2]!.align).toBeUndefined();
 
         // link 1 (RES)
         expect(shard.history[3]!.action).toBe("link");
-        expect(shard.history[3]!.team).toBe("RES");
+        expect(shard.history[3]!.align).toBe("RES");
 
         // link 2 (ENL)
         expect(shard.history[4]!.action).toBe("link");
-        expect(shard.history[4]!.team).toBe("ENL");
+        expect(shard.history[4]!.align).toBe("ENL");
 
         // despawn (RES)
         expect(shard.history[5]!.action).toBe("despawn");
-        expect(shard.history[5]!.team).toBe("RES");
+        expect(shard.history[5]!.align).toBe("RES");
     });
 
     test("should parse target portals from artifact list correctly", () => {
@@ -355,7 +355,7 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         expect(result.length).toBe(1);
         const record = result[0]!;
         expect(record.metadata.siteId).toBe("test-site");
@@ -425,10 +425,10 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         expect(result.length).toBe(1);
         const shard = result[0]!.observations!.shards![99]!;
         expect(shard.history[1]!.action).toBe("link");
-        expect(shard.history[1]!.mismatch).toBe(true);
+        expect(shard.history[1]!.mismatch).toEqual({ originAlign: "ENL", destAlign: "RES" });
     });
 });

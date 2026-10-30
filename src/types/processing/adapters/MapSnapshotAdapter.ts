@@ -6,19 +6,18 @@ import type { Ornament } from "../../config/EventBlueprints.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
-import { instant } from "temporal-polyfill/fns/Now";
 import { findSiteByCoords } from "../../../common/Geo.js";
-import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
+import type { SiteConfig } from "../../../config/SiteConfig.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
     private portalIdMapper = new PortalIdMapper();
 
     constructor(
         private blueprintOrnaments: Record<string, Ornament>,
-        private timestampMs: number = instant().epochMilliseconds
+        private candidateSites: SiteConfig[]
     ) {}
 
-    private parsePortalHistory(ornaments: string[]): any[] {
+    private parsePortalHistory(ornaments: string[], timestamp: number): any[] {
         const historyEntries: any[] = [];
         for (const ornId of ornaments) {
             const blueprint = this.blueprintOrnaments[ornId];
@@ -34,7 +33,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             if (historyType) {
                 historyEntries.push({
                     type: historyType,
-                    timestamp: this.timestampMs,
+                    timestamp,
                     ornId: ornId
                 });
             }
@@ -42,9 +41,9 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
         return historyEntries;
     }
 
-    public parseAndGroupObservations(input: MapSnapshot, config: EventConfigRegistry): SiteRecord[] {
-        const timestampMs = input.timestamp;
-        if (timestampMs === undefined) {
+    public parseAndGroupObservations(input: MapSnapshot): SiteRecord[] {
+        const timestamp = input.timestamp;
+        if (timestamp === undefined) {
             throw new Error("[MapSnapshotAdapter] Missing snapshot timestamp in MapSnapshot input");
         }
         const siteRecordsMap = new Map<SiteId, SiteRecord>();
@@ -52,7 +51,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
         const portalsInput = input.portals ?? [];
         for (const p of portalsInput) {
-            const matchedSite = findSiteByCoords(config.getAllSites(), p.latE6, p.lngE6, timestampMs);
+            const matchedSite = findSiteByCoords(this.candidateSites, p.latE6, p.lngE6, timestamp);
             if (!matchedSite) continue;
 
             const siteId = matchedSite.geocode.id;
@@ -60,9 +59,8 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
 
             const seasonId = matchedSite.seasonId;
 
-            const siteConfig = config.getSiteConfig(siteId);
-            const cutoff = siteConfig?.timeline?.preEventCutoff;
-            if (cutoff !== undefined && timestampMs > cutoff) {
+            const cutoff = matchedSite.timeline?.preEventCutoff;
+            if (cutoff !== undefined && timestamp > cutoff) {
                 ignoredSites.add(siteId);
                 continue;
             }
@@ -83,7 +81,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             const portals = record.observations!.portals!;
             const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, p.latE6, p.lngE6);
 
-            const historyEntries = p.ornaments ? this.parsePortalHistory(p.ornaments) : [];
+            const historyEntries = p.ornaments ? this.parsePortalHistory(p.ornaments, timestamp) : [];
 
             // If we found any valid ornament history entries, or if it's an identifiable portal we want to track
             if (historyEntries.length > 0) {

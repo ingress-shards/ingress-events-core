@@ -17,8 +17,8 @@ describe("MapSnapshotAdapter", () => {
     const eventTime = Date.parse("2026-06-18T12:00:00Z");
     const snapshotTime = eventTime - 24 * 60 * 60 * 1000; // 1 day before
 
-    const adapter = new MapSnapshotAdapter(blueprintOrnaments, snapshotTime);
     const mockRegistry = createMockEventConfigRegistry();
+    const adapter = new MapSnapshotAdapter(blueprintOrnaments, mockRegistry.getAllSites());
 
     test("should parse snapshot ornaments correctly", () => {
         const input: MapSnapshot = {
@@ -34,7 +34,7 @@ describe("MapSnapshotAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         console.log("--- MapSnapshotAdapter Input ---");
         console.log(JSON.stringify(input, undefined, 2));
         console.log("--- MapSnapshotAdapter Output ---");
@@ -58,37 +58,30 @@ describe("MapSnapshotAdapter", () => {
     });
 
     test("should ignore pre-event ornaments if snapshot is after preEventCutoff", () => {
-        // Mock getSiteConfig to return a cutoff in the past
-        const originalGet = mockRegistry.getSiteConfig;
-        mockRegistry.getSiteConfig = ((siteId: string) => {
-            return {
-                geocode: { id: siteId },
-                timeline: {
-                    preEventCutoff: snapshotTime - 1000 // cutoff is 1 second BEFORE the snapshot
+        const sitesWithPastCutoff = mockRegistry.getAllSites().map(site => ({
+            ...site,
+            timeline: {
+                ...site.timeline,
+                preEventCutoff: snapshotTime - 1000 // cutoff is 1 second BEFORE the snapshot
+            }
+        }));
+        const cutoffAdapter = new MapSnapshotAdapter(blueprintOrnaments, sitesWithPastCutoff);
+
+        const input: MapSnapshot = {
+            timestamp: snapshotTime,
+            portals: [
+                {
+                    guid: "guid-1",
+                    title: "Snapshot Portal",
+                    latE6: 10000000,
+                    lngE6: 20000000,
+                    ornaments: ["ap1"]
                 }
-            };
-        }) as any;
+            ]
+        };
 
-        try {
-            const input: MapSnapshot = {
-                timestamp: snapshotTime,
-                portals: [
-                    {
-                        guid: "guid-1",
-                        title: "Snapshot Portal",
-                        latE6: 10000000,
-                        lngE6: 20000000,
-                        ornaments: ["ap1"]
-                    }
-                ]
-            };
-
-            const result = adapter.parseAndGroupObservations(input, mockRegistry);
-            // Should be empty because the site was ignored due to cutoff
-            expect(result.length).toBe(0);
-        } finally {
-            // Restore original method
-            mockRegistry.getSiteConfig = originalGet;
-        }
+        const result = cutoffAdapter.parseAndGroupObservations(input);
+        // Should be empty because the site was ignored due to cutoff
+        expect(result.length).toBe(0);
     });
 });

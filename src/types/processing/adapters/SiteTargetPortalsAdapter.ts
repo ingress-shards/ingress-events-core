@@ -3,17 +3,19 @@ import type { ObservedPortal } from "../../../sites/Portal.js";
 import type { SiteTargetPortals } from "../../data-files/SiteTargetPortals.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
-import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
+import type { SiteConfig } from "../../../config/SiteConfig.js";
 
 export class SiteTargetPortalsAdapter implements DataObservationAdapter<SiteTargetPortals> {
     private portalIdMapper = new PortalIdMapper();
 
-    public parseAndGroupObservations(input: SiteTargetPortals, config: EventConfigRegistry): SiteRecord[] {
+    constructor(private readonly candidateSites: SiteConfig[]) {}
+
+    public parseAndGroupObservations(input: SiteTargetPortals): SiteRecord[] {
         const siteId = input.siteId;
-        const foundSeasonId = config.getSiteConfig(siteId)?.seasonId;
+        const foundSeasonId = this.candidateSites.find(s => s.geocode.id === siteId)?.seasonId;
 
         if (!foundSeasonId) {
-            console.warn(`[SiteTargetPortalsAdapter] SiteId "${siteId}" not found in season config. Skipping.`);
+            console.warn(`[SiteTargetPortalsAdapter] Site config not found for "${siteId}". Skipping.`);
             return [];
         }
 
@@ -29,13 +31,12 @@ export class SiteTargetPortalsAdapter implements DataObservationAdapter<SiteTarg
 
             for (const t of art.target) {
                 const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, t.portalInfo.latE6, t.portalInfo.lngE6);
-                const timestampMs = t.observedAt;
 
                 portals[portalId] = {
                     ...t.portalInfo,
                     history: [
                         {
-                            timestamp: timestampMs,
+                            timestamp: t.observedAt,
                             type: "target",
                             ornId: ornId,
                         }

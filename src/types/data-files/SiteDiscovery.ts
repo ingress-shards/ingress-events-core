@@ -5,9 +5,9 @@ import type { SiteId } from "../../common/Identifiers.js";
  * Used during the Discovery/Collection phase.
  */
 export interface SiteDiscovery {
-    siteId: SiteId;
+    siteId?: SiteId;
     /** The timestamp of the export action itself */
-    exportedAt: number;
+    exportedAt?: number;
     /** Array of detected portals and their observed state */
     portals: PortalDiscovery[];
 }
@@ -20,5 +20,7 @@ export interface PortalDiscovery {
     ornamentId: string;
     /** Ingress portal GUID - optional for backwards compatibility */
     guid?: string;
+    /** Optional timestamp of when this individual portal was observed */
+    observedAt?: number;
 }
 

@@ -3,10 +3,10 @@ import type { SiteRecord } from "../../../sites/Site.js";
 import type { ShardJumpCapture, Fragment, FragmentHistoryType, TargetArtifact } from "../../capture/ShardJumps.js";
 import type { DataObservationAdapter } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
-import { fromNianticId, type FactionId } from "../../../common/Factions.js";
+import { fromNianticId, type Alignment } from "../../../common/Alignment.js";
 import { findSiteByCoords } from "../../../common/Geo.js";
-import { EventConfigRegistry } from "../../../config/EventConfigRegistry.js";
-import type { ShardHistoryEntry } from "../../../sites/Shard.js";
+import type { ShardHistoryEntry, ShardMismatch } from "../../../sites/Shard.js";
+import type { SiteConfig } from "../../../config/SiteConfig.js";
 
 interface ReferencePortal {
     latE6: number;
@@ -18,9 +18,10 @@ interface ReferencePortal {
 export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJumpCapture> {
     private portalIdMapper = new PortalIdMapper();
 
+    constructor(private readonly candidateSites: SiteConfig[]) {}
+
     private parseFragment(
         fragment: Fragment,
-        config: EventConfigRegistry,
         getOrCreateRecord: (siteId: SiteId, seasonId: string) => SiteRecord
     ): void {
         const sortedHistory = [...fragment.history].sort((a, b) => a.moveTimeMs.localeCompare(b.moveTimeMs));
@@ -40,8 +41,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
         if (!referencePortal) return;
 
-        const firstTimeMs = Number(firstItem.moveTimeMs);
-        const matchedSite = findSiteByCoords(config.getAllSites(), referencePortal.latE6, referencePortal.lngE6, firstTimeMs);
+        const firstMoveTime = Number(firstItem.moveTimeMs);
+        const matchedSite = findSiteByCoords(this.candidateSites, referencePortal.latE6, referencePortal.lngE6, firstMoveTime);
         if (!matchedSite) return;
 
         const siteId = matchedSite.geocode.id;
@@ -104,27 +105,35 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     lastPortalId = this.portalIdMapper.getOrCreatePortalId(siteId, restingPortal.latE6, restingPortal.lngE6);
                 }
 
-                // Determine the team/faction code exclusively from linkCreatorTeam
-                const linkCreatorTeam = "linkCreatorTeam" in h ? h.linkCreatorTeam : undefined;
-                const destinationCapturerTeam = "destinationCapturerTeam" in h ? h.destinationCapturerTeam : undefined;
-                const originCapturerTeam = "originCapturerTeam" in h ? h.originCapturerTeam : undefined;
+                // Determine the alignment code exclusively from linkCreatorTeam
+                const originAlignStr = ("originPortalInfo" in h && h.originPortalInfo?.team) ?? ("originCapturerTeam" in h && h.originCapturerTeam) ?? undefined;
+                const destinationAlignStr = ("destinationPortalInfo" in h && h.destinationPortalInfo?.team) ?? ("destinationCapturerTeam" in h && h.destinationCapturerTeam) ?? undefined;
+                const creatorAlignStr = ("linkCreatorTeam" in h && h.linkCreatorTeam) ?? undefined;
 
-                const creatorFaction = linkCreatorTeam ? fromNianticId(linkCreatorTeam) : undefined;
-                const destinationFaction = destinationCapturerTeam ? fromNianticId(destinationCapturerTeam) : undefined;
-                const originFaction = originCapturerTeam ? fromNianticId(originCapturerTeam) : undefined;
+                const creatorAlign = creatorAlignStr ? fromNianticId(creatorAlignStr) : undefined;
+                const destinationAlign = destinationAlignStr ? fromNianticId(destinationAlignStr) : undefined;
+                const originAlign = originAlignStr ? fromNianticId(originAlignStr) : undefined;
 
-                const mismatch = (h.reason === "link" || h.reason === "jump") && creatorFaction && destinationFaction && originFaction &&
-                    (creatorFaction !== destinationFaction || creatorFaction !== originFaction || destinationFaction !== originFaction);
+                const isOriginMismatch = originAlign !== undefined && creatorAlign !== undefined && creatorAlign !== originAlign;
+                const isDestinationMismatch = destinationAlign !== undefined && creatorAlign !== undefined && creatorAlign !== destinationAlign;
+                const hasMismatch = h.reason === "link" && (isOriginMismatch || isDestinationMismatch);
 
-                if (mismatch) {
-                    console.warn(`[Shard Observer: Shard Jump Adapter] Team mismatch for shard ${fragment.id} at ${h.moveTimeMs}: linkCreatorTeam="${creatorFaction}", destinationCapturerTeam="${destinationFaction}", originCapturerTeam="${originFaction}"`);
+                if (hasMismatch) {
+                    console.warn(`[Shard Observer: Shard Jump Adapter] Alignment mismatch for shard ${fragment.id} at ${h.moveTimeMs}: linkCreator="${creatorAlign}", destination="${destinationAlign}", origin="${originAlign}"`);
                 }
 
-                let team: FactionId | undefined;
+                const mismatch: ShardMismatch | undefined = hasMismatch
+                    ? {
+                        ...(originAlign && { originAlign }),
+                        ...(destinationAlign && { destAlign: destinationAlign })
+                    }
+                    : undefined;
+
+                let align: Alignment | undefined;
                 switch (h.reason) {
-                    case "spawn": team = destinationFaction; break;
-                    case "link": team = creatorFaction; break;
-                    case "despawn": team = originFaction; break;
+                    case "spawn": align = destinationAlign; break;
+                    case "link": align = creatorAlign; break;
+                    case "despawn": align = originAlign; break;
                 }
 
                 let linkTime: number | undefined;
@@ -140,9 +149,9 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     moveTime: Number(h.moveTimeMs),
                     portalId,
                     ...(destination && { dest: destination }),
-                    ...(team && { team }),
+                    ...(align && { align }),
                     ...(linkTime && { linkTime }),
-                    ...(mismatch && { mismatch: true }),
+                    ...(mismatch && { mismatch }),
                 };
             })
             .filter((entry): entry is ShardHistoryEntry => entry !== undefined);
@@ -155,9 +164,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
     private parseTargetPortals(
         art: TargetArtifact,
-        config: EventConfigRegistry,
         getOrCreateRecord: (siteId: SiteId, seasonId: string) => SiteRecord,
-        timestampMs: number
+        timestamp: number
     ): void {
         const ornId = art.id; // Target identifier
         if (ornId !== "targetres" && ornId !== "targetenl") {
@@ -167,7 +175,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         const targets = art.target ?? [];
         for (const t of targets) {
             const info = t.portalInfo;
-            const matchedSite = findSiteByCoords(config.getAllSites(), info.latE6, info.lngE6, timestampMs);
+            const matchedSite = findSiteByCoords(this.candidateSites, info.latE6, info.lngE6, timestamp);
             if (!matchedSite) continue;
 
             const siteId = matchedSite.geocode.id;
@@ -181,7 +189,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 ...info,
                 history: [
                     {
-                        timestamp: timestampMs,
+                        timestamp,
                         type: "target",
                         ornId
                     }
@@ -190,9 +198,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         }
     }
 
-    public parseAndGroupObservations(input: ShardJumpCapture, config: EventConfigRegistry): SiteRecord[] {
-        const timestampMs = input.timestamp;
-        if (timestampMs === undefined) {
+    public parseAndGroupObservations(input: ShardJumpCapture): SiteRecord[] {
+        if (input.timestamp === undefined) {
             throw new Error("[ShardJumpCaptureAdapter] Missing capture timestamp in ShardJumpCapture input");
         }
         const siteRecordsMap = new Map<SiteId, SiteRecord>();
@@ -218,13 +225,13 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
             // 1. Handle fragments/shards
             if ("fragment" in art && art.fragment) {
                 for (const fragment of art.fragment) {
-                    this.parseFragment(fragment, config, getOrCreateRecord);
+                    this.parseFragment(fragment, getOrCreateRecord);
                 }
             }
 
             // 2. Handle target portals
             if ("target" in art && art.target) {
-                this.parseTargetPortals(art, config, getOrCreateRecord, timestampMs);
+                this.parseTargetPortals(art, getOrCreateRecord, input.timestamp);
             }
         }
 

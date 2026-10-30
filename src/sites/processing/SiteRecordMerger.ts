@@ -3,8 +3,7 @@ import type { ShardHistoryEntry } from "../Shard.js";
 import { instant } from "temporal-polyfill/fns/Now";
 import type { PortalMergeStrategy } from "./PortalMergeStrategy.js";
 import { DefaultPortalMergeStrategy } from "./DefaultPortalMergeStrategy.js";
-import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
-import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
+import type { SiteConfig, ShardWaveTimeline } from "../../config/SiteConfig.js";
 
 export class SiteRecordMerger {
     /**
@@ -14,7 +13,7 @@ export class SiteRecordMerger {
     public merge(
         baseRecord: SiteRecord,
         incomingObs: SiteObservation,
-        config?: EventConfigRegistry
+        siteConfig?: SiteConfig
     ): { record: SiteRecord; hasChanged: boolean } {
         // 1. Deep clone the base record to ensure immutability
         const record = structuredClone(baseRecord);
@@ -41,7 +40,6 @@ export class SiteRecordMerger {
             observations.portals ??= {};
 
             const strategy: PortalMergeStrategy = new DefaultPortalMergeStrategy();
-            const siteConfig = config?.getSiteConfig(record.metadata.siteId);
             const waves = siteConfig?.timeline?.shards;
 
             const result = strategy.merge(observations.portals, incomingObs.portals, {
@@ -88,15 +86,15 @@ export class SiteRecordMerger {
                 const incomingShardNumber = Number(shardNumberKey);
 
                 // Map the origin and destination entries to site record portal ids
-                const mappedHistory = (incomingShard.history || []).map(h => ({
+                const mappedHistory: ShardHistoryEntry[] = (incomingShard.history || []).map(h => ({
                     action: h.action,
                     moveTime: h.moveTime,
                     portalId: resolvePortalId(h.portalId),
-                    dest: h.dest ? resolvePortalId(h.dest) : undefined,
-                    team: h.team,
+                    ...(h.dest !== undefined && { dest: resolvePortalId(h.dest) }),
+                    ...(h.align !== undefined && { align: h.align }),
                     ...(h.linkTime !== undefined && { linkTime: h.linkTime }),
                     ...(h.mismatch !== undefined && { mismatch: h.mismatch })
-                }) as ShardHistoryEntry);
+                }));
 
                 const existingShard = observations.shards[incomingShardNumber];
                 if (existingShard === undefined) {

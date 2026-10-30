@@ -127,10 +127,10 @@ export const calculateCentroid = (coords: Coordinates[]): Coordinates | undefine
  * Matches active events first (within event duration + 60 mins buffer), then upcoming events by earliest start time.
  */
 export const findSiteByCoords = (
-    sites: Iterable<SiteConfig>,
+    sites: SiteConfig[],
     latE6: number,
     lngE6: number,
-    timestampMs: number
+    timestamp: number
 ): SiteConfig | undefined => {
     const matches: SiteConfig[] = [];
 
@@ -144,17 +144,17 @@ export const findSiteByCoords = (
         return undefined;
     }
 
-    // 1. Check for active/recent event matching (start <= timestampMs <= end + 60 mins)
+    // 1. Check for active/recent event matching (start <= timestamp <= end + 60 mins)
     const activeMatch = matches.find(m => {
         const { start, end } = m.timeline;
-        return timestampMs >= start && timestampMs <= end + 60 * 60 * 1000;
+        return timestamp >= start && timestamp <= end + 60 * 60 * 1000;
     });
     if (activeMatch) {
         return activeMatch;
     }
 
-    // 2. Check for upcoming event matching (start > timestampMs) sorted by earliest start
-    const upcomingMatches = matches.filter(m => m.timeline.start > timestampMs);
+    // 2. Check for upcoming event matching (start > timestamp) sorted by earliest start
+    const upcomingMatches = matches.filter(m => m.timeline.start > timestamp);
     upcomingMatches.sort((a, b) => a.timeline.start - b.timeline.start);
 
     if (upcomingMatches.length > 0) {

@@ -267,12 +267,12 @@ describe("SiteRecordMerger", () => {
             shards: {
                 "32": {
                     history: [
-                        { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" },
+                        { action: "spawn", moveTime: 1784374342160, portalId: 1, align: "RES" },
                         { action: "no move", moveTime: 1784374829924, portalId: 1 },
                         { action: "no move", moveTime: 1784375153838, portalId: 1 },
-                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, team: "RES", linkTime: 1784375206567 },
-                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, team: "ENL", linkTime: 1784375661238 },
-                        { action: "despawn", moveTime: 1784375980580, portalId: 3, team: "RES" }
+                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, align: "RES", linkTime: 1784375206567 },
+                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, align: "ENL", linkTime: 1784375661238 },
+                        { action: "despawn", moveTime: 1784375980580, portalId: 3, align: "RES" }
                     ]
                 }
             }
@@ -284,22 +284,22 @@ describe("SiteRecordMerger", () => {
         expect(shard.history).toHaveLength(6);
 
         expect(shard.history[0]!.action).toBe("spawn");
-        expect(shard.history[0]!.team).toBe("RES");
+        expect(shard.history[0]!.align).toBe("RES");
 
         expect(shard.history[1]!.action).toBe("no move");
-        expect(shard.history[1]!.team).toBeUndefined();
+        expect(shard.history[1]!.align).toBeUndefined();
 
         expect(shard.history[2]!.action).toBe("no move");
-        expect(shard.history[2]!.team).toBeUndefined();
+        expect(shard.history[2]!.align).toBeUndefined();
 
         expect(shard.history[3]!.action).toBe("link");
-        expect(shard.history[3]!.team).toBe("RES");
+        expect(shard.history[3]!.align).toBe("RES");
 
         expect(shard.history[4]!.action).toBe("link");
-        expect(shard.history[4]!.team).toBe("ENL");
+        expect(shard.history[4]!.align).toBe("ENL");
 
         expect(shard.history[5]!.action).toBe("despawn");
-        expect(shard.history[5]!.team).toBe("RES");
+        expect(shard.history[5]!.align).toBe("RES");
     });
 
     test("should merge Helsinki shard 32 history correctly into an existing site record with only the spawn history item", () => {
@@ -318,7 +318,7 @@ describe("SiteRecordMerger", () => {
                 shards: {
                     "32": {
                         history: [
-                            { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" }
+                            { action: "spawn", moveTime: 1784374342160, portalId: 1, align: "RES" }
                         ]
                     }
                 }
@@ -334,12 +334,12 @@ describe("SiteRecordMerger", () => {
             shards: {
                 "32": {
                     history: [
-                        { action: "spawn", moveTime: 1784374342160, portalId: 1, team: "RES" },
+                        { action: "spawn", moveTime: 1784374342160, portalId: 1, align: "RES" },
                         { action: "no move", moveTime: 1784374829924, portalId: 1 },
                         { action: "no move", moveTime: 1784375153838, portalId: 1 },
-                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, team: "RES", linkTime: 1784375206567 },
-                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, team: "ENL", linkTime: 1784375661238 },
-                        { action: "despawn", moveTime: 1784375980580, portalId: 3, team: "RES" }
+                        { action: "link", moveTime: 1784375468313, portalId: 1, dest: 2, align: "RES", linkTime: 1784375206567 },
+                        { action: "link", moveTime: 1784375735042, portalId: 2, dest: 3, align: "ENL", linkTime: 1784375661238 },
+                        { action: "despawn", moveTime: 1784375980580, portalId: 3, align: "RES" }
                     ]
                 }
             }
@@ -351,21 +351,21 @@ describe("SiteRecordMerger", () => {
         expect(shard.history).toHaveLength(6);
 
         expect(shard.history[0]!.action).toBe("spawn");
-        expect(shard.history[0]!.team).toBe("RES");
+        expect(shard.history[0]!.align).toBe("RES");
 
         expect(shard.history[1]!.action).toBe("no move");
-        expect(shard.history[1]!.team).toBeUndefined();
+        expect(shard.history[1]!.align).toBeUndefined();
 
         expect(shard.history[2]!.action).toBe("no move");
-        expect(shard.history[2]!.team).toBeUndefined();
+        expect(shard.history[2]!.align).toBeUndefined();
 
         expect(shard.history[3]!.action).toBe("link");
-        expect(shard.history[3]!.team).toBe("RES");
+        expect(shard.history[3]!.align).toBe("RES");
 
         expect(shard.history[4]!.action).toBe("link");
-        expect(shard.history[4]!.team).toBe("ENL");
+        expect(shard.history[4]!.align).toBe("ENL");
 
         expect(shard.history[5]!.action).toBe("despawn");
-        expect(shard.history[5]!.team).toBe("RES");
+        expect(shard.history[5]!.align).toBe("RES");
     });
 });

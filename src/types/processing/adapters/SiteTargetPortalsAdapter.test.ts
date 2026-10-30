@@ -5,8 +5,8 @@ import type { TargetHistoryEntry } from "../../../sites/Portal.js";
 import { createMockEventConfigRegistry } from "../../../../test/fixtures/MockConfigRegistry.js";
 
 describe("SiteTargetPortalsAdapter", () => {
-    const adapter = new SiteTargetPortalsAdapter();
     const mockRegistry = createMockEventConfigRegistry();
+    const adapter = new SiteTargetPortalsAdapter(mockRegistry.getAllSites());
 
     test("should parse and group target portals correctly", () => {
         const input: SiteTargetPortals = {
@@ -31,7 +31,7 @@ describe("SiteTargetPortalsAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input, mockRegistry);
+        const result = adapter.parseAndGroupObservations(input);
         console.log("--- SiteTargetPortalsAdapter Input ---");
         console.log(JSON.stringify(input, undefined, 2));
         console.log("--- SiteTargetPortalsAdapter Output ---");

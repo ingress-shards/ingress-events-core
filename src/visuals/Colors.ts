@@ -3,10 +3,10 @@
  */
 
 /**
- * Shared faction color palette.
- * @see FactionId for valid keys (RES, ENL, MAC, NEU)
+ * Shared alignment color palette.
+ * Covers all alignments (RES, ENL, MAC, NEU).
  */
-export const FACTION_COLORS = {
+export const ALIGNMENT_COLORS = {
     /** Resistance Blue */
     RES: "#0088FF",
     /** Enlightened Green */
@@ -16,6 +16,11 @@ export const FACTION_COLORS = {
     /** Neutral Orange */
     NEU: "#FF6600",
 } as const;
+
+/**
+ * @deprecated Use `ALIGNMENT_COLORS` instead. Slated for removal during Phase 5 (Display Integration).
+ */
+export const FACTION_COLORS = ALIGNMENT_COLORS;
 
 /**
  * UI State and Secondary color palette.

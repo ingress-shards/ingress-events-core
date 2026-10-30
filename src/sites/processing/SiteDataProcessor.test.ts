@@ -47,14 +47,14 @@ describe("SiteDataProcessor", () => {
             resolveRecord
         });
 
-        expect(mockAdapter.parseAndGroupObservations).toHaveBeenCalledWith(mockInput, mockRegistry);
+        expect(mockAdapter.parseAndGroupObservations).toHaveBeenCalledWith(mockInput);
         expect(resolveRecord).toHaveBeenCalledWith("test-site");
         expect(result.length).toBe(1);
 
         const savedRecord = result[0]!;
         expect(savedRecord.metadata.siteId).toBe("test-site");
         expect(savedRecord.metadata.seasonId).toBe("test-season");
-        expect(savedRecord.analysis).toBeDefined();
+        expect(savedRecord.analysis).toBeUndefined();
         const portal = savedRecord.observations!.portals!["1"]!;
         expect(portal).toBeDefined();
         expect(portal.title).toBe("Test Portal");
