@@ -261,9 +261,6 @@ describe("EventConfigRegistry", () => {
         const pragueConfig = registry.getSiteConfig("2026-orion-jersey-city");
         expect(pragueConfig).toBeDefined();
         
-        console.log("=== JERSEY CITY CONFIG REGISTRY OUTPUT ===");
-        console.log(JSON.stringify(pragueConfig, undefined, 2));
-        console.log("=====================================");
     });
 
     it("should return configured site duration or default fallback duration", () => {

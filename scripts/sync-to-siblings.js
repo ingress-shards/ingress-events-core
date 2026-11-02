@@ -16,7 +16,7 @@
  * are not found, ensuring clean, zero-failure runs in isolated CI and Docker builds.
  */
 
-import { existsSync, cpSync } from 'node:fs';
+import { existsSync, cpSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const siblings = [
@@ -30,6 +30,12 @@ for (const relPath of siblings) {
     if (existsSync(targetDir)) {
         cpSync('dist', resolve(targetDir, 'dist'), { recursive: true, force: true });
         cpSync('package.json', resolve(targetDir, 'package.json'), { force: true });
+
+        // Invalidate sibling build cache (e.g. Webpack, Vite)
+        const siblingCache = resolve(targetDir, '../../.cache');
+        if (existsSync(siblingCache)) {
+            rmSync(siblingCache, { recursive: true, force: true });
+        }
         console.log(`[Sync Siblings] Synced core dist to: ${relPath}`);
         syncedCount++;
     }

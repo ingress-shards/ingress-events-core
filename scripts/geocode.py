@@ -1,40 +1,76 @@
 #!/usr/bin/env python3
 
+import hashlib
 import json
-import time
-import datetime as dt
-import requests
-import requests_cache
-import re
-import pandas as pd
-import reverse_geocoder as rg
-from unidecode import unidecode
 import os
+import re
 import sys
-from timezonefinder import TimezoneFinder
-from concurrent.futures import ThreadPoolExecutor
+import time
 
 # Ensure UTF-8 output
-if sys.stdout.encoding.lower() != 'utf-8':
+if sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
     except AttributeError:
-        pass # Older python
+        pass  # Older python
+
+# Paths & Filenames
+SEASON_MANIFEST_FILENAME = 'season_manifest.json'
+EVENT_BLUEPRINTS_FILENAME = 'event_blueprints.json'
+SEASON_GEOCODE_FILENAME = 'season_geocode.json'
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'conf')
+GEN_CONF_DIR = os.path.join(SCRIPT_DIR, '..', 'gen', 'conf')
+
+SEASON_MANIFEST_FILE_PATH = os.path.join(CONF_DIR, SEASON_MANIFEST_FILENAME)
+GEOCODE_FILE_PATH = os.path.join(GEN_CONF_DIR, SEASON_GEOCODE_FILENAME)
+HASH_FILE_PATH = os.path.join(GEN_CONF_DIR, '.manifest_hash')
+PACKAGE_JSON_PATH = os.path.join(SCRIPT_DIR, '..', 'package.json')
+
+
+def compute_manifest_hash():
+    hasher = hashlib.sha256()
+    for filename in [SEASON_MANIFEST_FILENAME, EVENT_BLUEPRINTS_FILENAME]:
+        file_path = os.path.join(CONF_DIR, filename)
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                hasher.update(f.read())
+    with open(__file__, 'rb') as f:
+        hasher.update(f.read())
+    return hasher.hexdigest()
+
+
+# Fast exit if manifest & script have not changed
+if '--force' not in sys.argv:
+    if os.path.exists(GEOCODE_FILE_PATH) and os.path.exists(HASH_FILE_PATH):
+        try:
+            with open(HASH_FILE_PATH, 'r', encoding='utf-8') as f:
+                if f.read().strip() == compute_manifest_hash():
+                    print("[Geocode] Season manifest unchanged (cached). Skipping geocoding.")
+                    sys.exit(0)
+        except Exception:
+            pass
+
+# Heavy imports only loaded on cache miss
+import datetime as dt
+from concurrent.futures import ThreadPoolExecutor
+
+import pandas as pd
+import requests
+import requests_cache
+import reverse_geocoder as rg
+from timezonefinder import TimezoneFinder
+from unidecode import unidecode
 
 # Cache for 1 hour
 requests_cache.install_cache('cache', expire_after=3600)
 
-SEASON_MANIFEST_FILENAME = 'season_manifest.json'
-SEASON_GEOCODE_FILENAME = 'season_geocode.json'
-
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SEASON_MANIFEST_FILE_PATH = os.path.join(SCRIPT_DIR, '..', 'conf', SEASON_MANIFEST_FILENAME)
 with open(SEASON_MANIFEST_FILE_PATH, 'r', encoding="utf-8") as f:
     season_manifest = json.load(f)
 
 EVENT_MARKER_REGEX = r"L.marker\(\[(?P<lat>-?\d+.\d+), (?P<lng>-?\d+.\d+)\]\).bindPopup\('(?P<type>Shard Skirmish|Anomaly)<br /> ?(?P<name>.+?)<br />(?P<date>.+?)'\)"
 
-PACKAGE_JSON_PATH = os.path.join(SCRIPT_DIR, '..', 'package.json')
 with open(PACKAGE_JSON_PATH, 'r', encoding='utf-8') as f:
     package_version = json.load(f).get('version', '0.0.0')
 print(f'Package version: {package_version}')
@@ -126,17 +162,18 @@ def process_season(season):
                             latE6 = site_config.get("latE6")
                             lngE6 = site_config.get("lngE6")
                             name = site_config.get("name")
-                            if latE6 is not None and lngE6 is not None:
+                            if latE6 is not None and lngE6 is not None and name and entry_date:
                                 site_rows.append({
                                     "latE6": int(latE6),
                                     "lngE6": int(lngE6),
                                     "name": name,
-                                    "eventType": event_type,
-                                    "date": pd.to_datetime(entry_date, format='%Y-%m-%d')
+                                    "date": pd.to_datetime(entry_date, format='%Y-%m-%d'),
+                                    "eventType": event_type
                                 })
+            
             if site_rows:
-                schedule_df = pd.DataFrame(site_rows)
-                df = pd.concat([df, schedule_df], ignore_index=True)
+                override_df = pd.DataFrame(site_rows)
+                df = pd.concat([df, override_df], ignore_index=True)
 
         if df.empty:
             return season_id, []
@@ -204,16 +241,19 @@ def filter_recent_data(season_geocode, season_manifest):
 
 def save_generated_data(season_geocode_full, season_geocode_recent, season_manifest_recent):
     # 1. Save Full Geocode
-    geocode_file_path = os.path.join(SCRIPT_DIR, '..', 'gen', 'conf', SEASON_GEOCODE_FILENAME)
-    save_to_file(season_geocode_full, geocode_file_path)
+    save_to_file(season_geocode_full, GEOCODE_FILE_PATH)
 
     # 2. Save Recent Filtered Geocode
-    recent_file_path = os.path.join(SCRIPT_DIR, '..', 'gen', 'conf', 'recent', SEASON_GEOCODE_FILENAME)
-    save_to_file(season_geocode_recent, recent_file_path)
+    recent_geocode_path = os.path.join(GEN_CONF_DIR, 'recent', SEASON_GEOCODE_FILENAME)
+    save_to_file(season_geocode_recent, recent_geocode_path)
 
     # 3. Save Recent Manifest
-    recent_manifest_path = os.path.join(SCRIPT_DIR, '..', 'gen', 'conf', 'recent', SEASON_MANIFEST_FILENAME)
+    recent_manifest_path = os.path.join(GEN_CONF_DIR, 'recent', SEASON_MANIFEST_FILENAME)
     save_to_file(season_manifest_recent, recent_manifest_path)
+
+    # 4. Save Hash for Caching
+    with open(HASH_FILE_PATH, 'w', encoding='utf-8') as f:
+        f.write(compute_manifest_hash())
 
 def save_to_file(data, file_path):
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
