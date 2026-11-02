@@ -54,6 +54,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Cache build and lint
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache
+          key: ${{ runner.os }}-core-cache-${{ hashFiles('yarn.lock', 'src/**') }}
+          restore-keys: |
+            ${{ runner.os }}-core-cache-
+
       - name: Validate
         run: yarn validate
 
