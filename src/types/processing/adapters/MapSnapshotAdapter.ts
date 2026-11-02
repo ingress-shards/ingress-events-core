@@ -1,15 +1,18 @@
 import type { SiteId } from "../../../common/Identifiers.js";
 import type { SiteRecord } from "../../../sites/Site.js";
 import type { MapSnapshot } from "../../capture/MapSnapshot.js";
-import type { DataObservationAdapter } from "../DataObservationAdapter.js";
+import type { DataObservationAdapter, IngestionItem } from "../DataObservationAdapter.js";
 import type { Ornament } from "../../config/EventBlueprints.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { PORTAL_HISTORY_TYPES } from "../../../sites/Portal.js";
 import type { PortalHistoryType } from "../../../sites/Portal.js";
 import { findSiteByCoords } from "../../../common/Geo.js";
 import type { SiteConfig } from "../../../config/SiteConfig.js";
+import { instant } from "temporal-polyfill/fns/Now";
+import { parseTimestampFromFilename } from "../../../common/Date.js";
 
 export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
+    private readonly filenamePattern = /^map-snapshot.*\.json$/i;
     private portalIdMapper = new PortalIdMapper();
 
     constructor(
@@ -39,6 +42,27 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             }
         }
         return historyEntries;
+    }
+
+    public tryParse(item: IngestionItem): MapSnapshot | undefined {
+        if (!this.filenamePattern.test(item.filename)) return undefined;
+
+        try {
+            const mapSnapshot: Partial<MapSnapshot> =
+                typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+            if (Array.isArray(mapSnapshot.portals)) {
+                if (!mapSnapshot.timestamp) {
+                    const timestamp = parseTimestampFromFilename(item.filename);
+                    if (!timestamp) return undefined;
+                    mapSnapshot.timestamp = timestamp;
+                }
+                return mapSnapshot as MapSnapshot;
+            }
+        } catch (error) {
+            console.error(`[MapSnapshotAdapter] Failed to parse JSON from ${item.filename}:`, error);
+        }
+        return undefined;
     }
 
     public parseAndGroupObservations(input: MapSnapshot): SiteRecord[] {
@@ -71,7 +95,7 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
                     metadata: {
                         siteId,
                         seasonId,
-                        lastUpdated: 0,
+                        lastUpdated: instant().epochMilliseconds,
                     },
                     observations: { portals: {}, shards: {} },
                 };

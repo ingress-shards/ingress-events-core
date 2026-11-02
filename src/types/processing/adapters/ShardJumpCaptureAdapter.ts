@@ -1,12 +1,14 @@
 import type { SiteId, PortalId } from "../../../common/Identifiers.js";
 import type { SiteRecord } from "../../../sites/Site.js";
 import type { ShardJumpCapture, Fragment, FragmentHistoryType, TargetArtifact } from "../../capture/ShardJumps.js";
-import type { DataObservationAdapter } from "../DataObservationAdapter.js";
+import type { DataObservationAdapter, IngestionItem } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import { fromNianticId, type Alignment } from "../../../common/Alignment.js";
 import { findSiteByCoords } from "../../../common/Geo.js";
 import type { ShardHistoryEntry, ShardMismatch } from "../../../sites/Shard.js";
 import type { SiteConfig } from "../../../config/SiteConfig.js";
+import { instant } from "temporal-polyfill/fns/Now";
+import { parseTimestampFromFilename } from "../../../common/Date.js";
 
 interface ReferencePortal {
     latE6: number;
@@ -16,6 +18,7 @@ interface ReferencePortal {
 }
 
 export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJumpCapture> {
+    private readonly filenamePattern = /^shard-jump-times.*\.json$/i;
     private portalIdMapper = new PortalIdMapper();
 
     constructor(private readonly candidateSites: SiteConfig[]) {}
@@ -198,6 +201,27 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         }
     }
 
+    public tryParse(item: IngestionItem): ShardJumpCapture | undefined {
+        if (!this.filenamePattern.test(item.filename)) return undefined;
+        
+        try {
+            const shardJumpCapture: Partial<ShardJumpCapture> =
+                typeof item.data === "string" ? JSON.parse(item.data) : item.data;
+
+            if (Array.isArray(shardJumpCapture.artifact)) {
+                if (!shardJumpCapture.timestamp) {
+                    const timestamp = parseTimestampFromFilename(item.filename);
+                    if (!timestamp) return undefined;
+                    shardJumpCapture.timestamp = timestamp;
+                }
+                return shardJumpCapture as ShardJumpCapture;
+            }
+        } catch (error) {
+            console.error(`[ShardJumpCaptureAdapter] Failed to parse JSON from ${item.filename}:`, error);
+        }
+        return undefined;
+    }
+
     public parseAndGroupObservations(input: ShardJumpCapture): SiteRecord[] {
         if (input.timestamp === undefined) {
             throw new Error("[ShardJumpCaptureAdapter] Missing capture timestamp in ShardJumpCapture input");
@@ -211,7 +235,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     metadata: {
                         siteId,
                         seasonId,
-                        lastUpdated: 0,
+                        lastUpdated: instant().epochMilliseconds,
                     },
                     observations: { portals: {}, shards: {} },
                 };

@@ -11,12 +11,12 @@ export class SiteRecordMerger {
      * of portals and shards, allocating IDs, and maintaining strict chronological order.
      */
     public merge(
-        baseRecord: SiteRecord,
+        existingRecord: SiteRecord,
         incomingObs: SiteObservation,
         siteConfig?: SiteConfig
     ): { record: SiteRecord; hasChanged: boolean } {
         // 1. Deep clone the base record to ensure immutability
-        const record = structuredClone(baseRecord);
+        const record = structuredClone(existingRecord);
         let hasChanged = false;
 
         record.observations ??= {};

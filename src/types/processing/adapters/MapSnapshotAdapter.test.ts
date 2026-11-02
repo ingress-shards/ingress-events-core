@@ -35,10 +35,6 @@ describe("MapSnapshotAdapter", () => {
         };
 
         const result = adapter.parseAndGroupObservations(input);
-        console.log("--- MapSnapshotAdapter Input ---");
-        console.log(JSON.stringify(input, undefined, 2));
-        console.log("--- MapSnapshotAdapter Output ---");
-        console.log(JSON.stringify(result, undefined, 2));
 
         expect(result.length).toBe(1);
         const record = result[0]!;

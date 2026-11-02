@@ -27,11 +27,6 @@ export const DATA_FILES: Record<DataFileType, DataFileMetadata> = {
         importPattern: /^site-record.*\.json$/i,
         exportPrefix: "site-record",
     },
-    shardJumpTimes: {
-        label: "Shard Jump Times",
-        importPattern: /^shard-jump-times.*\.json$/i,
-        exportPrefix: "shard-jump-times",
-    },
     ornamentedPortals: {
         label: "Ornamented Portals",
         importPattern: /^ornamented-portals.*\.json$/i,
@@ -41,6 +36,11 @@ export const DATA_FILES: Record<DataFileType, DataFileMetadata> = {
         label: "Target Portals",
         importPattern: /^target-portals.*\.json$/i,
         exportPrefix: "target-portals",
+    },
+    shardJumpTimes: {
+        label: "Shard Jump Times",
+        importPattern: /^shard-jump-times.*\.json$/i,
+        exportPrefix: "shard-jump-times",
     },
     recursivePortals: {
         label: "Recursive Portals",

@@ -61,3 +61,26 @@ The lifecycle of an anomaly event is divided into distinct scanning phases relat
 * **Behavior:** The event is live. Snapshot and shard jump observations are captured.
 * **Merger Logic:** Incoming observations are appended to the historical record, preserving chronological state transitions.
 * **Note:** Shard despawns are excluded from the end-of-live-phase boundary calculation.
+
+---
+
+## 3. Ingestion Pipeline & Architecture Roadmap
+
+### Unified Batch Ingestion (`DataIngestionPipeline`)
+The `DataIngestionPipeline` orchestrates multi-stage ingestion across all external file feeds (Discovery $\to$ Targets $\to$ Shards), ensuring:
+1. **Self-Describing Adapters:** Each adapter exposes `tryParse(filename, data)` to validate and extract observations without brittle central switchboards.
+2. **Ordered Execution:** Discovery establishes portals, targets register artifact destinations, and shard jumps evaluate movement in chronological order.
+3. **Single-Pass Analysis:** Intermediate merges bypass expensive metric re-computations; `SiteRecordAnalyser.analyse(record)` is executed once at the conclusion of the batch.
+
+### Planned Directory Restructuring
+Following consolidation of the batch pipeline changes, the processing, analysis, and adapter domains will be consolidated under a unified root directory:
+
+```
+src/pipeline/
+├── DataIngestionPipeline.ts   # Main entry point
+├── adapters/                  # Observation Adapters (SiteDiscovery, SiteTargetPortals, ShardJumpCapture, MapSnapshot)
+├── merging/                   # Merger and PortalMergeStrategy implementations
+└── analysis/                  # Analytical calculators and SiteRecordAnalyser
+```
+*Note: `src/types/DataFiles.ts` will be retired as file patterns and schemas are encapsulated directly within the respective adapters.*
+

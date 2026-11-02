@@ -4,9 +4,9 @@
  */
 export default [
     {
-        name: "Factions",
-        input: "src/common/Factions.ts",
-        output: "gen/zod-schemas/Factions.zod.ts",
+        name: "Alignment",
+        input: "src/common/Alignment.ts",
+        output: "gen/zod-schemas/Alignment.zod.ts",
     },
     {
         name: "Geo",

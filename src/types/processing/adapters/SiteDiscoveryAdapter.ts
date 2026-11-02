@@ -1,16 +1,21 @@
 import type { SiteRecord } from "../../../sites/Site.js";
 import type { ObservedPortal } from "../../../sites/Portal.js";
 import type { SiteDiscovery, PortalDiscovery } from "../../data-files/SiteDiscovery.js";
-import type { DataObservationAdapter } from "../DataObservationAdapter.js";
+import type { DataObservationAdapter, IngestionItem } from "../DataObservationAdapter.js";
 import { PortalIdMapper } from "../AdapterHelpers.js";
 import type { SiteConfig } from "../../../config/SiteConfig.js";
 import { findSiteByCoords } from "../../../common/Geo.js";
 import type { SiteId } from "../../../common/Identifiers.js";
+import { instant } from "temporal-polyfill/fns/Now";
+import { parseTimestampFromFilename } from "../../../common/Date.js";
 
 export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscovery> {
-    private portalIdMapper = new PortalIdMapper();
+    private readonly filenamePattern = /^ornamented-portals.*\.json$/i;
+    private portalIdMapper;
 
-    constructor(private readonly candidateSites: SiteConfig[]) {}
+    constructor(private readonly candidateSites: SiteConfig[]) {
+        this.portalIdMapper = new PortalIdMapper();
+    }
 
     private buildPortalsRecord(siteId: SiteId, portalsList: PortalDiscovery[], fallbackExportedAt?: number): Record<number, ObservedPortal> {
         const portals: Record<number, ObservedPortal> = {};
@@ -38,6 +43,28 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
             };
         }
         return portals;
+    }
+
+    public tryParse(item: IngestionItem): SiteDiscovery | undefined {
+        if (!this.filenamePattern.test(item.filename)) return undefined;
+        
+        try {
+            const discovery: Partial<SiteDiscovery> =
+                typeof item.data === "string" ? JSON.parse(item.data) : (item.data as Partial<SiteDiscovery>);
+
+            if (Array.isArray(discovery.portals)) {
+                if (!discovery.exportedAt) {
+                    const timestamp = parseTimestampFromFilename(item.filename);
+                    if (timestamp) {
+                        discovery.exportedAt = timestamp;
+                    }
+                }
+                return discovery as SiteDiscovery;
+            }
+        } catch (error) {
+            console.error(`[SiteDiscoveryAdapter] Failed to parse JSON from ${item.filename}:`, error);
+        }
+        return undefined;
     }
 
     public parseAndGroupObservations(input: SiteDiscovery): SiteRecord[] {
@@ -100,7 +127,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
                     metadata: {
                         siteId,
                         seasonId: siteConfig.seasonId,
-                        lastUpdated: 0,
+                        lastUpdated: instant().epochMilliseconds,
                     },
                     observations: { portals },
                 });

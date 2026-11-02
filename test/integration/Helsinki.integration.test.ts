@@ -51,7 +51,6 @@ describe("Helsinki Integration Analysis", () => {
                 for (const link of path.links) {
                     for (const move of link.moves) {
                         if (move.mismatch) {
-                            console.log('Mismatch Move:', pathKey, move.moveTime, 'Scored:', move.scoredRules);
                             mismatchCount++;
                         }
                     }

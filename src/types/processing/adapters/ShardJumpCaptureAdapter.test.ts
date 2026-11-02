@@ -53,10 +53,6 @@ describe("ShardJumpCaptureAdapter", () => {
         };
 
         const result = adapter.parseAndGroupObservations(input);
-        console.log("--- ShardJumpCaptureAdapter Input ---");
-        console.log(JSON.stringify(input, undefined, 2));
-        console.log("--- ShardJumpCaptureAdapter Output ---");
-        console.log(JSON.stringify(result, undefined, 2));
 
         expect(result.length).toBe(1);
         const record = result[0]!;
