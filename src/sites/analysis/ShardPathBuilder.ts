@@ -12,7 +12,7 @@ export class ShardPathBuilder {
         paths: Record<string, ShardPath>
     ): void {
         for (const h of filteredHistory) {
-            if (h.action !== "link") {
+            if (h.action !== "link" && h.action !== "jump") {
                 continue;
             }
 
@@ -34,9 +34,23 @@ export class ShardPathBuilder {
             }
 
             paths[pathKey] ??= {
-                links: [],
-                distance
+                distance,
+                links: []
             };
+
+            if (h.action === "jump") {
+                paths[pathKey].teleports ??= [];
+                const isTeleportExists = paths[pathKey].teleports.some(m => m.shardId === shardId && m.moveTime === h.moveTime);
+                if (!isTeleportExists) {
+                    paths[pathKey].teleports.push({
+                        origin,
+                        dest: destination,
+                        shardId,
+                        moveTime: h.moveTime,
+                    });
+                }
+                continue;
+            }
 
             const linkTime = h.linkTime ?? h.moveTime;
             const align = h.align ?? "NEU";
@@ -79,6 +93,9 @@ export class ShardPathBuilder {
             path.links.sort((a, b) => a.linkTime - b.linkTime);
             for (const link of path.links) {
                 link.moves.sort((a, b) => a.moveTime - b.moveTime);
+            }
+            if (path.teleports) {
+                path.teleports.sort((a, b) => a.moveTime - b.moveTime);
             }
         }
 

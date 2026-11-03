@@ -46,10 +46,12 @@ export type ShardAction = "spawn" | "link" | "jump" | "no move" | "despawn";
  * Shard path between two portals.
  */
 export interface ShardPath {
-    /** All links created between these two portals */
-    links: Link[];
     /** Distance between portals in meters */
     distance: number;
+    /** All links created between these two portals */
+    links: Link[];
+    /** Random idle teleports across this path (only present if a jump action occurred) */
+    teleports?: ShardMove[];
 }
 
 /**
