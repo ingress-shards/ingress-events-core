@@ -493,7 +493,17 @@
                 { "name": "Nashville, TN, USA", "latE6": 36162664, "lngE6": -86781602 }
               ]
             },
-            { "date": "2026-11-21", "sites": [] }
+            {
+              "date": "2026-11-21",
+              "sites": [
+                { "name": "Perth, Australia", "latE6": -31959229, "lngE6": 115876362 },
+                { "name": "Putrajaya, Malaysia", "latE6": 2934991, "lngE6": 101690088 },
+                { "name": "Innsbruck, Austria", "latE6": 47270597, "lngE6": 11396003 },
+                { "name": "Málaga, Spain", "latE6": 36717928, "lngE6": -4419937 },
+                { "name": "Concepción, Chile", "latE6": -36831506, "lngE6": -73062949 },
+                { "name": "Vancouver, Canada", "latE6": 49316240, "lngE6": -123071922 }
+              ]
+            }
           ]
         }
       ]
