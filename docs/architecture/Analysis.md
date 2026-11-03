@@ -31,7 +31,7 @@ To enrich site data for ingestion and visual display, a calculation pass is run 
 
 ### Directory Separation: Processing vs. Analysis
 The library strictly separates observation ingestion/merging from analytical evaluation into distinct modules:
-* `src/sites/processing/`: Observation ingestion, parsing, and state merging (`SiteDataProcessor`, `SiteRecordMerger`, `PortalMergeStrategy`, `DefaultPortalMergeStrategy`).
+* `src/sites/processing/`: Observation ingestion, parsing, and state merging (`DataIngestionPipeline`, `SiteRecordMerger`, `PortalMergeStrategy`, `DefaultPortalMergeStrategy`).
 * `src/sites/analysis/`: Analysis orchestration, graph path construction, scoring engines, window builders, and metric calculators.
 
 ### Analysis Progression & Composition Root

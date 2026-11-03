@@ -69,6 +69,70 @@ describe("StatisticsCalculator", () => {
         expect(stats.targets).toBe(1);
     });
 
+    it("should count distinct links when multiple shards traverse the same link", () => {
+        const shards = new Map<number, Shard>([
+            [1, { history: [{ action: "link", moveTime: 1200, portalId: 1, dest: 2 }] }],
+            [2, { history: [{ action: "link", moveTime: 1200, portalId: 1, dest: 2 }] }]
+        ]);
+
+        const paths: Record<string, ShardPath> = {
+            "1-2": {
+                distance: 100,
+                links: [
+                    {
+                        linkTime: 1200,
+                        align: "RES",
+                        moves: [
+                            { origin: 1, dest: 2, moveTime: 1200, shardId: 1 },
+                            { origin: 1, dest: 2, moveTime: 1200, shardId: 2 }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        const wave: ShardWaveTimeline = {
+            waveNumber: 1,
+            start: 1000,
+            end: 2000,
+            expectedShards: 2
+        };
+
+        const calculator = new StatisticsCalculator(shards, {}, paths);
+        const stats = calculator.calculate(wave);
+
+        expect(stats.shards.moving).toBe(2);
+        expect(stats.links).toBe(1); // 1 distinct link, even though 2 shards traversed it
+        expect(stats.paths).toBe(1);
+    });
+
+    it("should include paths with teleports in wave path count", () => {
+        const shards = new Map<number, Shard>([
+            [1, { history: [{ action: "jump", moveTime: 1300, portalId: 1, dest: 3 }] }]
+        ]);
+
+        const paths: Record<string, ShardPath> = {
+            "1-3": {
+                distance: 200,
+                links: [],
+                teleports: [{ origin: 1, dest: 3, shardId: 1, moveTime: 1300 }]
+            }
+        };
+
+        const wave: ShardWaveTimeline = {
+            waveNumber: 1,
+            start: 1000,
+            end: 2000,
+            expectedShards: 1
+        };
+
+        const calculator = new StatisticsCalculator(shards, {}, paths);
+        const stats = calculator.calculate(wave);
+
+        expect(stats.links).toBe(0);
+        expect(stats.paths).toBe(1);
+    });
+
     it("should return undefined for site aggregation when wave count is <= 1", () => {
         const waveStates: Record<number, WaveState> = {
             1: {
@@ -97,9 +161,9 @@ describe("StatisticsCalculator", () => {
         };
 
         const mockPaths: Record<string, ShardPath> = {
-            "p1": { distance: 10, links: [] },
-            "p2": { distance: 20, links: [] },
-            "p3": { distance: 30, links: [] }
+            "p1": { distance: 10, links: [{ linkTime: 1000, align: "RES", moves: [] }, { linkTime: 2000, align: "RES", moves: [] }] },
+            "p2": { distance: 20, links: [{ linkTime: 1100, align: "ENL", moves: [] }, { linkTime: 2100, align: "ENL", moves: [] }] },
+            "p3": { distance: 30, links: [{ linkTime: 1200, align: "RES", moves: [] }] }
         };
         const calculator = new StatisticsCalculator(new Map(), {}, mockPaths);
         const aggregated = calculator.aggregate(waveStates);
@@ -107,7 +171,7 @@ describe("StatisticsCalculator", () => {
         expect(aggregated).toBeDefined();
         expect(aggregated?.shards.moving).toBe(3);
         expect(aggregated?.shards.nonMoving).toBe(3);
-        expect(aggregated?.links).toBe(5);
+        expect(aggregated?.links).toBe(5); // 5 unique links across the site paths
         expect(aggregated?.paths).toBe(3);
         expect(aggregated?.targets).toBe(2);
     });

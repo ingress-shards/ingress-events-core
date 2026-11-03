@@ -63,7 +63,7 @@ describe("Helsinki Integration Analysis", () => {
         expect(analysis.statistics).toBeDefined();
         expect(analysis.statistics!.shards.moving).toBe(137);
         expect(analysis.statistics!.shards.nonMoving).toBe(1);
-        expect(analysis.statistics!.links).toBe(425);
+        expect(analysis.statistics!.links).toBe(393);
         expect(analysis.statistics!.paths).toBe(373);
         expect(analysis.statistics!.targets).toBe(72);
         

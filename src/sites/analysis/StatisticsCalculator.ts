@@ -15,7 +15,6 @@ export class StatisticsCalculator {
         const waveEndLimit = wave.shardsActions?.some(a => a.action === "despawn") ? wave.end + 55000 : wave.end;
         let moving = 0;
         let nonMoving = 0;
-        let links = 0;
 
         for (const shard of this.shards.values()) {
             const history = shard.history || [];
@@ -35,12 +34,20 @@ export class StatisticsCalculator {
             } else {
                 nonMoving++;
             }
+        }
 
-            links += waveHistory.filter(h => h.action === "link").length;
+        let waveLinkCount = 0;
+        for (const path of Object.values(this.paths)) {
+            for (const link of path.links) {
+                if (link.moves.some(m => m.moveTime >= wave.start && m.moveTime <= waveEndLimit)) {
+                    waveLinkCount++;
+                }
+            }
         }
 
         const wavePathCount = Object.values(this.paths).filter(path =>
-            path.links.some(link => link.moves.some(m => m.moveTime >= wave.start && m.moveTime <= waveEndLimit))
+            path.links.some(link => link.moves.some(m => m.moveTime >= wave.start && m.moveTime <= waveEndLimit)) ||
+            path.teleports?.some(t => t.moveTime >= wave.start && t.moveTime <= waveEndLimit)
         ).length;
 
         const targetsCount = Object.values(this.portals).filter(p => p.history?.some(h => {
@@ -53,7 +60,7 @@ export class StatisticsCalculator {
                 moving,
                 nonMoving
             },
-            links,
+            links: waveLinkCount,
             paths: wavePathCount,
             ...(targetsCount > 0 && { targets: targetsCount })
         };
@@ -67,24 +74,27 @@ export class StatisticsCalculator {
 
         let totalMoving = 0;
         let totalNonMoving = 0;
-        let totalLinks = 0;
         let totalTargets = 0;
 
         for (const ws of waveEntries) {
             totalMoving += ws.statistics.shards.moving;
             totalNonMoving += ws.statistics.shards.nonMoving;
-            totalLinks += ws.statistics.links;
             if (ws.statistics.targets) {
                 totalTargets += ws.statistics.targets;
             }
         }
+
+        const totalUniqueLinks = Object.values(this.paths).reduce(
+            (accumulator, path) => accumulator + path.links.length,
+            0
+        );
 
         return {
             shards: {
                 moving: totalMoving,
                 nonMoving: totalNonMoving
             },
-            links: totalLinks,
+            links: totalUniqueLinks,
             paths: Object.keys(this.paths).length,
             ...(totalTargets > 0 && { targets: totalTargets })
         };
