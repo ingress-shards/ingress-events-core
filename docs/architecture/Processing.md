@@ -72,8 +72,8 @@ The `DataIngestionPipeline` orchestrates multi-stage ingestion across all extern
 2. **Ordered Execution:** Discovery establishes portals, targets register artifact destinations, and shard jumps evaluate movement in chronological order.
 3. **Single-Pass Analysis:** Intermediate merges bypass expensive metric re-computations; `SiteRecordAnalyser.analyse(record)` is executed once at the conclusion of the batch.
 
-### Planned Directory Restructuring
-Following consolidation of the batch pipeline changes, the processing, analysis, and adapter domains will be consolidated under a unified root directory:
+### Pipeline Directory Structure
+The ingestion, adapter, merger, and analysis domains are consolidated under a unified root directory (`src/pipeline/`), with external boundary schemas cleanly grouped under `src/types/observations/`:
 
 ```
 src/pipeline/
@@ -82,5 +82,5 @@ src/pipeline/
 ├── merging/                   # Merger and PortalMergeStrategy implementations
 └── analysis/                  # Analytical calculators and SiteRecordAnalyser
 ```
-*Note: `src/types/DataFiles.ts` will be retired as file patterns and schemas are encapsulated directly within the respective adapters.*
+*Note: External observation schemas (`SiteDiscovery`, `SiteTargetPortals`, `MapSnapshot`, `ShardJumps`, `Capture`) live in `src/types/observations/` and are validated by Zod. Legacy `src/types/DataFiles.ts` has been retired.*
 

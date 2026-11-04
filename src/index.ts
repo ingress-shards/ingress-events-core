@@ -2,5 +2,6 @@ export * from "./common/index.js";
 export * from "./types/index.js";
 export * from "./config/index.js";
 export * from "./sites/index.js";
+export * from "./pipeline/index.js";
 export * from "./display/index.js";
 export * from "./visuals/index.js";

@@ -45,12 +45,12 @@ export default [
     },
     {
         name: "Capture",
-        input: "src/types/capture/Capture.ts",
+        input: "src/types/observations/Capture.ts",
         output: "gen/zod-schemas/Capture.zod.ts",
     },
     {
         name: "ShardJumps",
-        input: "src/types/capture/ShardJumps.ts",
+        input: "src/types/observations/ShardJumps.ts",
         output: "gen/zod-schemas/ShardJumps.zod.ts",
     }
 ];

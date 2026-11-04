@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { SiteRecordAnalyser } from "../../src/sites/analysis/SiteRecordAnalyser.js";
+import { SiteRecordAnalyser } from "../../src/pipeline/analysis/SiteRecordAnalyser.js";
 import type { SiteRecord } from "../../src/sites/Site.js";
 import { EventConfigRegistry } from "../../src/config/EventConfigRegistry.js";
 import * as fs from "node:fs";
