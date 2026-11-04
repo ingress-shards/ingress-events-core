@@ -52,8 +52,7 @@
         "test:coverage": "yarn generate && vitest run --coverage",
         "lint": "eslint src --cache --cache-location node_modules/.cache/eslint",
         "validate:check": "concurrently --kill-others-on-fail \"tsc --noEmit\" \"yarn lint\" \"vitest run\"",
-        "validate": "yarn clean && yarn generate && yarn validate:check && yarn build",
-        "validate:docker": "docker build -f Dockerfile.validate -t ingress-events-core-validate . && docker run --rm ingress-events-core-validate"
+        "validate": "yarn clean && yarn generate && yarn validate:check && yarn build"
     },
     "dependencies": {
         "temporal-polyfill": "~1.0.5"

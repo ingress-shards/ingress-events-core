@@ -13,7 +13,7 @@
  * 
  * Behavior:
  * Silently skips if sibling consumer repositories or their `node_modules` directories
- * are not found, ensuring clean, zero-failure runs in isolated CI and Docker builds.
+ * are not found, ensuring clean, zero-failure runs in isolated CI builds.
  */
 
 import { existsSync, cpSync, rmSync } from 'node:fs';
