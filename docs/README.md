@@ -35,6 +35,7 @@ The following event formats lack tangible, programmatic mechanic data and theref
     - [Seven-Stage Data Lifecycle](./architecture/README.md#classic-data-lifecycle)
     - [Processing Details](./architecture/Processing.md)
     - [Analysis Details](./architecture/Analysis.md)
+    - [Validation & Diagnostics Details](./architecture/ValidationAndReporting.md)
 - **[Data Schema](./Schema.md)**
     - [Collection Layer](./Schema.md#1-collection-layer)
     - [Storage Layer](./Schema.md#2-storage-layer)

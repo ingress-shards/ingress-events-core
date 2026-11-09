@@ -39,7 +39,7 @@ Storage can consist of both collected and processed files, however they are typi
 
 ### Stage 5: Analysis
 
-The enrichment of stored data to determine event statistics such as points, scores, centroids, and active links. For details on the analysis pipeline, see [Analysis](./Analysis.md).
+The enrichment of stored data to determine event statistics such as points, scores, centroids, and active links. For details on the analysis pipeline, see [Analysis](./Analysis.md). For details on validation, anomaly metrics, and site-wide statistics, see [Validation and Reporting](./ValidationAndReporting.md).
 
 ### Stage 6: Usage
 
@@ -55,3 +55,4 @@ Long-term management of historical season data for comparison and legacy trackin
 
 - [Game Mechanics](../mechanics/README.md)
 - [Data Schema](../Schema.md)
+- [Validation & Diagnostics](./ValidationAndReporting.md)

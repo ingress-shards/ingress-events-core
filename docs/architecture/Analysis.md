@@ -40,14 +40,13 @@ The library strictly separates observation ingestion/merging from analytical eva
 2. **Link Scoring (`LinkScoringEngine`)**: Chronologically scores shard link moves across paths, annotating each move with matched `scoredRules` and calculated `totalPoints`.
 3. **Wave State Progression (`WaveAnalyser`)**:
    * Iterates over scheduled waves (`analyse`) and builds each wave's state, short-circuiting when a wave has no active `shardJumpWindows`.
-   * **Jump Windows (`ShardJumpWindowBuilder`)**: Ingests `targetScorer`, `shards`, and `shardPaths`, building sequential jump windows (`buildWaveWindows`) and evaluating target arrivals via `TargetScoringEngine.scoreJumpWindow`. Window-level points, link rule counts, target goal details (`scoredCount` / `unscoredCount` omitted when `0`), and alignment mismatches are consolidated per faction inside `ShardJumpWindow.factionBreakdowns` (omitted entirely when no scoring or mismatch occurs in a window).
+   * **Jump Windows (`ShardJumpWindowBuilder`)**: Ingests `targetScorer`, `shards`, and `shardPaths`, building sequential jump windows (`buildWaveWindows`) and evaluating target arrivals via `TargetScoringEngine.scoreJumpWindow`. Window-level points, link rule counts, target goal details (`scoredCount` / `unscoredCount` omitted when `0`), and faction-attributed mismatched scoring jumps are consolidated per window inside `ShardJumpWindow`.
    * **Wave Points (`PointsSnapshot`)**: Derives wave `total`, `links`, and `goals` directly from the constituent `ShardJumpWindow[]`, omitting any empty category objects.
-   * **Wave Statistics (`StatisticsCalculator`)**: Calculates wave moving/non-moving shards, links, paths, and targets.
-   * **Wave Diagnostics (`DiagnosticsCalculator`)**: Calculates wave link alignment mismatches.
+   * **Wave Statistics (`StatisticsCalculator.calculateWaveStatistics`)**: Computes physical telemetry (`shards.moving`, `shards.nonMoving`, `links`, `paths`, and `targets`) for the wave window, attaching it to `WaveState.statistics`.
+
 4. **Site-Wide Aggregations**:
    * **Season Points (`SeasonPointsCalculator`)**: Aggregates wave points into season points according to blueprint rules (`SeasonPointsConfig`).
-   * **Site Statistics (`StatisticsCalculator.aggregate`)**: Aggregates multi-wave statistics.
-   * **Site Diagnostics (`DiagnosticsCalculator.aggregate`)**: Aggregates multi-wave diagnostics.
+   * **Site Statistics (`StatisticsCalculator.calculateSiteStatistics`)**: Direct single-pass evaluation of site-wide statistics into `SiteRecord.analysis.statistics` (including total unique links, paths, moving/non-moving shards, targets, mismatchedMoves, invalidActions, and extendedJumpWindows) unconditionally for all sites.
 
 > **Future Optimization Note (Phase 5 Map Integration):** `ShardMove.scoredRules` is currently populated during `LinkScoringEngine.scorePaths` and consumed in-memory by `ShardJumpWindowBuilder`. Once map link popups in `ingress-shards.github.io` are migrated in Phase 5 (which only require `ShardMove.totalPoints` while rule breakdowns live in `WaveState.shardJumpWindows`), `ShardMove.scoredRules` can be evaluated for omission from serialized output.
 
@@ -56,8 +55,7 @@ The library strictly separates observation ingestion/merging from analytical eva
 * `ShardPathBuilder`: Builds topological portal paths and chronological shard links/moves from shard history.
 * `LinkScoringEngine`: Applies link scoring rules across all shard paths (`scorePaths`) and sets `move.totalPoints`.
 * `TargetScoringEngine`: Evaluates goal arrivals and portal scoring limits for target portals per jump window (`scoreJumpWindow`).
-* `ShardJumpWindowBuilder`: Builds discrete jump windows, attaching per-faction points, link rule breakdowns, goal breakdowns, and alignment mismatches.
-* `WaveAnalyser`: Lightweight coordinator assembling `WaveState` from jump windows, statistics, and diagnostics.
-* `StatisticsCalculator`: Computes wave-level statistics and aggregates multi-wave site statistics.
-* `DiagnosticsCalculator`: Evaluates wave-level anomaly diagnostics and aggregates multi-wave site diagnostics.
+* `ShardJumpWindowBuilder`: Builds discrete jump windows, attaching per-faction points, link rule breakdowns, goal breakdowns, and faction-attributed mismatched scoring jumps.
+* `WaveAnalyser`: Coordinator assembling `WaveState` from jump windows, wave points snapshots, and wave telemetry statistics.
+* `StatisticsCalculator`: Computes wave-level operational metrics (`calculateWaveStatistics`) and site-level operational & diagnostic statistics (`calculateSiteStatistics`).
 * `SeasonPointsCalculator`: Computes season points distributions, wave point aggregations, and tracks contributing waves from `SeasonPointsConfig`.
