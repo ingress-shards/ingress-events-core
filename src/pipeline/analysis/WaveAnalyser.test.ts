@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { WaveAnalyser } from "./WaveAnalyser.js";
 import type { ShardJumpWindowBuilder } from "./ShardJumpWindowBuilder.js";
 import type { StatisticsCalculator } from "./StatisticsCalculator.js";
-import type { DiagnosticsCalculator } from "./DiagnosticsCalculator.js";
 import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
 
 describe("WaveAnalyser", () => {
@@ -25,25 +24,21 @@ describe("WaveAnalyser", () => {
     it("should assemble WaveStates across waves and short-circuit empty waves", () => {
         const mockWindows = [
             {
-                timestamp: 1500,
+                scheduledStart: 1500,
+                actualEnd: 1500,
                 jumpNumber: 1,
-                points: { total: { RES: 2 } },
-                historyCount: 1
+                actionCount: 1,
+                points: { total: { RES: 2 } }
             }
         ];
         const mockPoints = {
             total: { RES: 2 },
             links: { RES: 2 }
         };
-
-        const mockStats = {
-            shards: { moving: 1, nonMoving: 0 },
+        const mockWaveStats = {
+            shards: { moving: 1, nonMoving: 4 },
             links: 1,
             paths: 1
-        };
-
-        const mockDiagnostics = {
-            linkAlignmentMismatches: { RES: 1 }
         };
 
         const mockJumpWindowBuilder = {
@@ -52,35 +47,22 @@ describe("WaveAnalyser", () => {
                 .mockReturnValueOnce({ shardJumpWindows: [], points: {} })
         } as unknown as ShardJumpWindowBuilder;
 
-        const mockStatisticsCalculator = {
-            calculate: vi.fn().mockReturnValue(mockStats)
+        const mockStatsCalculator = {
+            calculateWaveStatistics: vi.fn().mockReturnValue(mockWaveStats)
         } as unknown as StatisticsCalculator;
 
-        const mockDiagnosticsCalculator = {
-            calculate: vi.fn().mockReturnValue(mockDiagnostics)
-        } as unknown as DiagnosticsCalculator;
-
-        const analyser = new WaveAnalyser(
-            mockJumpWindowBuilder,
-            mockStatisticsCalculator,
-            mockDiagnosticsCalculator
-        );
+        const analyser = new WaveAnalyser(mockJumpWindowBuilder, mockStatsCalculator);
 
         const waveStates = analyser.analyse([wave1, wave2Empty]);
 
         expect(mockJumpWindowBuilder.buildWaveWindows).toHaveBeenCalledTimes(2);
-        // Calculators should only run for wave 1 (wave 2 short-circuited due to 0 jump windows)
-        expect(mockStatisticsCalculator.calculate).toHaveBeenCalledTimes(1);
-        expect(mockStatisticsCalculator.calculate).toHaveBeenCalledWith(wave1);
-        expect(mockDiagnosticsCalculator.calculate).toHaveBeenCalledTimes(1);
-        expect(mockDiagnosticsCalculator.calculate).toHaveBeenCalledWith(wave1);
+        expect(mockStatsCalculator.calculateWaveStatistics).toHaveBeenCalledWith(wave1);
 
         expect(Object.keys(waveStates)).toEqual(["1"]);
         expect(waveStates[1]).toEqual({
             points: mockPoints,
             shardJumpWindows: mockWindows,
-            statistics: mockStats,
-            diagnostics: mockDiagnostics
+            statistics: mockWaveStats
         });
     });
 });

@@ -72,7 +72,7 @@ export class ShardPathBuilder {
                     dest: destination,
                     shardId,
                     moveTime: h.moveTime,
-                    ...(h.mismatch && { mismatch: true })
+
                 });
             }
         }

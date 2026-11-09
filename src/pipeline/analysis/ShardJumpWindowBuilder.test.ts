@@ -26,14 +26,14 @@ describe("ShardJumpWindowBuilder", () => {
             "1-2": {
                 distance: 100,
                 links: [{ linkTime: 1200, align: "RES", moves: [
-                    { origin: 1, dest: 2, shardId: 0, moveTime: 1500, mismatch: true, scoredRules: ["rule1"], totalPoints: 1 },
-                    { origin: 1, dest: 2, shardId: 1, moveTime: 1500, mismatch: true, scoredRules: ["rule1"], totalPoints: 1 }
+                    { origin: 1, dest: 2, shardId: 0, moveTime: 1500, scoredRules: ["rule1"], totalPoints: 1 },
+                    { origin: 1, dest: 2, shardId: 1, moveTime: 1500, scoredRules: ["rule1"], totalPoints: 1 }
                 ]}]
             },
             "3-4": {
                 distance: 100,
                 links: [{ linkTime: 1200, align: "RES", moves: [
-                    { origin: 3, dest: 4, shardId: 2, moveTime: 1500, mismatch: true, scoredRules: ["rule1"], totalPoints: 1 }
+                    { origin: 3, dest: 4, shardId: 2, moveTime: 1500, scoredRules: ["rule1"], totalPoints: 1 }
                 ]}]
             }
         };
@@ -46,12 +46,13 @@ describe("ShardJumpWindowBuilder", () => {
 
         expect(windows).toHaveLength(1);
         expect(windows[0]!.jumpNumber).toBe(1);
-        expect(windows[0]!.timestamp).toBe(1500);
-        expect(windows[0]!.historyCount).toBe(3);
+        expect(windows[0]!.scheduledStart).toBe(1500);
+        expect(windows[0]!.actualEnd).toBe(1500);
+        expect(windows[0]!.actionCount).toBe(3);
 
-        // 3 shards jumped, but 2 were on link "1-2" and 1 was on link "3-4".
-        // The number of mismatches should be 2 for ENL.
-        expect(windows[0]!.diagnostics?.linkAlignmentMismatches).toEqual({ ENL: 2 });
+        // 3 shards jumped with alignment mismatches (2 on link "1-2" and 1 on link "3-4").
+        // The links are aligned to RES, so the number of mismatched scoring jumps should be 3 for RES.
+        expect(windows[0]!.mismatchedScoringJumps).toEqual({ RES: 3 });
     });
 
     it("should correctly attribute movements across multiple jump windows and skip empty windows", () => {
@@ -93,12 +94,14 @@ describe("ShardJumpWindowBuilder", () => {
         expect(windows).toHaveLength(2);
 
         expect(windows[0]!.jumpNumber).toBe(1);
-        expect(windows[0]!.timestamp).toBe(1500);
-        expect(windows[0]!.historyCount).toBe(2);
+        expect(windows[0]!.scheduledStart).toBe(1500);
+        expect(windows[0]!.actualEnd).toBe(1650);
+        expect(windows[0]!.actionCount).toBe(2);
 
         expect(windows[1]!.jumpNumber).toBe(2);
-        expect(windows[1]!.timestamp).toBe(1800);
-        expect(windows[1]!.historyCount).toBe(1);
+        expect(windows[1]!.scheduledStart).toBe(1800);
+        expect(windows[1]!.actualEnd).toBe(1800);
+        expect(windows[1]!.actionCount).toBe(1);
     });
 
     it("should calculate link points and breakdowns for scored moves", () => {

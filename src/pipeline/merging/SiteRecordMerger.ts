@@ -93,7 +93,8 @@ export class SiteRecordMerger {
                     ...(h.dest !== undefined && { dest: resolvePortalId(h.dest) }),
                     ...(h.align !== undefined && { align: h.align }),
                     ...(h.linkTime !== undefined && { linkTime: h.linkTime }),
-                    ...(h.mismatch !== undefined && { mismatch: h.mismatch })
+                    ...(h.mismatch !== undefined && { mismatch: h.mismatch }),
+                    ...(h.invalid !== undefined && { invalid: h.invalid })
                 }));
 
                 const existingShard = observations.shards[incomingShardNumber];

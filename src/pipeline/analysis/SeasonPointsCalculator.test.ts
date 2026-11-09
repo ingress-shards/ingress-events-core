@@ -8,11 +8,6 @@ const createMockWaveState = (resistancePoints: number, enlightenedPoints: number
         total: { RES: resistancePoints, ENL: enlightenedPoints },
         links: { RES: resistancePoints, ENL: enlightenedPoints }
     },
-    statistics: {
-        shards: { moving: 1, nonMoving: 0 },
-        links: 1,
-        paths: 1
-    },
     shardJumpWindows: []
 });
 

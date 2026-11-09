@@ -35,6 +35,8 @@ export interface ShardHistoryEntry {
     linkTime?: number;
     /** Detailed mismatch information if faction alignment conflict exists */
     mismatch?: ShardMismatch;
+    /** True if this action originated from a portal other than the shard's last-known location */
+    invalid?: boolean;
 }
 
 /**
@@ -79,6 +81,36 @@ export interface ShardMove {
     scoredRules?: string[];
     /** Total points scored by this move across all matched rules */
     totalPoints?: number;
-    /** Whether there is an alignment mismatch for this move */
-    mismatch?: boolean;
 }
+
+/**
+ * Looks up the corresponding ShardHistoryEntry for a given ShardMove from shards observation data.
+ */
+export const getShardHistoryEntry = (
+    move: ShardMove,
+    shards?: Record<number, Shard> | Map<number, Shard>
+): ShardHistoryEntry | undefined => {
+    if (!shards) return undefined;
+    const shard = shards instanceof Map ? shards.get(move.shardId) : shards[move.shardId];
+    return shard?.history?.find(h => h.moveTime === move.moveTime);
+};
+
+/**
+ * Checks whether a given ShardMove has a faction alignment mismatch.
+ */
+export const isMoveMismatched = (
+    move: ShardMove,
+    shards?: Record<number, Shard> | Map<number, Shard>
+): boolean => {
+    return getShardHistoryEntry(move, shards)?.mismatch !== undefined;
+};
+
+/**
+ * Checks whether a given ShardMove has an invalid/discontinuous origin portal.
+ */
+export const isMoveInvalid = (
+    move: ShardMove,
+    shards?: Record<number, Shard> | Map<number, Shard>
+): boolean => {
+    return getShardHistoryEntry(move, shards)?.invalid === true;
+};

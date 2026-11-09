@@ -10,7 +10,7 @@ import { ShardJumpWindowBuilder } from "./ShardJumpWindowBuilder.js";
 import { WaveAnalyser } from "./WaveAnalyser.js";
 import { SeasonPointsCalculator } from "./SeasonPointsCalculator.js";
 import { StatisticsCalculator } from "./StatisticsCalculator.js";
-import { DiagnosticsCalculator } from "./DiagnosticsCalculator.js";
+
 import type { ShardLinkScoringRule, ShardGoalScoringRule } from "../../types/config/EventBlueprints.js";
 
 interface SiteScoringContext {
@@ -83,8 +83,8 @@ export class SiteRecordAnalyser {
         const targetScorer = new TargetScoringEngine(scoringContext.goalRules, timeline, shards, portalsMap);
         const jumpWindowBuilder = new ShardJumpWindowBuilder(targetScorer, shards, shardPaths);
         const statisticsCalculator = new StatisticsCalculator(shards, portalsMap, shardPaths);
-        const diagnosticsCalculator = new DiagnosticsCalculator(shards, portalsMap, shardPaths);
-        const waveAnalyser = new WaveAnalyser(jumpWindowBuilder, statisticsCalculator, diagnosticsCalculator);
+
+        const waveAnalyser = new WaveAnalyser(jumpWindowBuilder, statisticsCalculator);
 
         // 5. Calculate Wave Snapshots
         const waveStates = waveAnalyser.analyse(timeline?.shards);
@@ -92,9 +92,12 @@ export class SiteRecordAnalyser {
         // 6. Aggregate Wave scores to get Season Points
         const seasonPointsResult = new SeasonPointsCalculator().calculate(waveStates, scoringContext, timeline);
 
-        // 7. Aggregate Site-wide statistics and diagnostics for multi-wave events
-        const statistics = statisticsCalculator.aggregate(waveStates);
-        const diagnostics = diagnosticsCalculator.aggregate(waveStates);
+        // 7. Calculate Site-wide statistics unconditionally when observations are present
+        const hasObservations = portals.length > 0 || shards.size > 0;
+        const statistics = hasObservations
+            ? statisticsCalculator.calculateSiteStatistics(Object.values(waveStates), timeline?.shards)
+            : undefined;
+
 
         return {
             ...(centroid && { centroid }),
@@ -102,7 +105,7 @@ export class SiteRecordAnalyser {
             shardPaths,
             ...(statistics && { statistics }),
             ...(seasonPointsResult && { seasonPointsResult }),
-            ...(diagnostics && { diagnostics })
+
         };
     }
 }

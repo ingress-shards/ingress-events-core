@@ -2,13 +2,11 @@ import type { WaveState } from "../../sites/Site.js";
 import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
 import type { ShardJumpWindowBuilder } from "./ShardJumpWindowBuilder.js";
 import type { StatisticsCalculator } from "./StatisticsCalculator.js";
-import type { DiagnosticsCalculator } from "./DiagnosticsCalculator.js";
 
 export class WaveAnalyser {
     constructor(
         private readonly jumpWindowBuilder: ShardJumpWindowBuilder,
-        private readonly statisticsCalculator: StatisticsCalculator,
-        private readonly diagnosticsCalculator: DiagnosticsCalculator
+        private readonly statisticsCalculator?: StatisticsCalculator
     ) {}
 
     public analyse(waves?: ShardWaveTimeline[]): Record<number, WaveState> {
@@ -23,14 +21,12 @@ export class WaveAnalyser {
                 continue;
             }
 
-            const statistics = this.statisticsCalculator.calculate(wave);
-            const diagnostics = this.diagnosticsCalculator.calculate(wave);
+            const statistics = this.statisticsCalculator?.calculateWaveStatistics(wave);
 
             waveStates[wave.waveNumber] = {
                 points,
                 shardJumpWindows,
-                statistics,
-                ...(diagnostics && { diagnostics })
+                ...(statistics && { statistics }),
             };
         }
 

@@ -74,3 +74,9 @@ const pad = (num: number): string => String(num).padStart(2, "0");
 export const formatTimestamp = (zdt: ZonedDateTimeRecord): string => {
     return `${zdt.year}.${pad(zdt.month)}.${pad(zdt.day)}.${pad(zdt.hour)}.${pad(zdt.minute)}.${pad(zdt.second)}`;
 };
+
+/**
+ * Standard expected maximum duration of a shard jump window in milliseconds (1 minute).
+ * Jump windows exceeding this duration are classified as extended jump windows.
+ */
+export const STANDARD_JUMP_WINDOW_DURATION_MS = 60_000;

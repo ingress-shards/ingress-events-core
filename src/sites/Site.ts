@@ -1,11 +1,10 @@
-import type { Alignment, FactionId } from "../common/Alignment.js";
+import type { FactionId } from "../common/Alignment.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId, SiteId, SeasonId } from "../common/Identifiers.js";
 import type { ObservedPortal } from "./Portal.js";
 import type { Coordinates } from "../common/Geo.js";
 import type { PointsSummary, SeasonPointsResult, TargetGoalDetail } from "./Scoring.js";
-
-export * from "./Scoring.js";
+import type { SiteStatistics, WaveStatistics } from "./Statistics.js";
 
 /**
  * Represents the current lifecycle phase of an Ingress site.
@@ -67,34 +66,34 @@ export interface SiteAnalysis {
     /** Root-level storage of paths to avoid duplication */
     shardPaths?: Record<string, ShardPath>;
     /** Site-wide aggregated statistics across all waves (undefined for single-wave events) */
-    statistics?: Statistics;
-    /** Optional telemetry anomalies or data quality issues detected across the site */
-    diagnostics?: Diagnostics;
+    statistics?: SiteStatistics;
 }
 
 export interface WaveState {
     points: PointsSummary;
-    statistics: Statistics;
     shardJumpWindows: ShardJumpWindow[];
-    /** Optional telemetry anomalies or data quality issues detected in this wave */
-    diagnostics?: Diagnostics;
+    /** Operational telemetry metrics for this wave (optional) */
+    statistics?: WaveStatistics;
 }
 
 export interface ShardJumpWindow {
-    /** Epoch time of this jump window */
-    timestamp: number;
+
+    /** Epoch time of scheduled jump window start (ms) */
+    scheduledStart: number;
+    /** Epoch time of the latest shard movement observed in this window (ms) */
+    actualEnd: number;
     /** Sequential jump number within the wave (1, 2, 3...) */
     jumpNumber: number;
-    /** Overall number of raw shard history items in this window */
-    historyCount: number;
+    /** Total number of shard movements or actions observed in this window */
+    actionCount: number;
     /** Points scored in this jump window (total, links, goals by faction) */
     points?: PointsSummary;
     /** Link rule occurrence counts keyed by faction (e.g. { RES: { jump_rule: 2 } }) */
     linksBreakdown?: Partial<Record<FactionId, Record<string, number>>>;
     /** Target portal scoring details keyed by faction */
     goalsBreakdown?: Partial<Record<FactionId, TargetGoalDetail[]>>;
-    /** Optional telemetry anomalies or data quality issues detected in this jump window */
-    diagnostics?: Diagnostics;
+    /** Faction-attributed count of scored shard jumps that experienced portal alignment mismatches */
+    mismatchedScoringJumps?: Partial<Record<FactionId, number>>;
 }
 
 /**
@@ -107,21 +106,3 @@ export interface ShardJumpGroup {
     windows: ShardJumpWindow[];
 }
 
-/**
- * Quality and anomaly diagnostics detected during event analysis.
- */
-export interface Diagnostics {
-    /** Number of alignment mismatches between link creator and portal alignments, keyed by alignment */
-    linkAlignmentMismatches?: Partial<Record<Alignment, number>>;
-}
-
-export interface Statistics {
-    shards: {
-        moving: number;
-        nonMoving: number;
-    };
-    links: number;
-    paths: number;
-    /** The number of target portals active in this context (optional, omitted if 0) */
-    targets?: number;
-}

@@ -1,8 +1,10 @@
 import type { Shard, ShardPath } from "../../sites/Shard.js";
 import type { ObservedPortal } from "../../sites/Portal.js";
-import type { Statistics, WaveState } from "../../sites/Site.js";
+import type { WaveState } from "../../sites/Site.js";
+import type { SiteStatistics, WaveStatistics } from "../../sites/Statistics.js";
 import type { PortalId } from "../../common/Identifiers.js";
-import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
+import type { BaseWaveTimeline, ShardWaveTimeline } from "../../config/SiteConfig.js";
+import { STANDARD_JUMP_WINDOW_DURATION_MS } from "../../common/Date.js";
 
 export class StatisticsCalculator {
     constructor(
@@ -11,7 +13,7 @@ export class StatisticsCalculator {
         private readonly paths: Record<string, ShardPath>
     ) {}
 
-    public calculate(wave: ShardWaveTimeline): Statistics {
+    private countWaveMovingShards(wave: BaseWaveTimeline): { moving: number; nonMoving: number } {
         const waveEndLimit = wave.shardsActions?.some(a => a.action === "despawn") ? wave.end + 55000 : wave.end;
         let moving = 0;
         let nonMoving = 0;
@@ -28,7 +30,6 @@ export class StatisticsCalculator {
 
             const waveHistory = history.filter(h => h.moveTime >= wave.start && h.moveTime <= waveEndLimit);
             const hasMoved = waveHistory.some(h => h.action === "jump" || h.action === "link");
-
             if (hasMoved) {
                 moving++;
             } else {
@@ -36,58 +37,95 @@ export class StatisticsCalculator {
             }
         }
 
-        let waveLinkCount = 0;
-        for (const path of Object.values(this.paths)) {
-            for (const link of path.links) {
-                if (link.moves.some(m => m.moveTime >= wave.start && m.moveTime <= waveEndLimit)) {
-                    waveLinkCount++;
-                }
-            }
-        }
+        return { moving, nonMoving };
+    }
 
-        const wavePathCount = Object.values(this.paths).filter(path =>
-            path.links.some(link => link.moves.some(m => m.moveTime >= wave.start && m.moveTime <= waveEndLimit)) ||
-            path.teleports?.some(t => t.moveTime >= wave.start && t.moveTime <= waveEndLimit)
-        ).length;
+    /**
+     * Calculates operational telemetry statistics for an individual wave.
+     * Contains basic physical metrics (shards, links, paths, targets); zero diagnostic anomalies.
+     */
+    public calculateWaveStatistics(wave: BaseWaveTimeline): WaveStatistics {
+        const waveEndLimit = wave.shardsActions?.some(a => a.action === "despawn") ? wave.end + 55000 : wave.end;
+        const shards = this.countWaveMovingShards(wave);
 
         const targetsCount = Object.values(this.portals).filter(p => p.history?.some(h => {
             if (h.type !== "target") return false;
             return h.timestamp >= wave.start && h.timestamp <= wave.end;
         })).length;
 
+        let linksCount = 0;
+        const pathsSet = new Set<string>();
+
+        for (const [pathKey, path] of Object.entries(this.paths)) {
+            const waveLinks = path.links.filter(l => l.linkTime >= wave.start && l.linkTime <= waveEndLimit);
+            if (waveLinks.length > 0) {
+                linksCount += waveLinks.length;
+                pathsSet.add(pathKey);
+            }
+        }
+
         return {
-            shards: {
-                moving,
-                nonMoving
-            },
-            links: waveLinkCount,
-            paths: wavePathCount,
-            ...(targetsCount > 0 && { targets: targetsCount })
+            shards,
+            links: linksCount,
+            paths: pathsSet.size,
+            ...(targetsCount > 0 && { targets: targetsCount }),
         };
     }
 
-    public aggregate(waveStates: Record<number, WaveState>): Statistics | undefined {
-        const waveEntries = Object.values(waveStates);
-        if (waveEntries.length <= 1) {
-            return undefined;
-        }
-
+    /**
+     * Calculates site-wide operational and diagnostic statistics in a single pass.
+     * Evaluates shard wave movements and active targets across all timeline waves when present.
+     */
+    public calculateSiteStatistics(waveStates?: WaveState[], waves?: ShardWaveTimeline[]): SiteStatistics {
         let totalMoving = 0;
         let totalNonMoving = 0;
-        let totalTargets = 0;
+        let targetsCount = 0;
 
-        for (const ws of waveEntries) {
-            totalMoving += ws.statistics.shards.moving;
-            totalNonMoving += ws.statistics.shards.nonMoving;
-            if (ws.statistics.targets) {
-                totalTargets += ws.statistics.targets;
+        if (waves && waves.length > 0) {
+            for (const wave of waves) {
+                const waveShards = this.countWaveMovingShards(wave);
+                totalMoving += waveShards.moving;
+                totalNonMoving += waveShards.nonMoving;
+
+                targetsCount += Object.values(this.portals).filter(p => p.history?.some(h => {
+                    if (h.type !== "target") return false;
+                    return h.timestamp >= wave.start && h.timestamp <= wave.end;
+                })).length;
             }
+        } else {
+            for (const shard of this.shards.values()) {
+                const history = shard.history || [];
+                if (history.length === 0) continue;
+
+                const hasMoved = history.some(h => h.action === "jump" || h.action === "link");
+                if (hasMoved) {
+                    totalMoving++;
+                } else {
+                    totalNonMoving++;
+                }
+            }
+
+            targetsCount = Object.values(this.portals).filter(p =>
+                p.history?.some(h => h.type === "target")
+            ).length;
+        }
+
+        let totalInvalidActions = 0;
+        let totalMismatchedMoves = 0;
+        for (const shard of this.shards.values()) {
+            const history = shard.history || [];
+            totalInvalidActions += history.filter(h => h.invalid === true).length;
+            totalMismatchedMoves += history.filter(h => h.mismatch !== undefined).length;
         }
 
         const totalUniqueLinks = Object.values(this.paths).reduce(
             (accumulator, path) => accumulator + path.links.length,
             0
         );
+
+        const extendedJumpWindows = waveStates?.flatMap(ws => ws.shardJumpWindows).filter(
+            w => (w.actualEnd - w.scheduledStart) > STANDARD_JUMP_WINDOW_DURATION_MS
+        ).length ?? 0;
 
         return {
             shards: {
@@ -96,7 +134,10 @@ export class StatisticsCalculator {
             },
             links: totalUniqueLinks,
             paths: Object.keys(this.paths).length,
-            ...(totalTargets > 0 && { targets: totalTargets })
+            ...(targetsCount > 0 && { targets: targetsCount }),
+            ...(totalMismatchedMoves > 0 && { mismatchedMoves: totalMismatchedMoves }),
+            ...(extendedJumpWindows > 0 && { extendedJumpWindows }),
+            ...(totalInvalidActions > 0 && { invalidActions: totalInvalidActions })
         };
     }
 }

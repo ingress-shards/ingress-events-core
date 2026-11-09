@@ -61,6 +61,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         );
 
         let lastPortalId: PortalId | undefined;
+        let currentLocationId: PortalId | undefined;
 
         const historyEntries: ShardHistoryEntry[] = sortedHistory
             .map((h: FragmentHistoryType) => {
@@ -106,6 +107,38 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 const restingPortal = destinationPortal ?? originPortal;
                 if (restingPortal) {
                     lastPortalId = this.portalIdMapper.getOrCreatePortalId(siteId, restingPortal.latE6, restingPortal.lngE6);
+                }
+
+                let isInvalid = false;
+                switch (h.reason) {
+                    case "spawn": {
+                    currentLocationId = destinationPortalId ?? portalId;
+                        break;
+                    }
+                    case "link":
+                    case "jump": {
+                    if (currentLocationId !== undefined && portalId !== currentLocationId) {
+                        isInvalid = true;
+                    }
+                    if (destinationPortalId) {
+                        currentLocationId = destinationPortalId;
+                    }
+                        break;
+                    }
+                    case "despawn": {
+                    if (currentLocationId !== undefined && portalId !== currentLocationId) {
+                        isInvalid = true;
+                    }
+                    currentLocationId = undefined;
+                        break;
+                    }
+                    case "no move": {
+                    if (currentLocationId !== undefined && portalId !== currentLocationId) {
+                        isInvalid = true;
+                    }
+                        currentLocationId = portalId;
+                        break;
+                    }
                 }
 
                 // Determine the alignment code exclusively from linkCreatorTeam
@@ -155,6 +188,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     ...(align && { align }),
                     ...(linkTime && { linkTime }),
                     ...(mismatch && { mismatch }),
+                    ...(isInvalid && { invalid: true }),
                 };
             })
             .filter((entry): entry is ShardHistoryEntry => entry !== undefined);

@@ -140,22 +140,23 @@ describe("SiteRecordAnalyser", () => {
         // Wave 1 checks:
         const w1 = analysis.waves[1]!;
         expect(w1).toBeDefined();
-        expect(w1.statistics.shards.moving).toBe(1); // Shard 101 jumped
-        expect(w1.statistics.shards.nonMoving).toBe(1); // Shard 102 present but not moving
-        expect(w1.statistics.links).toBe(0);
-        expect(w1.statistics.paths).toBe(0);
         expect(w1.shardJumpWindows.length).toBe(1);
-        expect(w1.shardJumpWindows[0]!.timestamp).toBe(150000);
+        expect(w1.shardJumpWindows[0]!.scheduledStart).toBe(150000);
+        expect(w1.shardJumpWindows[0]!.actualEnd).toBe(150000);
         expect(w1.shardJumpWindows[0]!.jumpNumber).toBe(1);
-        expect(w1.shardJumpWindows[0]!.historyCount).toBe(1);
+        expect(w1.shardJumpWindows[0]!.actionCount).toBe(1);
+        expect(w1.statistics).toBeDefined();
+        expect(w1.statistics!.shards.moving).toBe(1);
 
         // Wave 2 checks:
         const w2 = analysis.waves[2]!;
         expect(w2).toBeDefined();
-        expect(w2.statistics.shards.moving).toBe(1); // Shard 102 linked
-        expect(w2.statistics.shards.nonMoving).toBe(1); // Shard 101 present but despawned
-        expect(w2.statistics.links).toBe(1);
-        expect(w2.statistics.paths).toBe(1);
         expect(w2.shardJumpWindows.length).toBe(1); // despawn removed, only link at 2500000 remains
+
+        // Site-wide statistics checks:
+        expect(analysis.statistics).toBeDefined();
+        expect(analysis.statistics!.shards.moving).toBe(2);
+        expect(analysis.statistics!.links).toBe(1);
+        expect(analysis.statistics!.paths).toBe(1);
     });
 });

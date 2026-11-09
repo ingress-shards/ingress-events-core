@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { SiteRecordAnalyser } from "../../src/pipeline/analysis/SiteRecordAnalyser.js";
+import { isMoveMismatched } from "../../src/sites/Shard.js";
 import type { SiteRecord } from "../../src/sites/Site.js";
 import { EventConfigRegistry } from "../../src/config/EventConfigRegistry.js";
 import * as fs from "node:fs";
@@ -50,7 +51,7 @@ describe("Helsinki Integration Analysis", () => {
                 if (!path) continue;
                 for (const link of path.links) {
                     for (const move of link.moves) {
-                        if (move.mismatch) {
+                        if (isMoveMismatched(move, record.observations?.shards)) {
                             mismatchCount++;
                         }
                     }
@@ -66,13 +67,21 @@ describe("Helsinki Integration Analysis", () => {
         expect(analysis.statistics!.links).toBe(393);
         expect(analysis.statistics!.paths).toBe(373);
         expect(analysis.statistics!.targets).toBe(72);
+        expect(analysis.statistics!.mismatchedMoves).toBe(3);
+        expect(analysis.waves[3]?.shardJumpWindows.some(w => w.mismatchedScoringJumps?.ENL === 1)).toBe(true);
+        expect(analysis.waves[5]?.shardJumpWindows.some(w => w.mismatchedScoringJumps?.ENL === 1)).toBe(true);
+
+        // Assertions on wave statistics
+        expect(analysis.waves[1]?.statistics).toBeDefined();
+        expect(analysis.waves[1]?.statistics!.targets).toBe(12);
+        expect(analysis.waves[1]?.statistics!.shards.moving).toBeGreaterThan(0);
         
-        // Assertions on diagnostics
-        expect(analysis.diagnostics).toBeDefined();
-        expect(analysis.diagnostics!.linkAlignmentMismatches).toEqual({ ENL: 2 });
-        expect(analysis.waves[3]?.diagnostics?.linkAlignmentMismatches).toEqual({ ENL: 1 });
-        expect(analysis.waves[5]?.diagnostics?.linkAlignmentMismatches).toEqual({ ENL: 1 });
-        expect(analysis.waves[1]?.diagnostics).toBeUndefined();
+
+
+
+
+
+
         
         // Assertions on final scoring
         expect(analysis.seasonPointsResult).toBeDefined();

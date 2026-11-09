@@ -1,20 +1,16 @@
-import type { Shard, ShardHistoryEntry, ShardPath } from "../../sites/Shard.js";
-import type { ShardJumpWindow, Diagnostics } from "../../sites/Site.js";
+import { isMoveMismatched, type Link, type Shard, type ShardHistoryEntry, type ShardPath } from "../../sites/Shard.js";
+import type { ShardJumpWindow } from "../../sites/Site.js";
 import type { FactionPoints, PointsSummary } from "../../sites/Scoring.js";
-import type { Alignment, FactionId } from "../../common/Alignment.js";
+import type { FactionId } from "../../common/Alignment.js";
 import type { ShardWaveTimeline } from "../../config/SiteConfig.js";
 import { roundToDecimalPlaces } from "../../common/Math.js";
 import { TargetScoringEngine } from "./TargetScoringEngine.js";
 import { isMovementInWindow, type JumpWindowBounds } from "./JumpWindowUtilities.js";
 
-interface WindowHistoryResult {
-    jumpHistory: ShardHistoryEntry[];
-    jumpMismatchedLinks: Map<string, Alignment>;
-}
-
-interface LinkScoringResult {
+interface ScoredLinkAggregation {
     linkPoints: Record<FactionId, number>;
     linksBreakdown: Partial<Record<FactionId, Record<string, number>>>;
+    mismatchedScoringJumps: Partial<Record<FactionId, number>>;
 }
 
 export interface WaveWindowsResult {
@@ -39,84 +35,81 @@ export class ShardJumpWindowBuilder {
         return cleanResult;
     }
 
-    private findScoredMove(path: ShardPath, shardId: number, moveTime: number) {
-        for (const link of path.links) {
-            for (const move of link.moves) {
-                if (move.shardId === shardId && move.moveTime === moveTime) {
-                    return move;
-                }
-            }
-        }
-        return undefined;
-    }
-
     /**
-     * Gathers all shard movements in the jump window and detects alignment mismatches on scored links.
+     * Gathers all shard movements in the jump window to determine action count and actual end.
      */
-    private collectWindowHistory(windowBounds: JumpWindowBounds): WindowHistoryResult {
+    private collectWindowHistory(windowBounds: JumpWindowBounds): ShardHistoryEntry[] {
         const jumpHistory: ShardHistoryEntry[] = [];
-        const jumpMismatchedLinks = new Map<string, Alignment>();
-
-        for (const [sId, s] of this.shards) {
+        for (const s of this.shards.values()) {
             if (!s?.history) continue;
-            const matchingEntries = s.history.filter(h => isMovementInWindow(h, windowBounds));
-            for (const h of matchingEntries) {
-                jumpHistory.push(h);
-                if (h.align && h.mismatch && h.dest !== undefined) {
-                    const p1 = Math.min(h.portalId, h.dest);
-                    const p2 = Math.max(h.portalId, h.dest);
-                    const pathKey = `${p1}-${p2}`;
-                    const path = this.shardPaths[pathKey];
-                    if (path) {
-                        const matchingMove = this.findScoredMove(path, sId, h.moveTime);
-                        if (matchingMove?.scoredRules && matchingMove.scoredRules.length > 0) {
-                            jumpMismatchedLinks.set(pathKey, h.align);
-                        }
-                    }
+            for (const h of s.history) {
+                if (isMovementInWindow(h, windowBounds)) {
+                    jumpHistory.push(h);
                 }
             }
         }
-
-        return { jumpHistory, jumpMismatchedLinks };
+        return jumpHistory;
     }
 
-    private processLinkMoves(
-        link: ShardPath["links"][number],
-        attributionFaction: FactionId,
-        windowBounds: JumpWindowBounds,
-        linkPoints: Record<FactionId, number>,
-        linksBreakdown: Partial<Record<FactionId, Record<string, number>>>
-    ): void {
+    private aggregateLink(
+        link: Link,
+        windowBounds: JumpWindowBounds
+    ): { points: number; breakdown: Record<string, number>; mismatchedJumps: number } {
+        let points = 0;
+        const breakdown: Record<string, number> = {};
+        let mismatchedJumps = 0;
+
         for (const move of link.moves) {
-            if (!isMovementInWindow({ action: "link", moveTime: move.moveTime }, windowBounds) || !move.scoredRules || move.scoredRules.length === 0) {
+            if (!isMovementInWindow({ action: "link", moveTime: move.moveTime }, windowBounds) || !move.scoredRules?.length) {
                 continue;
             }
 
-            const teamBreakdown = linksBreakdown[attributionFaction] ??= {};
+            points += move.totalPoints ?? 0;
+
             for (const ruleId of move.scoredRules) {
-                teamBreakdown[ruleId] = (teamBreakdown[ruleId] ?? 0) + 1;
+                breakdown[ruleId] = (breakdown[ruleId] ?? 0) + 1;
             }
-            const points = move.totalPoints ?? 0;
-            linkPoints[attributionFaction] = (linkPoints[attributionFaction] ?? 0) + points;
+
+            if (isMoveMismatched(move, this.shards)) {
+                mismatchedJumps++;
+            }
         }
+
+        return { points, breakdown, mismatchedJumps };
     }
 
     /**
-     * Calculates faction points and breakdown for shard link moves occurring within the jump window.
+     * Aggregates pre-scored shard link movements that occurred within the jump window.
      */
-    private calculateLinkScores(windowBounds: JumpWindowBounds): LinkScoringResult {
+    private aggregateLinkScores(windowBounds: JumpWindowBounds): ScoredLinkAggregation {
         const linkPoints: Record<FactionId, number> = { RES: 0, ENL: 0, MAC: 0 };
         const linksBreakdown: Partial<Record<FactionId, Record<string, number>>> = {};
+        const mismatchedScoringJumps: Partial<Record<FactionId, number>> = {};
 
-        for (const path of Object.values(this.shardPaths)) {
-            for (const link of path.links) {
-                if (link.align !== "NEU") {
-                    this.processLinkMoves(link, link.align, windowBounds, linkPoints, linksBreakdown);
+        const allLinks = Object.values(this.shardPaths).flatMap((p) => p.links);
+
+        for (const link of allLinks) {
+            if (link.align === "NEU") {
+                continue;
+            }
+            const faction = link.align;
+            const result = this.aggregateLink(link, windowBounds);
+
+            linkPoints[faction] += result.points;
+
+            if (Object.keys(result.breakdown).length > 0) {
+                const teamBreakdown = linksBreakdown[faction] ??= {};
+                for (const [ruleId, count] of Object.entries(result.breakdown)) {
+                    teamBreakdown[ruleId] = (teamBreakdown[ruleId] ?? 0) + count;
                 }
+            }
+
+            if (result.mismatchedJumps > 0) {
+                mismatchedScoringJumps[faction] = (mismatchedScoringJumps[faction] ?? 0) + result.mismatchedJumps;
             }
         }
 
-        return { linkPoints, linksBreakdown };
+        return { linkPoints, linksBreakdown, mismatchedScoringJumps };
     }
 
     public buildWaveWindows(wave: ShardWaveTimeline): WaveWindowsResult {
@@ -154,13 +147,13 @@ export class ShardJumpWindowBuilder {
                 waveEnd: wave.end
             };
 
-            const { jumpHistory, jumpMismatchedLinks } = this.collectWindowHistory(windowBounds);
+            const jumpHistory = this.collectWindowHistory(windowBounds);
 
             if (jumpHistory.length === 0) {
                 continue;
             }
 
-            const { linkPoints, linksBreakdown } = this.calculateLinkScores(windowBounds);
+            const { linkPoints, linksBreakdown, mismatchedScoringJumps } = this.aggregateLinkScores(windowBounds);
             const goalResult = this.targetScorer.scoreJumpWindow(windowBounds);
 
             const jumpWindowPoints: Record<FactionId, number> = {
@@ -175,11 +168,6 @@ export class ShardJumpWindowBuilder {
                 waveTotalPoints[f] = (waveTotalPoints[f] ?? 0) + (jumpWindowPoints[f] ?? 0);
             }
 
-            const mismatches: Partial<Record<Alignment, number>> = {};
-            for (const align of jumpMismatchedLinks.values()) {
-                mismatches[align] = (mismatches[align] ?? 0) + 1;
-            }
-
             const cleanWindowTotal = this.cleanPoints(jumpWindowPoints);
             const cleanWindowLinks = this.cleanPoints(linkPoints);
             const cleanWindowGoals = this.cleanPoints(goalResult.jumpWindowPoints);
@@ -190,18 +178,15 @@ export class ShardJumpWindowBuilder {
                 ...(Object.keys(cleanWindowGoals).length > 0 && { goals: cleanWindowGoals }),
             };
 
-            const windowDiagnostics: Diagnostics | undefined = Object.keys(mismatches).length > 0
-                ? { linkAlignmentMismatches: mismatches }
-                : undefined;
-
             shardJumpWindows.push({
-                timestamp: windowBounds.windowStart,
+                scheduledStart: windowBounds.windowStart,
+                actualEnd: Math.max(...jumpHistory.map((h) => h.moveTime)),
                 jumpNumber,
-                historyCount: jumpHistory.length,
+                actionCount: jumpHistory.length,
                 ...(Object.keys(windowPoints).length > 0 && { points: windowPoints }),
                 ...(Object.keys(linksBreakdown).length > 0 && { linksBreakdown }),
                 ...(Object.keys(goalResult.goalsBreakdown).length > 0 && { goalsBreakdown: goalResult.goalsBreakdown }),
-                ...(windowDiagnostics && { diagnostics: windowDiagnostics }),
+                ...(Object.keys(mismatchedScoringJumps).length > 0 && { mismatchedScoringJumps }),
             });
         }
 

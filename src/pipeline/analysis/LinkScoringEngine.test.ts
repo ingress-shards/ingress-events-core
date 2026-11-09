@@ -72,7 +72,7 @@ describe("LinkScoringEngine", () => {
             dest: 2,
             shardId: 101,
             moveTime: 1250,
-            mismatch: true // ENL shard jumping on RES link
+
         };
         const link: Link = {
             linkTime: 1200,

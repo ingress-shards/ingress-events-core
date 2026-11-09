@@ -9,8 +9,8 @@ describe("ShardJumpGrouper", () => {
 
     it("defaults to jumpGroupSize of 1 and derives individual J<n> labels", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: 1000, jumpNumber: 1, historyCount: 2 },
-            { timestamp: 2000, jumpNumber: 2, historyCount: 1 }
+            { scheduledStart: 1000, actualEnd: 1000, jumpNumber: 1, actionCount: 2 },
+            { scheduledStart: 2000, actualEnd: 2000, jumpNumber: 2, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows);
@@ -29,11 +29,11 @@ describe("ShardJumpGrouper", () => {
 
     it("groups windows by specified jumpGroupSize and derives range labels", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: 1000, jumpNumber: 1, historyCount: 1 },
-            { timestamp: 1100, jumpNumber: 2, historyCount: 1 },
-            { timestamp: 1200, jumpNumber: 3, historyCount: 1 },
-            { timestamp: 2000, jumpNumber: 4, historyCount: 1 },
-            { timestamp: 2100, jumpNumber: 5, historyCount: 1 }
+            { scheduledStart: 1000, actualEnd: 1000, jumpNumber: 1, actionCount: 1 },
+            { scheduledStart: 1100, actualEnd: 1100, jumpNumber: 2, actionCount: 1 },
+            { scheduledStart: 1200, actualEnd: 1200, jumpNumber: 3, actionCount: 1 },
+            { scheduledStart: 2000, actualEnd: 2000, jumpNumber: 4, actionCount: 1 },
+            { scheduledStart: 2100, actualEnd: 2100, jumpNumber: 5, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows, 3);
@@ -50,7 +50,7 @@ describe("ShardJumpGrouper", () => {
 
     it("derives single J<n> label if a group contains only one jump", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: 1000, jumpNumber: 7, historyCount: 3 }
+            { scheduledStart: 1000, actualEnd: 1000, jumpNumber: 7, actionCount: 3 }
         ];
 
         const groups = getShardJumpGroups(windows, 3);
@@ -62,8 +62,8 @@ describe("ShardJumpGrouper", () => {
 
     it("handles jumpGroupSize larger than windows length", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: 1000, jumpNumber: 1, historyCount: 1 },
-            { timestamp: 1100, jumpNumber: 2, historyCount: 1 }
+            { scheduledStart: 1000, actualEnd: 1000, jumpNumber: 1, actionCount: 1 },
+            { scheduledStart: 1100, actualEnd: 1100, jumpNumber: 2, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows, 5);
@@ -94,7 +94,7 @@ describe("formatJumpGroupTime", () => {
         const group = {
             groupIndex: 1,
             label: "J1",
-            windows: [{ timestamp: t1400, jumpNumber: 1, historyCount: 1 }]
+            windows: [{ scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 }]
         };
         expect(formatJumpGroupTime(group)).toBe("14:00");
     });
@@ -104,9 +104,9 @@ describe("formatJumpGroupTime", () => {
             groupIndex: 1,
             label: "J1-3",
             windows: [
-                { timestamp: t1400, jumpNumber: 1, historyCount: 1 },
-                { timestamp: t1405, jumpNumber: 2, historyCount: 1 },
-                { timestamp: t1410, jumpNumber: 3, historyCount: 1 }
+                { scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 },
+                { scheduledStart: t1405, actualEnd: t1405, jumpNumber: 2, actionCount: 1 },
+                { scheduledStart: t1410, actualEnd: t1410, jumpNumber: 3, actionCount: 1 }
             ]
         };
         expect(formatJumpGroupTime(group)).toBe("14:00-10");
@@ -117,8 +117,8 @@ describe("formatJumpGroupTime", () => {
             groupIndex: 1,
             label: "J1-2",
             windows: [
-                { timestamp: t1450, jumpNumber: 1, historyCount: 1 },
-                { timestamp: t1505, jumpNumber: 2, historyCount: 1 }
+                { scheduledStart: t1450, actualEnd: t1450, jumpNumber: 1, actionCount: 1 },
+                { scheduledStart: t1505, actualEnd: t1505, jumpNumber: 2, actionCount: 1 }
             ]
         };
         expect(formatJumpGroupTime(group)).toBe("14:50-15:05");
@@ -126,11 +126,11 @@ describe("formatJumpGroupTime", () => {
 
     it("handles an uneven remainder of only 1 jump when group size is 2", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: t1400, jumpNumber: 1, historyCount: 1 },
-            { timestamp: t1410, jumpNumber: 2, historyCount: 1 },
-            { timestamp: t1420, jumpNumber: 3, historyCount: 1 },
-            { timestamp: t1430, jumpNumber: 4, historyCount: 1 },
-            { timestamp: t1440, jumpNumber: 5, historyCount: 1 }
+            { scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 },
+            { scheduledStart: t1410, actualEnd: t1410, jumpNumber: 2, actionCount: 1 },
+            { scheduledStart: t1420, actualEnd: t1420, jumpNumber: 3, actionCount: 1 },
+            { scheduledStart: t1430, actualEnd: t1430, jumpNumber: 4, actionCount: 1 },
+            { scheduledStart: t1440, actualEnd: t1440, jumpNumber: 5, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows, 2);
@@ -150,11 +150,11 @@ describe("formatJumpGroupTime", () => {
 
     it("handles an uneven remainder of 2 jumps when group size is 3", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: t1400, jumpNumber: 1, historyCount: 1 },
-            { timestamp: t1405, jumpNumber: 2, historyCount: 1 },
-            { timestamp: t1410, jumpNumber: 3, historyCount: 1 },
-            { timestamp: t1415, jumpNumber: 4, historyCount: 1 },
-            { timestamp: t1420, jumpNumber: 5, historyCount: 1 }
+            { scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 },
+            { scheduledStart: t1405, actualEnd: t1405, jumpNumber: 2, actionCount: 1 },
+            { scheduledStart: t1410, actualEnd: t1410, jumpNumber: 3, actionCount: 1 },
+            { scheduledStart: t1415, actualEnd: t1415, jumpNumber: 4, actionCount: 1 },
+            { scheduledStart: t1420, actualEnd: t1420, jumpNumber: 5, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows, 3);
@@ -171,10 +171,10 @@ describe("formatJumpGroupTime", () => {
 
     it("handles an uneven remainder of 1 jump when group size is 3", () => {
         const windows: ShardJumpWindow[] = [
-            { timestamp: t1400, jumpNumber: 1, historyCount: 1 },
-            { timestamp: t1405, jumpNumber: 2, historyCount: 1 },
-            { timestamp: t1410, jumpNumber: 3, historyCount: 1 },
-            { timestamp: t1415, jumpNumber: 4, historyCount: 1 }
+            { scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 },
+            { scheduledStart: t1405, actualEnd: t1405, jumpNumber: 2, actionCount: 1 },
+            { scheduledStart: t1410, actualEnd: t1410, jumpNumber: 3, actionCount: 1 },
+            { scheduledStart: t1415, actualEnd: t1415, jumpNumber: 4, actionCount: 1 }
         ];
 
         const groups = getShardJumpGroups(windows, 3);
@@ -193,8 +193,8 @@ describe("formatJumpGroupTime", () => {
             groupIndex: 1,
             label: "J1-2",
             windows: [
-                { timestamp: t1400, jumpNumber: 1, historyCount: 1 },
-                { timestamp: t1405, jumpNumber: 2, historyCount: 1 }
+                { scheduledStart: t1400, actualEnd: t1400, jumpNumber: 1, actionCount: 1 },
+                { scheduledStart: t1405, actualEnd: t1405, jumpNumber: 2, actionCount: 1 }
             ]
         };
 

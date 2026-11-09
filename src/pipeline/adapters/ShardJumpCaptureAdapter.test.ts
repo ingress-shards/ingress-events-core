@@ -427,4 +427,112 @@ describe("ShardJumpCaptureAdapter", () => {
         expect(shard.history[1]!.action).toBe("link");
         expect(shard.history[1]!.mismatch).toEqual({ originAlign: "ENL", destAlign: "RES" });
     });
+
+    test("should flag invalid actions when origin does not match current location", () => {
+        const defaultTeams = {
+            originCapturerTeam: "NEUTRAL",
+            destinationCapturerTeam: "NEUTRAL",
+            linkCreatorTeam: "NEUTRAL"
+        };
+
+        const input: ShardJumpCapture = {
+            timestamp: 1000,
+            artifact: [
+                {
+                    id: "fragment_100",
+                    name: "Shard 100",
+                    fragment: [
+                        {
+                            id: "shard_100",
+                            history: [
+                                {
+                                    ...defaultTeams,
+                                    moveTimeMs: "1000",
+                                    reason: "spawn",
+                                    destinationPortalInfo: {
+                                        title: "Portal 1",
+                                        latE6: 10000000,
+                                        lngE6: 20000000,
+                                        team: "NEUTRAL"
+                                    }
+                                },
+                                {
+                                    ...defaultTeams,
+                                    moveTimeMs: "2000",
+                                    reason: "link",
+                                    originPortalInfo: {
+                                        title: "Portal 1",
+                                        latE6: 10000000,
+                                        lngE6: 20000000,
+                                        team: "NEUTRAL"
+                                    },
+                                    destinationPortalInfo: {
+                                        title: "Portal 2",
+                                        latE6: 10001000,
+                                        lngE6: 20001000,
+                                        team: "NEUTRAL"
+                                    }
+                                },
+                                {
+                                    ...defaultTeams,
+                                    moveTimeMs: "3000",
+                                    reason: "link",
+                                    originPortalInfo: {
+                                        title: "Portal 3 (Teleported without jump)",
+                                        latE6: 10003000,
+                                        lngE6: 20003000,
+                                        team: "NEUTRAL"
+                                    },
+                                    destinationPortalInfo: {
+                                        title: "Portal 4",
+                                        latE6: 10004000,
+                                        lngE6: 20004000,
+                                        team: "NEUTRAL"
+                                    }
+                                },
+                                {
+                                    ...defaultTeams,
+                                    moveTimeMs: "4000",
+                                    reason: "link",
+                                    originPortalInfo: {
+                                        title: "Portal 4",
+                                        latE6: 10004000,
+                                        lngE6: 20004000,
+                                        team: "NEUTRAL"
+                                    },
+                                    destinationPortalInfo: {
+                                        title: "Portal 5",
+                                        latE6: 10005000,
+                                        lngE6: 20005000,
+                                        team: "NEUTRAL"
+                                    }
+                                },
+                                {
+                                    ...defaultTeams,
+                                    moveTimeMs: "5000",
+                                    reason: "despawn",
+                                    originPortalInfo: {
+                                        title: "Portal 1 (Spawn Portal, stale despawn)",
+                                        latE6: 10000000,
+                                        lngE6: 20000000,
+                                        team: "NEUTRAL"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        const result = adapter.parseAndGroupObservations(input);
+        expect(result.length).toBe(1);
+        const shard = result[0]!.observations!.shards![100]!;
+        expect(shard.history).toHaveLength(5);
+        expect(shard.history[0]!.invalid).toBeUndefined();
+        expect(shard.history[1]!.invalid).toBeUndefined();
+        expect(shard.history[2]!.invalid).toBe(true);
+        expect(shard.history[3]!.invalid).toBeUndefined();
+        expect(shard.history[4]!.invalid).toBe(true);
+    });
 });

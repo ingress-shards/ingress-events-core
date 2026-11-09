@@ -45,7 +45,7 @@ export const formatJumpGroupTime = (
 ): string => {
     if (!group?.windows || group.windows.length === 0) return "";
     const firstWin = group.windows[0]!;
-    const startZdt = toZonedDateTimeISO(fromEpochMilliseconds(firstWin.timestamp), timeZone);
+    const startZdt = toZonedDateTimeISO(fromEpochMilliseconds(firstWin.scheduledStart), timeZone);
     const startHour = String(startZdt.hour).padStart(2, "0");
     const startMin = String(startZdt.minute).padStart(2, "0");
     const startStr = `${startHour}:${startMin}`;
@@ -55,7 +55,7 @@ export const formatJumpGroupTime = (
     }
 
     const lastWin = group.windows.at(-1)!;
-    const endZdt = toZonedDateTimeISO(fromEpochMilliseconds(lastWin.timestamp), timeZone);
+    const endZdt = toZonedDateTimeISO(fromEpochMilliseconds(lastWin.scheduledStart), timeZone);
     const endHour = String(endZdt.hour).padStart(2, "0");
     const endMin = String(endZdt.minute).padStart(2, "0");
 
