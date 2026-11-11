@@ -308,6 +308,8 @@ __metadata:
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.68.0"
     vitest: "npm:4.1.12"
+  peerDependencies:
+    temporal-polyfill: ^1.0.5
   languageName: unknown
   linkType: soft
 
