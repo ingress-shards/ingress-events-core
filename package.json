@@ -54,8 +54,8 @@
         "validate:check": "concurrently --kill-others-on-fail \"tsc --noEmit\" \"yarn lint\" \"vitest run\"",
         "validate": "yarn clean && yarn generate && yarn validate:check && yarn build"
     },
-    "dependencies": {
-        "temporal-polyfill": "~1.0.5"
+    "peerDependencies": {
+        "temporal-polyfill": "^1.0.8"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -69,12 +69,13 @@
         "eslint-plugin-unicorn": "^72.0.0",
         "globals": "^17.11.0",
         "semantic-release": "^25.0.9",
+        "temporal-polyfill": "^1.0.8",
         "ts-node": "^10.9.2",
         "ts-to-zod": "^5.1.0",
         "tsdown": "^0.23.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.68.0",
-        "vitest": "4.1.11"
+        "vitest": "4.1.12"
     },
     "resolutions": {
         "ts-to-zod": "patch:ts-to-zod@npm%3A5.1.0#~/.yarn/patches/ts-to-zod-npm-5.1.0-8f81b27357.patch"
