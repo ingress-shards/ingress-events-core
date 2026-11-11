@@ -70,7 +70,7 @@ The lifecycle of an anomaly event is divided into distinct scanning phases relat
 The `DataIngestionPipeline` orchestrates multi-stage ingestion across all external file feeds (Discovery $\to$ Targets $\to$ Shards), ensuring:
 1. **Self-Describing Adapters:** Each adapter exposes `tryParse(filename, data)` to validate and extract observations without brittle central switchboards.
 2. **Ordered Execution:** Discovery establishes portals, targets register artifact destinations, and shard jumps evaluate movement in chronological order.
-3. **Single-Pass Analysis:** Intermediate merges bypass expensive metric re-computations; `SiteRecordAnalyser.analyse(record)` is executed once at the conclusion of the batch.
+3. **Single-Pass Analysis:** Intermediate merges bypass expensive metric re-computations; `SiteStateAnalyser.analyse(state)` is executed once at the conclusion of the batch.
 
 ### Pipeline Directory Structure
 The ingestion, adapter, merger, and analysis domains are consolidated under a unified root directory (`src/pipeline/`), with external boundary schemas cleanly grouped under `src/types/observations/`:
@@ -80,7 +80,7 @@ src/pipeline/
 ├── DataIngestionPipeline.ts   # Main entry point
 ├── adapters/                  # Observation Adapters (SiteDiscovery, SiteTargetPortals, ShardJumpCapture, MapSnapshot)
 ├── merging/                   # Merger and PortalMergeStrategy implementations
-└── analysis/                  # Analytical calculators and SiteRecordAnalyser
+└── analysis/                  # Analytical calculators and SiteStateAnalyser
 ```
 *Note: External observation schemas (`SiteDiscovery`, `SiteTargetPortals`, `MapSnapshot`, `ShardJumps`, `Capture`) live in `src/types/observations/` and are validated by Zod. Legacy `src/types/DataFiles.ts` has been retired.*
 

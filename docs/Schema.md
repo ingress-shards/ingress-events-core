@@ -33,14 +33,14 @@ The system uses a data-driven approach for identifying portal features. Rather t
 - `recursive`: Bonus multipliers or other special modifiers.
 
 ## Entity Relationship Flow
-The data models map to the [Classic Data Lifecycle](./Architecture.md#classic-data-lifecycle) and are unified within the **SiteRecord** container.
+The data models map to the classic data lifecycle and are unified within the **SiteState** container.
 
 ```mermaid
 erDiagram
     %% Root Container
-    SiteRecord ||--|| SiteMetadata : "Config"
-    SiteRecord ||--o| SiteObservation : "Storage"
-    SiteRecord ||--o| SiteState : "Analysis"
+    SiteState ||--|| SiteStateMetadata : "Metadata"
+    SiteState ||--o| SiteTelemetry : "Telemetry"
+    SiteState ||--o| SiteAnalysis : "Analysis"
 
     %% Stage 1 & 2: Generation/Collection
     Ingress_Intel_Map ||--o{ Portals : "Provides"
@@ -48,48 +48,43 @@ erDiagram
     
     %% Stage 3: Processing
     Portals ||--o{ PortalHistoryEntry : "Yields"
-    Shard_Jumps_Capture ||--o{ ShardJumpObservation : "Parsed Into"
+    Shard_Jumps_Capture ||--o{ ShardTelemetryEntry : "Parsed Into"
     
-    %% Stage 4: Storage (within SiteObservation)
-    SiteObservation ||--o{ ShardJumpObservation : "Stores History"
-    SiteObservation ||--o{ PortalHistoryEntry : "Stores State"
+    %% Stage 4: Storage (within SiteTelemetry)
+    SiteTelemetry ||--o{ ShardTelemetryEntry : "Stores History"
+    SiteTelemetry ||--o{ PortalHistoryEntry : "Stores State"
     
-    %% Stage 5: Analysis (within SiteState)
-    SiteState ||--|| Points : "Calculates"
-    SiteState ||--|| Scores : "Determines"
+    %% Stage 5: Analysis (within SiteAnalysis)
+    SiteAnalysis ||--|| Points : "Calculates"
+    SiteAnalysis ||--|| Scores : "Determines"
 ```
 
 ## Temporal Data Standards
 
-Timestamps are stored as **Epoch Milliseconds (13-digit Unix timestamps)** in all circumstances (both for high-level metadata and raw event observations) to maintain consistency and ease of calculation:
-
-- `PortalHistoryEntry.timestamp`
-- `ShardHistoryEntry.moveTime`
-- `ShardJumpObservation.timestamp`
-- `SiteRecord.lastUpdated`
-- `SiteState.period.start` / `end`
+- **Domain Models & Resolved Timelines (`SiteState`, `SiteTimeline`)**: All timestamps are normalized to **Epoch Milliseconds** (13-digit Unix `number`) across metadata, portal/shard telemetry, jump windows, and wave schedules.
+- **Ingestion & Config Boundaries**: External formats are normalized during ingestion and config compilation — e.g. ISO `ZonedDateTime` strings in `season_geocode.json`, stringified ms in Niantic `ShardJumpCapture` payloads, and epoch-second `exportedAt` fields in `SiteDiscovery` / `SiteTargetPortals`.
 
 ## Layer Definitions
 
-### 1. Root Container: SiteRecord
-The `SiteRecord` is the primary domain entity representing the complete lifecycle of a single event site. It acts as the "Shoebox" for everything known about that site.
+### 1. Root Container: SiteState
+The `SiteState` is the primary domain entity representing the complete lifecycle of a single event site. It acts as the container for everything known about that site.
 
-- **metadata**: Identifying keys (siteId, seasonId) and lastUpdated timestamp (Stage 3).
-- **observations**: The raw processed state and historical jump data (Stage 4).
-- **analysis**: The enriched results, point tallies, and faction scores (Stage 5).
+- **metadata**: Identifying keys (`siteId`, `seasonId`) and `lastUpdated` timestamp (`SiteStateMetadata`).
+- **telemetry**: The raw processed state and historical jump telemetry (`SiteTelemetry`).
+- **analysis**: The enriched results, point tallies, and faction scores (`SiteAnalysis`).
 
-### 2. Storage Layer (SiteObservation)
-The storage layer defines the "Document Persistence Model" (JSON representations) of what has been seen on the map.
+### 2. Telemetry Layer (SiteTelemetry)
+The telemetry layer defines the document model of what has been observed on the map.
 
-- **ShardJumpObservation**: A simplified record of a shard movement, stripped of wire-protocol artifacts.
+- **ShardTelemetryEntry**: Chronological record of a shard movement or spawn action.
 - **PortalHistoryEntry**: Captures chronological indicators like `battle-beacon`, `target`, and `pre-event` ornaments exactly as rendered on the portal network.
 
-### 3. Analysis Layer (SiteState)
-The analysis layer enriches the stored observation data to produce rule-based standings.
+### 3. Analysis Layer (SiteAnalysis)
+The analysis layer enriches the stored telemetry data to produce rule-based standings and wave breakdowns.
 
-- **SiteState**: A snapshot of the site's competitive state (e.g., at a specific wave).
-- **Points**: Raw accounting totals (e.g., jump counts).
-- **Scores**: The final verdict or rule-based point allocation.
+- **WaveState**: A snapshot of the site's competitive state at a specific wave.
+- **Points**: Raw accounting totals and scoring rules breakdown.
+- **Scores**: The final verdict or rule-based point allocation (`seasonPointsResult`).
 
 ---
 

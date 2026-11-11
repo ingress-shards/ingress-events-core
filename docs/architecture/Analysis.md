@@ -27,15 +27,15 @@ To enrich site data for ingestion and visual display, a calculation pass is run 
 * **Behavior:** Shard history is analyzed to classify shards and count active link connections:
   * **Moving Shards:** A shard is counted as moving if its history contains at least one movement action (`link` or `jump`).
   * **Non-Moving Shards:** A shard is classified as non-moving if it has only a spawn action or no recorded movement events.
-* **Recalculation:** The entire analysis is wiped and recalculated from scratch (`new SiteRecordAnalyser().analyse(...)`) immediately after the merger completes.
+* **Recalculation:** The entire analysis is wiped and recalculated from scratch (`new SiteStateAnalyser().analyse(...)`) immediately after the merger completes.
 
 ### Directory Separation: Processing vs. Analysis
 The library strictly separates observation ingestion/merging from analytical evaluation into distinct modules:
-* `src/pipeline/merging/` & `src/pipeline/adapters/`: Observation ingestion, parsing, and state merging (`DataIngestionPipeline`, `SiteRecordMerger`, `PortalMergeStrategy`, `DefaultPortalMergeStrategy`).
+* `src/pipeline/merging/` & `src/pipeline/adapters/`: Observation ingestion, parsing, and state merging (`DataIngestionPipeline`, `SiteStateMerger`, `PortalMergeStrategy`, `DefaultPortalMergeStrategy`).
 * `src/pipeline/analysis/`: Analysis orchestration, graph path construction, scoring engines, window builders, and metric calculators.
 
 ### Analysis Progression & Composition Root
-`SiteRecordAnalyser` acts as the single **Composition Root** for the analysis pipeline, instantiating all domain services with site-level scope before executing a strict, unidirectional progression:
+`SiteStateAnalyser` acts as the single **Composition Root** for the analysis pipeline, instantiating all domain services with site-level scope before executing a strict, unidirectional progression:
 1. **Physical Paths (`ShardPathBuilder`)**: Builds topological paths between portal pairs (`siteShardPaths`) and records movement transits.
 2. **Link Scoring (`LinkScoringEngine`)**: Chronologically scores shard link moves across paths, annotating each move with matched `scoredRules` and calculated `totalPoints`.
 3. **Wave State Progression (`WaveAnalyser`)**:
@@ -46,12 +46,12 @@ The library strictly separates observation ingestion/merging from analytical eva
 
 4. **Site-Wide Aggregations**:
    * **Season Points (`SeasonPointsCalculator`)**: Aggregates wave points into season points according to blueprint rules (`SeasonPointsConfig`).
-   * **Site Statistics (`StatisticsCalculator.calculateSiteStatistics`)**: Direct single-pass evaluation of site-wide statistics into `SiteRecord.analysis.statistics` (including total unique links, paths, moving/non-moving shards, targets, mismatchedMoves, invalidActions, and extendedJumpWindows) unconditionally for all sites.
+   * **Site Statistics (`StatisticsCalculator.calculateSiteStatistics`)**: Direct single-pass evaluation of site-wide statistics into `SiteState.analysis.statistics` (including total unique links, paths, moving/non-moving shards, targets, mismatchedMoves, invalidActions, and extendedJumpWindows) unconditionally for all sites.
 
 > **Future Optimization Note (Phase 5 Map Integration):** `ShardMove.scoredRules` is currently populated during `LinkScoringEngine.scorePaths` and consumed in-memory by `ShardJumpWindowBuilder`. Once map link popups in `ingress-shards.github.io` are migrated in Phase 5 (which only require `ShardMove.totalPoints` while rule breakdowns live in `WaveState.shardJumpWindows`), `ShardMove.scoredRules` can be evaluated for omission from serialized output.
 
 ### Analysis Domain Services
-* `SiteRecordAnalyser`: Composition Root and top-level orchestrator.
+* `SiteStateAnalyser`: Composition Root and top-level orchestrator.
 * `ShardPathBuilder`: Builds topological portal paths and chronological shard links/moves from shard history.
 * `LinkScoringEngine`: Applies link scoring rules across all shard paths (`scorePaths`) and sets `move.totalPoints`.
 * `TargetScoringEngine`: Evaluates goal arrivals and portal scoring limits for target portals per jump window (`scoreJumpWindow`).
