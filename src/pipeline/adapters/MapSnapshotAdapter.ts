@@ -1,5 +1,5 @@
 import type { SiteId } from "../../common/Identifiers.js";
-import type { SiteRecord } from "../../sites/Site.js";
+import type { SiteState } from "../../sites/Site.js";
 import type { MapSnapshot } from "../../types/observations/MapSnapshot.js";
 import type { DataObservationAdapter, IngestionItem } from "./DataObservationAdapter.js";
 import type { Ornament } from "../../types/config/EventBlueprints.js";
@@ -65,12 +65,12 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
         return undefined;
     }
 
-    public parseAndGroupObservations(input: MapSnapshot): SiteRecord[] {
+    public parseAndGroupTelemetry(input: MapSnapshot): SiteState[] {
         const timestamp = input.timestamp;
         if (timestamp === undefined) {
             throw new Error("[MapSnapshotAdapter] Missing snapshot timestamp in MapSnapshot input");
         }
-        const siteRecordsMap = new Map<SiteId, SiteRecord>();
+        const siteStatesMap = new Map<SiteId, SiteState>();
         const ignoredSites = new Set<SiteId>();
 
         const portalsInput = input.portals ?? [];
@@ -89,20 +89,20 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
                 continue;
             }
 
-            let record = siteRecordsMap.get(siteId);
-            if (!record) {
-                record = {
+            let state = siteStatesMap.get(siteId);
+            if (!state) {
+                state = {
                     metadata: {
                         siteId,
                         seasonId,
                         lastUpdated: instant().epochMilliseconds,
                     },
-                    observations: { portals: {}, shards: {} },
+                    telemetry: { portals: {}, shards: {} },
                 };
-                siteRecordsMap.set(siteId, record);
+                siteStatesMap.set(siteId, state);
             }
 
-            const portals = record.observations!.portals!;
+            const portals = state.telemetry!.portals!;
             const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, p.latE6, p.lngE6);
 
             const historyEntries = p.ornaments ? this.parsePortalHistory(p.ornaments, timestamp) : [];
@@ -116,7 +116,6 @@ export class MapSnapshotAdapter implements DataObservationAdapter<MapSnapshot> {
             }
         }
 
-        // eslint-disable-next-line unicorn/prefer-spread
-        return Array.from(siteRecordsMap.values());
+        return [...siteStatesMap.values()];
     }
 }

@@ -1,4 +1,4 @@
-import type { Shard, ShardHistoryEntry, ShardPath } from "../../sites/Shard.js";
+import type { Shard, ShardTelemetryEntry, ShardPath } from "../../sites/Shard.js";
 import type { PortalId } from "../../common/Identifiers.js";
 import type { ObservedPortal } from "../../sites/Portal.js";
 import { haversineDistance } from "../../common/Geo.js";
@@ -7,7 +7,7 @@ import { roundToDecimalPlaces } from "../../common/Math.js";
 export class ShardPathBuilder {
     private addShardPathEntries(
         shardId: number,
-        filteredHistory: ShardHistoryEntry[],
+        filteredHistory: ShardTelemetryEntry[],
         portals: Record<PortalId, ObservedPortal> | undefined,
         paths: Record<string, ShardPath>
     ): void {

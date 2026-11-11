@@ -1,2 +1,2 @@
-export * from "./EventConfigRegistry.js";
+export * from "./ConfigRegistry.js";
 export * from "./SiteConfig.js";

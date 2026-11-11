@@ -1,4 +1,4 @@
-import type { SiteRecord } from "../../sites/Site.js";
+import type { SiteState } from "../../sites/Site.js";
 import type { ObservedPortal } from "../../sites/Portal.js";
 import type { SiteDiscovery, PortalDiscovery } from "../../types/observations/SiteDiscovery.js";
 import type { DataObservationAdapter, IngestionItem } from "./DataObservationAdapter.js";
@@ -67,7 +67,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
         return undefined;
     }
 
-    public parseAndGroupObservations(input: SiteDiscovery): SiteRecord[] {
+    public parseAndGroupTelemetry(input: SiteDiscovery): SiteState[] {
         // 1. Fast-path: Explicit single-site input
         if (input.siteId) {
             const siteId = input.siteId;
@@ -86,7 +86,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
                         seasonId: siteConfig.seasonId,
                         lastUpdated: 0,
                     },
-                    observations: { portals },
+                    telemetry: { portals },
                 }];
             }
             return [];
@@ -118,7 +118,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
             group.push(p);
         }
 
-        const results: SiteRecord[] = [];
+        const results: SiteState[] = [];
         for (const [siteConfig, sitePortals] of portalsBySite) {
             const siteId = siteConfig.geocode.id;
             const portals = this.buildPortalsRecord(siteId, sitePortals, input.exportedAt);
@@ -129,7 +129,7 @@ export class SiteDiscoveryAdapter implements DataObservationAdapter<SiteDiscover
                         seasonId: siteConfig.seasonId,
                         lastUpdated: instant().epochMilliseconds,
                     },
-                    observations: { portals },
+                    telemetry: { portals },
                 });
             }
         }

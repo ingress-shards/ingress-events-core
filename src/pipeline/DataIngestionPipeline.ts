@@ -1,11 +1,11 @@
-import type { EventConfigRegistry } from "../config/EventConfigRegistry.js";
-import type { SiteRecord } from "../sites/Site.js";
+import type { ConfigRegistry } from "../config/ConfigRegistry.js";
+import type { SiteState } from "../sites/Site.js";
 import type { SiteId } from "../common/Identifiers.js";
 import type {
     DataObservationAdapter,
     IngestionItem,
 } from "./adapters/DataObservationAdapter.js";
-import { SiteRecordMerger } from "./merging/SiteRecordMerger.js";
+import { SiteStateMerger } from "./merging/SiteStateMerger.js";
 import type { SiteConfig } from "../config/SiteConfig.js";
 import {
     MapSnapshotAdapter,
@@ -14,23 +14,23 @@ import {
     SiteTargetPortalsAdapter,
 } from "./adapters/index.js";
 import { parseTimestampFromFilename } from "../common/Date.js";
-import { SiteRecordAnalyser } from "./analysis/SiteRecordAnalyser.js";
+import { SiteStateAnalyser } from "./analysis/SiteStateAnalyser.js";
 
 export type { IngestionItem, IngestionPayload } from "./adapters/DataObservationAdapter.js";
 
 export class DataIngestionPipeline {
     private readonly ingestionStages: DataObservationAdapter<any>[];
     private readonly sitesById: Map<SiteId, SiteConfig>;
-    private readonly analyser: SiteRecordAnalyser;
+    private readonly analyser: SiteStateAnalyser;
 
     constructor(
-        private readonly registry: EventConfigRegistry,
+        private readonly registry: ConfigRegistry,
         candidateSites: SiteConfig[],
-        private readonly resolveExistingRecord?: (siteId: SiteId) => Promise<SiteRecord | undefined>,
-        private readonly merger: SiteRecordMerger = new SiteRecordMerger()
+        private readonly resolveExistingState?: (siteId: SiteId) => Promise<SiteState | undefined>,
+        private readonly merger: SiteStateMerger = new SiteStateMerger()
     ) {
         this.sitesById = new Map(candidateSites.map((s) => [s.geocode.id, s]));
-        this.analyser = new SiteRecordAnalyser(this.registry);
+        this.analyser = new SiteStateAnalyser(this.registry);
         this.ingestionStages = [
             new SiteDiscoveryAdapter(candidateSites),
             new MapSnapshotAdapter(this.registry.blueprints.ornaments, candidateSites),
@@ -39,31 +39,31 @@ export class DataIngestionPipeline {
         ];
     }
 
-    private async consolidateSiteRecords(
-        ingestedSiteRecords: SiteRecord[],
-        records: Map<SiteId, SiteRecord>
+    private async consolidateSiteStates(
+        ingestedSiteStates: SiteState[],
+        states: Map<SiteId, SiteState>
     ): Promise<void> {
-        for (const incomingRecord of ingestedSiteRecords) {
-            const siteId = incomingRecord.metadata.siteId;
-            const existingRecord = records.get(siteId) ?? await this.resolveExistingRecord?.(siteId);
-            if (existingRecord) {
+        for (const incomingState of ingestedSiteStates) {
+            const siteId = incomingState.metadata.siteId;
+            const existingState = states.get(siteId) ?? await this.resolveExistingState?.(siteId);
+            if (existingState) {
                 const siteConfig = this.sitesById.get(siteId);
-                const { record: updatedRecord, hasChanged } = this.merger.merge(
-                    existingRecord, 
-                    incomingRecord.observations ?? {},
+                const { state: updatedState, hasChanged } = this.merger.merge(
+                    existingState, 
+                    incomingState.telemetry ?? {},
                     siteConfig
                 );
                 if (hasChanged) {
-                    records.set(siteId, updatedRecord);
+                    states.set(siteId, updatedState);
                 }
             } else {
-                records.set(siteId, incomingRecord);
+                states.set(siteId, incomingState);
             }
         }
     }
 
-    public async ingestBatch(items: IngestionItem[]): Promise<SiteRecord[]> {
-        const records = new Map<SiteId, SiteRecord>();
+    public async ingestBatch(items: IngestionItem[]): Promise<SiteState[]> {
+        const states = new Map<SiteId, SiteState>();
         const sortedItems = [...items].sort(
             (a, b) => (parseTimestampFromFilename(a.filename) ?? 0) - (parseTimestampFromFilename(b.filename) ?? 0)
         );
@@ -74,8 +74,8 @@ export class DataIngestionPipeline {
             for (const item of remainingItems) {
                 const parsedData = ingestionStage.tryParse(item);
                 if (parsedData) {
-                    const ingestedSiteRecords = ingestionStage.parseAndGroupObservations(parsedData);
-                    await this.consolidateSiteRecords(ingestedSiteRecords, records);
+                    const ingestedSiteStates = ingestionStage.parseAndGroupTelemetry(parsedData);
+                    await this.consolidateSiteStates(ingestedSiteStates, states);
                 } else {
                     unhandledItems.push(item);
                 }
@@ -83,10 +83,10 @@ export class DataIngestionPipeline {
             remainingItems = unhandledItems;
         }
 
-        for (const record of records.values()) {
-            record.analysis = this.analyser.analyse(record);
+        for (const state of states.values()) {
+            state.analysis = this.analyser.analyse(state);
         }
 
-        return [...records.values()];
+        return [...states.values()];
     }
 }

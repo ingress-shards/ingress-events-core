@@ -30,28 +30,28 @@ export const PhaseDisplayNames: Record<SitePhase, string> = {
 };
 
 /**
- * Unified record of a site.
+ * Unified state of a site.
  * This is the primary storage format for the local IndexedDB.
  */
-export interface SiteRecord {
-    metadata: SiteRecordMetadata;
-    observations?: SiteObservation;
+export interface SiteState {
+    metadata: SiteStateMetadata;
+    telemetry?: SiteTelemetry;
     analysis?: SiteAnalysis;
 }
 
 /**
- * Collection of site records keyed by site ID.
+ * Collection of site states keyed by site ID.
  */
-export type SiteRecordMap = Record<SiteId, SiteRecord>;
+export type SiteStateMap = Record<SiteId, SiteState>;
 
-export interface SiteRecordMetadata {
+export interface SiteStateMetadata {
     siteId: SiteId;
     seasonId: SeasonId;
     /** Epoch time in milliseconds */
     lastUpdated: number;
 }
 
-export interface SiteObservation {
+export interface SiteTelemetry {
     portals?: Record<PortalId, ObservedPortal>;
     shards?: Record<ShardId, Shard>;
 }

@@ -98,10 +98,10 @@ describe("Strict Configuration Validation", () => {
     test("all referenced event types exist in blueprints", () => {
         const context = getValidationContext();
         
-        // Manifest components event types
+        // Manifest events event types
         for (const season of context.manifest.seasons) {
-            for (const component of season.components) {
-                expect(context.validEventTypes, `Season "${season.id}" component eventType "${component.eventType}"`).toContain(component.eventType);
+            for (const event of season.events) {
+                expect(context.validEventTypes, `Season "${season.id}" event eventType "${event.eventType}"`).toContain(event.eventType);
             }
         }
 
@@ -122,10 +122,10 @@ describe("Strict Configuration Validation", () => {
         const context = getValidationContext();
 
         for (const season of context.manifest.seasons) {
-            for (const component of season.components) {
-                const shards = component.mechanics.shards;
+            for (const event of season.events) {
+                const shards = event.mechanics.shards;
                 if (shards) {
-                    expect(context.validShardMechanics, `Season "${season.id}" component "${component.eventType}" shardMechanics "${shards.shardMechanics}"`).toContain(shards.shardMechanics);
+                    expect(context.validShardMechanics, `Season "${season.id}" event "${event.eventType}" shardMechanics "${shards.shardMechanics}"`).toContain(shards.shardMechanics);
                 }
             }
         }
@@ -135,10 +135,10 @@ describe("Strict Configuration Validation", () => {
         const context = getValidationContext();
 
         for (const season of context.manifest.seasons) {
-            for (const component of season.components) {
-                const shards = component.mechanics.shards;
+            for (const event of season.events) {
+                const shards = event.mechanics.shards;
                 if (shards?.targetMechanics) {
-                    expect(context.validTargetMechanics, `Season "${season.id}" component "${component.eventType}" targetMechanics "${shards.targetMechanics}"`).toContain(shards.targetMechanics);
+                    expect(context.validTargetMechanics, `Season "${season.id}" event "${event.eventType}" targetMechanics "${shards.targetMechanics}"`).toContain(shards.targetMechanics);
                 }
             }
         }

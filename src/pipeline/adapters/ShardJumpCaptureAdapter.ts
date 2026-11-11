@@ -1,11 +1,11 @@
 import type { SiteId, PortalId } from "../../common/Identifiers.js";
-import type { SiteRecord } from "../../sites/Site.js";
+import type { SiteState } from "../../sites/Site.js";
 import type { ShardJumpCapture, Fragment, FragmentHistoryType, TargetArtifact } from "../../types/observations/ShardJumps.js";
 import type { DataObservationAdapter, IngestionItem } from "./DataObservationAdapter.js";
 import { PortalIdMapper } from "./AdapterHelpers.js";
 import { fromNianticId, type Alignment } from "../../common/Alignment.js";
 import { findSiteByCoords } from "../../common/Geo.js";
-import type { ShardHistoryEntry, ShardMismatch } from "../../sites/Shard.js";
+import type { ShardTelemetryEntry, ShardMismatch } from "../../sites/Shard.js";
 import type { SiteConfig } from "../../config/SiteConfig.js";
 import { instant } from "temporal-polyfill/fns/Now";
 import { parseTimestampFromFilename } from "../../common/Date.js";
@@ -25,7 +25,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
     private parseFragment(
         fragment: Fragment,
-        getOrCreateRecord: (siteId: SiteId, seasonId: string) => SiteRecord
+        getOrCreateState: (siteId: SiteId, seasonId: string) => SiteState
     ): void {
         const sortedHistory = [...fragment.history].sort((a, b) => a.moveTimeMs.localeCompare(b.moveTimeMs));
         const spawnItem = sortedHistory.find(h => h.reason === "spawn");
@@ -50,8 +50,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
         const siteId = matchedSite.geocode.id;
         const seasonId = matchedSite.seasonId;
-        const record = getOrCreateRecord(siteId, seasonId);
-        const obs = record.observations!;
+        const state = getOrCreateState(siteId, seasonId);
+        const telemetry = state.telemetry!;
 
         // Extract shard details
         const shardIdNum = Number(
@@ -63,7 +63,7 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         let lastPortalId: PortalId | undefined;
         let currentLocationId: PortalId | undefined;
 
-        const historyEntries: ShardHistoryEntry[] = sortedHistory
+        const historyEntries: ShardTelemetryEntry[] = sortedHistory
             .map((h: FragmentHistoryType) => {
                 const originPortal = "originPortalInfo" in h ? h.originPortalInfo : undefined;
                 const destinationPortal = "destinationPortalInfo" in h ? h.destinationPortalInfo : undefined;
@@ -77,8 +77,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     portalId = this.portalIdMapper.getOrCreatePortalId(siteId, portal.latE6, portal.lngE6);
 
                     // Add portals seen in history to our site's portals record (WHITE-LISTING)
-                    obs.portals ??= {};
-                    obs.portals[portalId] = {
+                    telemetry.portals ??= {};
+                    telemetry.portals[portalId] = {
                         title: portal.title,
                         latE6: portal.latE6,
                         lngE6: portal.lngE6,
@@ -95,8 +95,8 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                 const destinationPortalId = destinationPortal ? this.portalIdMapper.getOrCreatePortalId(siteId, destinationPortal.latE6, destinationPortal.lngE6) : undefined;
                 if (destinationPortal && destinationPortalId) {
                     // Add destination portal to site's portals record (WHITE-LISTING)
-                    obs.portals ??= {};
-                    obs.portals[destinationPortalId] = {
+                    telemetry.portals ??= {};
+                    telemetry.portals[destinationPortalId] = {
                         title: destinationPortal.title,
                         latE6: destinationPortal.latE6,
                         lngE6: destinationPortal.lngE6,
@@ -191,17 +191,17 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
                     ...(isInvalid && { invalid: true }),
                 };
             })
-            .filter((entry): entry is ShardHistoryEntry => entry !== undefined);
+            .filter((entry): entry is ShardTelemetryEntry => entry !== undefined);
 
-        obs.shards ??= {};
-        obs.shards[shardIdNum] = {
+        telemetry.shards ??= {};
+        telemetry.shards[shardIdNum] = {
             history: historyEntries
         };
     }
 
     private parseTargetPortals(
         art: TargetArtifact,
-        getOrCreateRecord: (siteId: SiteId, seasonId: string) => SiteRecord,
+        getOrCreateState: (siteId: SiteId, seasonId: string) => SiteState,
         timestamp: number
     ): void {
         const ornId = art.id; // Target identifier
@@ -217,12 +217,12 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
 
             const siteId = matchedSite.geocode.id;
             const seasonId = matchedSite.seasonId;
-            const record = getOrCreateRecord(siteId, seasonId);
-            const obs = record.observations!;
+            const state = getOrCreateState(siteId, seasonId);
+            const telemetry = state.telemetry!;
             const portalId = this.portalIdMapper.getOrCreatePortalId(siteId, info.latE6, info.lngE6);
 
-            obs.portals ??= {};
-            obs.portals[portalId] = {
+            telemetry.portals ??= {};
+            telemetry.portals[portalId] = {
                 ...info,
                 history: [
                     {
@@ -256,26 +256,26 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
         return undefined;
     }
 
-    public parseAndGroupObservations(input: ShardJumpCapture): SiteRecord[] {
+    public parseAndGroupTelemetry(input: ShardJumpCapture): SiteState[] {
         if (input.timestamp === undefined) {
             throw new Error("[ShardJumpCaptureAdapter] Missing capture timestamp in ShardJumpCapture input");
         }
-        const siteRecordsMap = new Map<SiteId, SiteRecord>();
+        const siteStatesMap = new Map<SiteId, SiteState>();
 
-        const getOrCreateRecord = (siteId: SiteId, seasonId: string): SiteRecord => {
-            let record = siteRecordsMap.get(siteId);
-            if (!record) {
-                record = {
+        const getOrCreateState = (siteId: SiteId, seasonId: string): SiteState => {
+            let state = siteStatesMap.get(siteId);
+            if (!state) {
+                state = {
                     metadata: {
                         siteId,
                         seasonId,
                         lastUpdated: instant().epochMilliseconds,
                     },
-                    observations: { portals: {}, shards: {} },
+                    telemetry: { portals: {}, shards: {} },
                 };
-                siteRecordsMap.set(siteId, record);
+                siteStatesMap.set(siteId, state);
             }
-            return record;
+            return state;
         };
 
         const artifacts = input.artifact ?? [];
@@ -283,21 +283,16 @@ export class ShardJumpCaptureAdapter implements DataObservationAdapter<ShardJump
             // 1. Handle fragments/shards
             if ("fragment" in art && art.fragment) {
                 for (const fragment of art.fragment) {
-                    this.parseFragment(fragment, getOrCreateRecord);
+                    this.parseFragment(fragment, getOrCreateState);
                 }
             }
 
             // 2. Handle target portals
             if ("target" in art && art.target) {
-                this.parseTargetPortals(art, getOrCreateRecord, input.timestamp);
+                this.parseTargetPortals(art, getOrCreateState, input.timestamp);
             }
         }
 
-        const results: SiteRecord[] = [];
-        // eslint-disable-next-line unicorn/prefer-spread
-        for (const value of siteRecordsMap.values()) {
-            results.push(value);
-        }
-        return results;
+        return [...siteStatesMap.values()];
     }
 }

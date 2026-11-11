@@ -1,4 +1,4 @@
-import { EventConfigRegistry } from "../../src/config/EventConfigRegistry.js";
+import { ConfigRegistry } from "../../src/config/ConfigRegistry.js";
 import type { EventBlueprints, EventMetadata, EventType, SeasonGeocode, SeasonManifest, SiteGeocode } from "../../src/types/index.js";
 
 export interface MockRegistryOptions {
@@ -22,7 +22,7 @@ const defaultEvents: Record<EventType, EventMetadata> = {
     UNKNOWN: { label: "Unknown" }
 };
 
-export const createMockEventConfigRegistry = (options: MockRegistryOptions = {}): EventConfigRegistry => {
+export const createMockConfigRegistry = (options: MockRegistryOptions = {}): ConfigRegistry => {
     const siteId = options.siteId ?? "test-site";
     const seasonId = options.seasonId ?? "test-season";
     const latE6 = options.latE6 ?? 10000000;
@@ -66,7 +66,7 @@ export const createMockEventConfigRegistry = (options: MockRegistryOptions = {})
                 name: "Test Season",
                 year: 2026,
                 overviewUrl: "",
-                components: [
+                events: [
                     {
                         eventType: "ANOMALY",
                         startTime: "12:00",
@@ -83,5 +83,5 @@ export const createMockEventConfigRegistry = (options: MockRegistryOptions = {})
         ]
     };
 
-    return new EventConfigRegistry(blueprints, manifest, geocode);
+    return new ConfigRegistry(blueprints, manifest, geocode);
 };

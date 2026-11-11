@@ -1,7 +1,7 @@
-import type { SiteRecord, SiteAnalysis } from "../../sites/Site.js";
+import type { SiteState, SiteAnalysis } from "../../sites/Site.js";
 import type { Shard } from "../../sites/Shard.js";
 import { calculateCentroid } from "../../common/Geo.js";
-import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
+import type { ConfigRegistry } from "../../config/ConfigRegistry.js";
 import type { SiteConfig } from "../../config/SiteConfig.js";
 import { LinkScoringEngine } from "./LinkScoringEngine.js";
 import { TargetScoringEngine } from "./TargetScoringEngine.js";
@@ -20,8 +20,8 @@ interface SiteScoringContext {
     seasonPointsTotal?: number | undefined;
 }
 
-export class SiteRecordAnalyser {
-    constructor(private readonly registry: EventConfigRegistry) {}
+export class SiteStateAnalyser {
+    constructor(private readonly registry: ConfigRegistry) {}
 
     private resolveScoringContext(siteConfig?: SiteConfig): SiteScoringContext {
         const linkRules: Record<string, ShardLinkScoringRule> = {};
@@ -31,8 +31,8 @@ export class SiteRecordAnalyser {
 
         if (siteConfig && this.registry) {
             const season = this.registry.getSeasonMetadata(siteConfig.seasonId);
-            const component = season?.components?.find(c => c.eventType === siteConfig.geocode?.eventType);
-            const scoring = component?.mechanics?.shards?.scoring;
+            const event = season?.events?.find(event_ => event_.eventType === siteConfig.geocode?.eventType);
+            const scoring = event?.mechanics?.shards?.scoring;
             if (scoring) {
                 wavePointAggregation = scoring.wavePointAggregation;
                 seasonPointsTotal = scoring.seasonPoints;
@@ -54,22 +54,22 @@ export class SiteRecordAnalyser {
         return { linkRules, goalRules, wavePointAggregation, seasonPointsTotal };
     }
 
-    public analyse(record: SiteRecord): SiteAnalysis {
-        console.log(`[Site Observer: Site Record Analysis] Analysing site ${record.metadata.siteId}`);
+    public analyse(state: SiteState): SiteAnalysis {
+        console.log(`[Site Observer: Site State Analysis] Analysing site ${state.metadata.siteId}`);
         
-        const portals = record.observations?.portals ? Object.values(record.observations.portals) : [];
+        const portals = state.telemetry?.portals ? Object.values(state.telemetry.portals) : [];
         const shards = new Map<number, Shard>(
-            record.observations?.shards
-                ? Object.entries(record.observations.shards).map(([id, s]) => [Number(id), s])
+            state.telemetry?.shards
+                ? Object.entries(state.telemetry.shards).map(([id, s]) => [Number(id), s])
                 : []
         );
-        const portalsMap = record.observations?.portals ?? {};
+        const portalsMap = state.telemetry?.portals ?? {};
 
         // 1. Core aggregates
         const centroid = calculateCentroid(portals);
 
         // 2. Scoring rules & config
-        const siteConfig = this.registry?.getSiteConfig(record.metadata.siteId);
+        const siteConfig = this.registry?.getSiteConfig(state.metadata.siteId);
         const timeline = siteConfig?.timeline;
         const scoringContext = this.resolveScoringContext(siteConfig);
 
@@ -92,12 +92,11 @@ export class SiteRecordAnalyser {
         // 6. Aggregate Wave scores to get Season Points
         const seasonPointsResult = new SeasonPointsCalculator().calculate(waveStates, scoringContext, timeline);
 
-        // 7. Calculate Site-wide statistics unconditionally when observations are present
-        const hasObservations = portals.length > 0 || shards.size > 0;
-        const statistics = hasObservations
+        // 7. Calculate Site-wide statistics unconditionally when telemetry is present
+        const hasTelemetry = portals.length > 0 || shards.size > 0;
+        const statistics = hasTelemetry
             ? statisticsCalculator.calculateSiteStatistics(Object.values(waveStates), timeline?.shards)
             : undefined;
-
 
         return {
             ...(centroid && { centroid }),
@@ -105,7 +104,6 @@ export class SiteRecordAnalyser {
             shardPaths,
             ...(statistics && { statistics }),
             ...(seasonPointsResult && { seasonPointsResult }),
-
         };
     }
 }

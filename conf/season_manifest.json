@@ -5,7 +5,7 @@
       "name": "Shared Memories",
       "year": 2024,
       "overviewUrl": "https://ingress.com/news/2024-sharedmem",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -25,7 +25,7 @@
       "name": "Erased Memories",
       "year": 2024,
       "overviewUrl": "https://ingress.com/news/2024-erasedmem",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -45,7 +45,7 @@
       "name": "+Alpha",
       "year": 2025,
       "overviewUrl": "https://ingress.com/news/2025-plusalpha",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -65,7 +65,7 @@
       "name": "+Theta",
       "year": 2025,
       "overviewUrl": "https://ingress.com/news/2025-plustheta",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -160,7 +160,7 @@
       "name": "+Delta",
       "year": 2025,
       "overviewUrl": "https://ingress.com/news/2025-plusdelta",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -173,7 +173,7 @@
       "name": "+Beta",
       "year": 2025,
       "overviewUrl": "https://ingress.com/news/2025-plusbeta",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -258,7 +258,7 @@
       "name": "+Gamma",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-plusgamma",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -356,7 +356,7 @@
       "name": "Orion",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-orion",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -407,7 +407,7 @@
       "name": "Apollo",
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-apollo",
-      "components": [
+      "events": [
         {
           "eventType": "ANOMALY",
           "startTime": "14:00",
@@ -459,7 +459,7 @@
       "year": 2026,
       "overviewUrl": "https://ingress.com/news/2026-cygnus",
       "defaultView": true,
-      "components": [
+      "events": [
         {
           "eventType": "STORM",
           "startTime": "14:00",

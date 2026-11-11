@@ -2,10 +2,10 @@ import { describe, test, expect } from "vitest";
 import { SiteTargetPortalsAdapter } from "./SiteTargetPortalsAdapter.js";
 import type { SiteTargetPortals } from "../../types/observations/SiteTargetPortals.js";
 import type { TargetHistoryEntry } from "../../sites/Portal.js";
-import { createMockEventConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
+import { createMockConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
 
 describe("SiteTargetPortalsAdapter", () => {
-    const mockRegistry = createMockEventConfigRegistry();
+    const mockRegistry = createMockConfigRegistry();
     const adapter = new SiteTargetPortalsAdapter(mockRegistry.getAllSites());
 
     test("should parse and group target portals correctly", () => {
@@ -31,17 +31,17 @@ describe("SiteTargetPortalsAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
 
         expect(result.length).toBe(1);
-        const record = result[0]!;
-        expect(record.metadata.siteId).toBe("test-site");
-        expect(record.metadata.seasonId).toBe("test-season");
+        const state = result[0]!;
+        expect(state.metadata.siteId).toBe("test-site");
+        expect(state.metadata.seasonId).toBe("test-season");
         
-        const obs = record.observations!;
-        expect(obs.portals).toBeDefined();
+        const tele = state.telemetry!;
+        expect(tele.portals).toBeDefined();
 
-        const portal = obs.portals![1]!;
+        const portal = tele.portals![1]!;
         expect(portal).toBeDefined();
         expect(portal.title).toBe("Target Portal One");
         expect(portal.history![0]!.type).toBe("target");

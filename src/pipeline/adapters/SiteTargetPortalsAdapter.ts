@@ -1,4 +1,4 @@
-import type { SiteRecord } from "../../sites/Site.js";
+import type { SiteState } from "../../sites/Site.js";
 import type { ObservedPortal } from "../../sites/Portal.js";
 import type { SiteTargetPortals } from "../../types/observations/SiteTargetPortals.js";
 import type { DataObservationAdapter, IngestionItem } from "./DataObservationAdapter.js";
@@ -35,7 +35,7 @@ export class SiteTargetPortalsAdapter implements DataObservationAdapter<SiteTarg
         return undefined;
     }
 
-    public parseAndGroupObservations(input: SiteTargetPortals): SiteRecord[] {
+    public parseAndGroupTelemetry(input: SiteTargetPortals): SiteState[] {
         const siteId = input.siteId;
         const foundSeasonId = this.candidateSites.find(s => s.geocode.id === siteId)?.seasonId;
 
@@ -77,7 +77,7 @@ export class SiteTargetPortalsAdapter implements DataObservationAdapter<SiteTarg
                     seasonId: foundSeasonId,
                     lastUpdated: instant().epochMilliseconds,
                 },
-                observations: { portals },
+                telemetry: { portals },
             }];
         }
         return [];

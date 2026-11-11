@@ -1,15 +1,15 @@
 import { describe, test, expect, vi } from "vitest";
 import { DataIngestionPipeline, type IngestionItem } from "./DataIngestionPipeline.js";
-import { SiteRecordMerger } from "./merging/SiteRecordMerger.js";
-import { createMockEventConfigRegistry } from "../../test/fixtures/MockConfigRegistry.js";
-import type { SiteRecord } from "../sites/Site.js";
+import { SiteStateMerger } from "./merging/SiteStateMerger.js";
+import { createMockConfigRegistry } from "../../test/fixtures/MockConfigRegistry.js";
+import type { SiteState } from "../sites/Site.js";
 
 describe("DataIngestionPipeline", () => {
     // 2026-04-12T14:00:00Z[UTC] = 1776002400000 ms
     const siteStartTime = "2026-04-12T14:00:00Z[UTC]";
     const siteStartEpoch = 1776002400000;
 
-    const registry = createMockEventConfigRegistry({
+    const registry = createMockConfigRegistry({
         siteId: "test-site",
         seasonId: "test-season",
         latE6: 10000000,
@@ -33,7 +33,7 @@ describe("DataIngestionPipeline", () => {
         expect(results).toEqual([]);
     });
 
-    test("should ingest discovery items and establish portals on a site record", async () => {
+    test("should ingest discovery items and establish portals on a site state", async () => {
         const pipeline = new DataIngestionPipeline(registry, candidateSites);
 
         const discoveryPayload = {
@@ -59,19 +59,19 @@ describe("DataIngestionPipeline", () => {
         const results = await pipeline.ingestBatch(items);
         expect(results).toHaveLength(1);
 
-        const record = results[0]!;
-        expect(record.metadata.siteId).toBe("test-site");
-        expect(record.metadata.seasonId).toBe("test-season");
+        const state = results[0]!;
+        expect(state.metadata.siteId).toBe("test-site");
+        expect(state.metadata.seasonId).toBe("test-season");
 
-        // Verify observations
-        const portals = Object.values(record.observations?.portals ?? {});
+        // Verify telemetry
+        const portals = Object.values(state.telemetry?.portals ?? {});
         expect(portals).toHaveLength(1);
         expect(portals[0]!.title).toBe("Alpha Portal");
         expect(portals[0]!.history?.[0]?.type).toBe("pre-event");
 
         // Verify analysis is populated with centroid at end of batch
-        expect(record.analysis).toBeDefined();
-        expect(record.analysis?.centroid).toEqual({ latE6: 10000000, lngE6: 20000000 });
+        expect(state.analysis).toBeDefined();
+        expect(state.analysis?.centroid).toEqual({ latE6: 10000000, lngE6: 20000000 });
     });
 
     test("should merge multiple items across stages in correct order (Discovery -> Targets -> Shards)", async () => {
@@ -155,33 +155,33 @@ describe("DataIngestionPipeline", () => {
         const results = await pipeline.ingestBatch([shardItem, targetItem, discoveryItem]);
 
         expect(results).toHaveLength(1);
-        const record = results[0]!;
+        const state = results[0]!;
 
         // Check portals contain both pre-event and target history
-        const portals = Object.values(record.observations?.portals ?? {});
+        const portals = Object.values(state.telemetry?.portals ?? {});
         expect(portals).toHaveLength(1);
         expect(portals[0]!.history?.map((h) => h.type)).toContain("pre-event");
         expect(portals[0]!.history?.map((h) => h.type)).toContain("target");
 
         // Check shards contain the fragment
-        const shards = Object.values(record.observations?.shards ?? {});
+        const shards = Object.values(state.telemetry?.shards ?? {});
         expect(shards).toHaveLength(1);
         expect(shards[0]!.history).toHaveLength(1);
 
         // Check comprehensive analysis completed
-        expect(record.analysis).toBeDefined();
-        expect(record.analysis?.centroid).toEqual({ latE6: 10000000, lngE6: 20000000 });
-        expect(record.analysis?.shardPaths).toBeDefined();
+        expect(state.analysis).toBeDefined();
+        expect(state.analysis?.centroid).toEqual({ latE6: 10000000, lngE6: 20000000 });
+        expect(state.analysis?.shardPaths).toBeDefined();
     });
 
-    test("should resolve existing records from external resolver if provided", async () => {
-        const existingRecord: SiteRecord = {
+    test("should resolve existing states from external resolver if provided", async () => {
+        const existingState: SiteState = {
             metadata: {
                 siteId: "test-site",
                 seasonId: "test-season",
                 lastUpdated: 100,
             },
-            observations: {
+            telemetry: {
                 portals: {
                     1: {
                         title: "Existing Portal",
@@ -200,13 +200,13 @@ describe("DataIngestionPipeline", () => {
             },
         };
 
-        const resolveExistingRecord = vi.fn().mockResolvedValue(existingRecord);
-        const merger = new SiteRecordMerger();
+        const resolveExistingState = vi.fn().mockResolvedValue(existingState);
+        const merger = new SiteStateMerger();
 
         const pipeline = new DataIngestionPipeline(
             registry,
             candidateSites,
-            resolveExistingRecord,
+            resolveExistingState,
             merger
         );
 
@@ -238,10 +238,10 @@ describe("DataIngestionPipeline", () => {
         ];
 
         const results = await pipeline.ingestBatch(items);
-        expect(resolveExistingRecord).toHaveBeenCalledWith("test-site");
+        expect(resolveExistingState).toHaveBeenCalledWith("test-site");
         expect(results).toHaveLength(1);
 
-        const portals = Object.values(results[0]!.observations?.portals ?? {});
+        const portals = Object.values(results[0]!.telemetry?.portals ?? {});
         expect(portals).toHaveLength(1);
         expect(portals[0]!.title).toBe("Existing Portal");
         expect(portals[0]!.history?.map((h) => h.type)).toContain("target");
@@ -273,7 +273,7 @@ describe("DataIngestionPipeline", () => {
         const results = await pipeline.ingestBatch(items);
         expect(results).toHaveLength(1);
 
-        const portals = Object.values(results[0]!.observations?.portals ?? {});
+        const portals = Object.values(results[0]!.telemetry?.portals ?? {});
         expect(portals).toHaveLength(1);
         expect(portals[0]!.title).toBe("Live Portal");
         expect(portals[0]!.history?.[0]?.type).toBe("pre-event");

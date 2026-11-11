@@ -1,9 +1,9 @@
-import type { EventBlueprints, SeasonGeocode, SeasonManifest, SeasonMetadata, SeasonComponent, SiteGeocode, SiteManifestMetadata } from "../types/index.js";
+import type { EventBlueprints, SeasonGeocode, SeasonManifest, SeasonMetadata, SeasonEvent, SiteGeocode, HostSite } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
 import { DEFAULT_SITE_DURATION_MINUTES, type SiteConfig, type SiteTimeline, type ShardWaveTimeline, type TargetWaveTimeline, type ScheduledShardAction } from "./SiteConfig.js";
 import { parseZonedDateTime } from "../common/Date.js";
 
-export class EventConfigRegistry {
+export class ConfigRegistry {
     private readonly sites = new Map<SiteId, SiteConfig>();
     private readonly seasons = new Map<SeasonId, SeasonMetadata>();
 
@@ -17,12 +17,12 @@ export class EventConfigRegistry {
             this.seasons.set(season.id, season);
             const geocodeSeason = geocode.seasons.find(s => s.id === season.id);
 
-            for (const component of season.components) {
-                // Find matching geocodes for this component event type
-                const componentSites = geocodeSeason?.sites.filter(s => s.eventType === component.eventType) ?? [];
+            for (const event of season.events) {
+                // Find matching geocodes for this event type
+                const eventSites = geocodeSeason?.sites.filter(s => s.eventType === event.eventType) ?? [];
 
-                for (const site of componentSites) {
-                    const timeline = this.buildSiteTimeline(site, season, component);
+                for (const site of eventSites) {
+                    const timeline = this.buildSiteTimeline(site, season, event);
                     const siteConfig: SiteConfig = {
                         seasonId: season.id,
                         geocode: site,
@@ -35,12 +35,12 @@ export class EventConfigRegistry {
         }
     }
 
-    private buildSiteTimeline(site: SiteGeocode, season: SeasonMetadata, component: SeasonComponent): SiteTimeline {
-        const shardMechanics = component.mechanics.shards?.shardMechanics
-            ? this.blueprints.shardMechanics[component.mechanics.shards.shardMechanics]
+    private buildSiteTimeline(site: SiteGeocode, season: SeasonMetadata, event: SeasonEvent): SiteTimeline {
+        const shardMechanics = event.mechanics.shards?.shardMechanics
+            ? this.blueprints.shardMechanics[event.mechanics.shards.shardMechanics]
             : undefined;
-        const targetMechanics = component.mechanics.shards?.targetMechanics
-            ? this.blueprints.targetMechanics[component.mechanics.shards.targetMechanics]
+        const targetMechanics = event.mechanics.shards?.targetMechanics
+            ? this.blueprints.targetMechanics[event.mechanics.shards.targetMechanics]
             : undefined;
 
         const startMs = parseZonedDateTime(site.startTime).epochMilliseconds;
@@ -55,11 +55,11 @@ export class EventConfigRegistry {
         }
         const endMs = startMs + maxEndOffsetMinutes * 60 * 1000;
 
-        let siteMetadata: SiteManifestMetadata | undefined;
-        if (component.schedule) {
-            for (const day of component.schedule) {
-                siteMetadata = day.sites.find(s => s.latE6 === site.latE6 && s.lngE6 === site.lngE6);
-                if (siteMetadata) break;
+        let hostSite: HostSite | undefined;
+        if (event.schedule) {
+            for (const day of event.schedule) {
+                hostSite = day.sites.find(s => s.latE6 === site.latE6 && s.lngE6 === site.lngE6);
+                if (hostSite) break;
             }
         }
 
@@ -73,14 +73,14 @@ export class EventConfigRegistry {
             }));
 
             let expectedShards: number;
-            const overrideCount = siteMetadata?.shardCounts?.[index];
+            const overrideCount = hostSite?.shardCounts?.[index];
             if (typeof overrideCount === "number") {
                 expectedShards = overrideCount;
             } else if (typeof w.quantity === "number") {
                 expectedShards = w.quantity;
             } else {
                 throw new TypeError(
-                    `Invalid configuration: Missing shard quantity for wave ${index + 1} of ${shardWaves.length} at site '${site.id}' (${site.name}) in season '${season.id}' (${component.eventType}, mechanics: '${component.mechanics.shards?.shardMechanics}').`
+                    `Invalid configuration: Missing shard quantity for wave ${index + 1} of ${shardWaves.length} at site '${site.id}' (${site.name}) in season '${season.id}' (${event.eventType}, mechanics: '${event.mechanics.shards?.shardMechanics}').`
                 );
             }
 
@@ -111,7 +111,7 @@ export class EventConfigRegistry {
         });
 
         const durationMinutes = Math.round((endMs - startMs) / (60 * 1000));
-        const jumpGroupSize = component.mechanics.shards?.jumpGroupSize;
+        const jumpGroupSize = event.mechanics.shards?.jumpGroupSize;
 
         return {
             start: startMs,

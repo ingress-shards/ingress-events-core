@@ -15,19 +15,19 @@ export type EventType =
     | "UNKNOWN";
 
 /**
- * Site specific metadata within a scheduled season component.
+ * Host site specification within a scheduled season event.
  * @strict
  */
-export interface SiteManifestMetadata extends SiteLocation {
+export interface HostSite extends SiteLocation {
     /** Optional site-specific shard count overrides per wave */
     shardCounts?: number[];
 }
 
 /**
- * Component of an Anomaly season, defining specific shard/target behavior.
+ * Event format within an Anomaly season, defining mechanics, schedule, and scoring rules.
  * @strict
  */
-export interface SeasonComponent {
+export interface SeasonEvent {
     eventType: EventType;
     /** Default local start time (HH:mm) */
     startTime: string;
@@ -46,12 +46,12 @@ export interface SeasonComponent {
             };
         };
     };
-    /** Optional specific dates and locations for this component */
+    /** Optional specific dates and locations for this event */
     schedule?: {
         /** ISO date (YYYY-MM-DD) */
         date: string;
-        /** List of active sites on this day */
-        sites: SiteManifestMetadata[];
+        /** List of active host sites on this day */
+        sites: HostSite[];
     }[];
 }
 
@@ -65,7 +65,7 @@ export interface SeasonMetadata {
     name: string;
     year: number;
     overviewUrl: string;
-    components: SeasonComponent[];
+    events: SeasonEvent[];
     /** If true, this season is shown by default in the UI */
     defaultView?: boolean;
 }

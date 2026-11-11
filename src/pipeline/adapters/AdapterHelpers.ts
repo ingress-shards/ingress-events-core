@@ -1,13 +1,13 @@
 import type { SiteId } from "../../common/Identifiers.js";
-import type { SiteObservation } from "../../sites/Site.js";
+import type { SiteTelemetry } from "../../sites/Site.js";
 
 /**
- * Standard utility to find or create a site observation bucket within a grouped Map.
+ * Standard utility to find or create a site telemetry bucket within a grouped Map.
  */
 export const getOrCreateSiteBucket = (
-    grouped: Map<SiteId, SiteObservation>,
+    grouped: Map<SiteId, SiteTelemetry>,
     siteId: SiteId
-): SiteObservation => {
+): SiteTelemetry => {
     let bucket = grouped.get(siteId);
     if (!bucket) {
         bucket = {};

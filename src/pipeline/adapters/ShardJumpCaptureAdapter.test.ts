@@ -1,10 +1,10 @@
 import { describe, test, expect } from "vitest";
 import { ShardJumpCaptureAdapter } from "./ShardJumpCaptureAdapter.js";
 import type { ShardJumpCapture } from "../../types/observations/ShardJumps.js";
-import { createMockEventConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
+import { createMockConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
 
 describe("ShardJumpCaptureAdapter", () => {
-    const mockRegistry = createMockEventConfigRegistry({
+    const mockRegistry = createMockConfigRegistry({
         extraSites: [
             {
                 id: "helsinki",
@@ -52,17 +52,17 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
 
         expect(result.length).toBe(1);
-        const record = result[0]!;
-        expect(record.metadata.siteId).toBe("test-site");
-        expect(record.metadata.seasonId).toBe("test-season");
+        const state = result[0]!;
+        expect(state.metadata.siteId).toBe("test-site");
+        expect(state.metadata.seasonId).toBe("test-season");
 
-        const obs = record.observations!;
-        expect(obs.shards).toBeDefined();
+        const telemetry = state.telemetry!;
+        expect(telemetry.shards).toBeDefined();
 
-        const shard = obs.shards![1]!;
+        const shard = telemetry.shards![1]!;
         expect(shard).toBeDefined();
         expect(shard.history[0]!.action).toBe("spawn");
         expect(shard.history[0]!.moveTime).toBe(1000);
@@ -107,12 +107,12 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
 
-        const record = result[0]!;
-        const obs = record.observations!;
-        const shard = obs.shards![1]!;
+        const state = result[0]!;
+        const telemetry = state.telemetry!;
+        const shard = telemetry.shards![1]!;
         
         expect(shard.history).toHaveLength(2);
         expect(shard.history[0]!.action).toBe("spawn");
@@ -178,12 +178,12 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
 
-        const record = result[0]!;
-        const obs = record.observations!;
-        const shard = obs.shards![1]!;
+        const state = result[0]!;
+        const telemetry = state.telemetry!;
+        const shard = telemetry.shards![1]!;
         
         expect(shard.history).toHaveLength(3);
         expect(shard.history[0]!.action).toBe("spawn");
@@ -295,12 +295,12 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result).toHaveLength(1);
-        const record = result[0]!;
-        expect(record.metadata.siteId).toBe("helsinki");
+        const state = result[0]!;
+        expect(state.metadata.siteId).toBe("helsinki");
 
-        const shard = record.observations!.shards![32]!;
+        const shard = state.telemetry!.shards![32]!;
         expect(shard).toBeDefined();
         expect(shard.history).toHaveLength(6);
 
@@ -351,15 +351,15 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
-        const record = result[0]!;
-        expect(record.metadata.siteId).toBe("test-site");
-        expect(record.metadata.seasonId).toBe("test-season");
+        const state = result[0]!;
+        expect(state.metadata.siteId).toBe("test-site");
+        expect(state.metadata.seasonId).toBe("test-season");
 
-        const obs = record.observations!;
-        expect(obs.portals).toBeDefined();
-        const portal = Object.values(obs.portals!)[0]!;
+        const telemetry = state.telemetry!;
+        expect(telemetry.portals).toBeDefined();
+        const portal = Object.values(telemetry.portals!)[0]!;
         expect(portal).toBeDefined();
         expect(portal.title).toBe("Target Portal One");
         expect(portal.history).toHaveLength(1);
@@ -421,9 +421,9 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
-        const shard = result[0]!.observations!.shards![99]!;
+        const shard = result[0]!.telemetry!.shards![99]!;
         expect(shard.history[1]!.action).toBe("link");
         expect(shard.history[1]!.mismatch).toEqual({ originAlign: "ENL", destAlign: "RES" });
     });
@@ -525,9 +525,9 @@ describe("ShardJumpCaptureAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
-        const shard = result[0]!.observations!.shards![100]!;
+        const shard = result[0]!.telemetry!.shards![100]!;
         expect(shard.history).toHaveLength(5);
         expect(shard.history[0]!.invalid).toBeUndefined();
         expect(shard.history[1]!.invalid).toBeUndefined();

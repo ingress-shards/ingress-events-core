@@ -5,7 +5,7 @@ import type { PortalId } from "../common/Identifiers.js";
  * Individual shard data.
  */
 export interface Shard {
-    history: ShardHistoryEntry[];
+    history: ShardTelemetryEntry[];
 }
 
 /**
@@ -19,9 +19,9 @@ export interface ShardMismatch {
 }
 
 /**
- * Shard movement history entry (Analysed).
+ * Shard movement telemetry entry.
  */
-export interface ShardHistoryEntry {
+export interface ShardTelemetryEntry {
     action: ShardAction;
     /** Epoch time in milliseconds */
     moveTime: number;
@@ -84,12 +84,12 @@ export interface ShardMove {
 }
 
 /**
- * Looks up the corresponding ShardHistoryEntry for a given ShardMove from shards observation data.
+ * Looks up the corresponding ShardTelemetryEntry for a given ShardMove from shards telemetry data.
  */
-export const getShardHistoryEntry = (
+export const getShardTelemetryEntry = (
     move: ShardMove,
     shards?: Record<number, Shard> | Map<number, Shard>
-): ShardHistoryEntry | undefined => {
+): ShardTelemetryEntry | undefined => {
     if (!shards) return undefined;
     const shard = shards instanceof Map ? shards.get(move.shardId) : shards[move.shardId];
     return shard?.history?.find(h => h.moveTime === move.moveTime);
@@ -102,7 +102,7 @@ export const isMoveMismatched = (
     move: ShardMove,
     shards?: Record<number, Shard> | Map<number, Shard>
 ): boolean => {
-    return getShardHistoryEntry(move, shards)?.mismatch !== undefined;
+    return getShardTelemetryEntry(move, shards)?.mismatch !== undefined;
 };
 
 /**
@@ -112,5 +112,5 @@ export const isMoveInvalid = (
     move: ShardMove,
     shards?: Record<number, Shard> | Map<number, Shard>
 ): boolean => {
-    return getShardHistoryEntry(move, shards)?.invalid === true;
+    return getShardTelemetryEntry(move, shards)?.invalid === true;
 };

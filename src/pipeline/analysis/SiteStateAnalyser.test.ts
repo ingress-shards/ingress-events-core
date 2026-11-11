@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { SiteRecordAnalyser } from "./SiteRecordAnalyser.js";
-import type { SiteRecord } from "../../sites/Site.js";
-import type { EventConfigRegistry } from "../../config/EventConfigRegistry.js";
-import { createMockEventConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
+import { SiteStateAnalyser } from "./SiteStateAnalyser.js";
+import type { SiteState } from "../../sites/Site.js";
+import type { ConfigRegistry } from "../../config/ConfigRegistry.js";
+import { createMockConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
 
-describe("SiteRecordAnalyser", () => {
-    it("should handle record with no observations", () => {
-        const record: SiteRecord = {
+describe("SiteStateAnalyser", () => {
+    it("should handle state with no telemetry", () => {
+        const state: SiteState = {
             metadata: {
                 siteId: "test-site",
                 seasonId: "test-season",
@@ -14,9 +14,9 @@ describe("SiteRecordAnalyser", () => {
             },
         };
 
-        const mockRegistry = createMockEventConfigRegistry();
-        const analyser = new SiteRecordAnalyser(mockRegistry);
-        const analysis = analyser.analyse(record);
+        const mockRegistry = createMockConfigRegistry();
+        const analyser = new SiteStateAnalyser(mockRegistry);
+        const analysis = analyser.analyse(state);
         expect(analysis.centroid).toBeUndefined();
         expect(analysis.waves).toEqual({});
         expect(analysis.shardPaths).toEqual({});
@@ -24,13 +24,13 @@ describe("SiteRecordAnalyser", () => {
     });
 
     it("should calculate correct centroid and aggregated statistics when empty config is provided", () => {
-        const record: SiteRecord = {
+        const state: SiteState = {
             metadata: {
                 siteId: "test-site",
                 seasonId: "test-season",
                 lastUpdated: 1000,
             },
-            observations: {
+            telemetry: {
                 portals: {
                     1: { title: "P1", latE6: 10000000, lngE6: 20000000 },
                     2: { title: "P2", latE6: 20000000, lngE6: 40000000 },
@@ -52,9 +52,9 @@ describe("SiteRecordAnalyser", () => {
             },
         };
 
-        const mockRegistry = createMockEventConfigRegistry();
-        const analyser = new SiteRecordAnalyser(mockRegistry);
-        const analysis = analyser.analyse(record);
+        const mockRegistry = createMockConfigRegistry();
+        const analyser = new SiteStateAnalyser(mockRegistry);
+        const analysis = analyser.analyse(state);
 
         // Centroid calculation: avg(10, 20) = 15, avg(20, 40) = 30
         expect(analysis.centroid).toEqual({ latE6: 15000000, lngE6: 30000000 });
@@ -69,13 +69,13 @@ describe("SiteRecordAnalyser", () => {
     });
 
     it("should calculate correct wave-by-wave statistics and shardJumpWindows when config is provided", () => {
-        const record: SiteRecord = {
+        const state: SiteState = {
             metadata: {
                 siteId: "test-site",
                 seasonId: "test-season",
                 lastUpdated: 1000,
             },
-            observations: {
+            telemetry: {
                 portals: {
                     1: { title: "P1", latE6: 10000000, lngE6: 20000000 },
                 },
@@ -133,8 +133,8 @@ describe("SiteRecordAnalyser", () => {
             getSeasonMetadata: () => undefined
         };
 
-        const analyser = new SiteRecordAnalyser(mockConfig as unknown as EventConfigRegistry);
-        const analysis = analyser.analyse(record);
+        const analyser = new SiteStateAnalyser(mockConfig as unknown as ConfigRegistry);
+        const analysis = analyser.analyse(state);
         expect(Object.keys(analysis.waves).length).toBe(2);
 
         // Wave 1 checks:

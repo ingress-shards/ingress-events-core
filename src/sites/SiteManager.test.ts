@@ -4,7 +4,7 @@ import { subtract as zdtSubtract, toInstant as zdtToInstant } from "temporal-pol
 import { parseZonedDateTime } from "../common/Date.js";
 import { SiteManager } from "./SiteManager.js";
 import { SitePhase } from "../sites/Site.js";
-import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
+import type { ShardMechanics, HostSite } from "../types/index.js";
 
 describe("Site Manager", () => {
     describe("getExpectedShardCount", () => {
@@ -21,7 +21,7 @@ describe("Site Manager", () => {
         });
 
         it("should return sum of shardCounts if override exists", () => {
-            const override: SiteManifestMetadata = {
+            const override: HostSite = {
                 name: "Test",
                 latE6: 0,
                 lngE6: 0,

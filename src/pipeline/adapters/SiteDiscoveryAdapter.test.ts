@@ -2,10 +2,10 @@ import { describe, test, expect } from "vitest";
 import { SiteDiscoveryAdapter } from "./SiteDiscoveryAdapter.js";
 import type { SiteDiscovery } from "../../types/observations/SiteDiscovery.js";
 import type { PreEventHistoryEntry } from "../../sites/Portal.js";
-import { createMockEventConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
+import { createMockConfigRegistry } from "../../../test/fixtures/MockConfigRegistry.js";
 
 describe("SiteDiscoveryAdapter", () => {
-    const mockRegistry = createMockEventConfigRegistry({
+    const mockRegistry = createMockConfigRegistry({
         extraSites: [
             {
                 id: "extra-site",
@@ -36,17 +36,17 @@ describe("SiteDiscoveryAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(1);
 
-        const record = result[0]!;
-        expect(record.metadata.siteId).toBe("test-site");
-        expect(record.metadata.seasonId).toBe("test-season");
+        const state = result[0]!;
+        expect(state.metadata.siteId).toBe("test-site");
+        expect(state.metadata.seasonId).toBe("test-season");
 
-        const obs = record.observations!;
-        expect(obs.portals).toBeDefined();
+        const tele = state.telemetry!;
+        expect(tele.portals).toBeDefined();
         
-        const portal = obs.portals![1]!;
+        const portal = tele.portals![1]!;
         expect(portal).toBeDefined();
         expect(portal.title).toBe("Portal Discovery One");
         expect(portal.history![0]!.type).toBe("pre-event");
@@ -80,20 +80,20 @@ describe("SiteDiscoveryAdapter", () => {
             ]
         };
 
-        const result = adapter.parseAndGroupObservations(input);
+        const result = adapter.parseAndGroupTelemetry(input);
         expect(result.length).toBe(2);
 
-        const testSiteRecord = result.find(r => r.metadata.siteId === "test-site");
-        const extraSiteRecord = result.find(r => r.metadata.siteId === "extra-site");
+        const testSiteState = result.find(r => r.metadata.siteId === "test-site");
+        const extraSiteState = result.find(r => r.metadata.siteId === "extra-site");
 
-        expect(testSiteRecord).toBeDefined();
-        expect(extraSiteRecord).toBeDefined();
+        expect(testSiteState).toBeDefined();
+        expect(extraSiteState).toBeDefined();
 
-        const testPortal = Object.values(testSiteRecord!.observations!.portals!)[0]!;
+        const testPortal = Object.values(testSiteState!.telemetry!.portals!)[0]!;
         expect(testPortal.title).toBe("Portal Near Test Site");
         expect(testPortal.history![0]!.timestamp).toBe(1771949828 * 1000);
 
-        const extraPortal = Object.values(extraSiteRecord!.observations!.portals!)[0]!;
+        const extraPortal = Object.values(extraSiteState!.telemetry!.portals!)[0]!;
         expect(extraPortal.title).toBe("Portal Near Extra Site");
         expect(extraPortal.history![0]!.timestamp).toBe(1771949828500);
         expect((extraPortal.history![0]! as PreEventHistoryEntry).ornId).toBe("nl-1331-2026");

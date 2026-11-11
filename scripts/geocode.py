@@ -120,8 +120,8 @@ def get_zoned_timestamp(row):
 def get_start_time(row, season_config):
     """Looks up the blueprint start time for an event type and merges it with the date."""
     event_type = row['eventType']
-    components = season_config.get('components', [])
-    config = next((c for c in components if c.get('eventType') == event_type), {})
+    events = season_config.get('events', season_config.get('components', []))
+    config = next((c for c in events if c.get('eventType') == event_type), {})
     start_time_str = config.get('startTime', '00:00')
     date_only = row['date'].strftime('%Y-%m-%d')
     return pd.to_datetime(f"{date_only} {start_time_str}")
@@ -132,7 +132,7 @@ def process_season(season):
         season_id = season.get("id")
         season_name = season.get("name")
         overview_url = season.get("overviewUrl")
-        season_components = season.get("components")
+        season_events = season.get("events")
         df = pd.DataFrame()
 
         # Phase 1: Data Gathering (Intel Overview)
@@ -149,11 +149,11 @@ def process_season(season):
                 df = site_df
 
         # Phase 2: Data Gathering (Manifest Overrides/Schedule)
-        if season_components:
+        if season_events:
             site_rows = []
-            for component in season_components:
-                event_type = component.get("eventType")
-                schedule = component.get("schedule")
+            for event in season_events:
+                event_type = event.get("eventType")
+                schedule = event.get("schedule")
                 if schedule:
                     for entry in schedule:
                         entry_date = entry.get("date")
@@ -195,7 +195,7 @@ def process_season(season):
         df = df.drop(columns=["base_id"])
 
         # Phase 4: Temporal & Geographic Enrichment
-        if 'components' in season:
+        if 'events' in season:
             df['date'] = df.apply(lambda r: get_start_time(r, season), axis=1)
             
         df["timeZone"] = df.apply(lambda r: tf.timezone_at(lng=r["lngE6"]/1e6, lat=r["latE6"]/1e6), axis=1)

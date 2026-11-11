@@ -1,4 +1,4 @@
-import { isMoveMismatched, type Link, type Shard, type ShardHistoryEntry, type ShardPath } from "../../sites/Shard.js";
+import { isMoveMismatched, type Link, type Shard, type ShardTelemetryEntry, type ShardPath } from "../../sites/Shard.js";
 import type { ShardJumpWindow } from "../../sites/Site.js";
 import type { FactionPoints, PointsSummary } from "../../sites/Scoring.js";
 import type { FactionId } from "../../common/Alignment.js";
@@ -38,8 +38,8 @@ export class ShardJumpWindowBuilder {
     /**
      * Gathers all shard movements in the jump window to determine action count and actual end.
      */
-    private collectWindowHistory(windowBounds: JumpWindowBounds): ShardHistoryEntry[] {
-        const jumpHistory: ShardHistoryEntry[] = [];
+    private collectWindowHistory(windowBounds: JumpWindowBounds): ShardTelemetryEntry[] {
+        const jumpHistory: ShardTelemetryEntry[] = [];
         for (const s of this.shards.values()) {
             if (!s?.history) continue;
             for (const h of s.history) {

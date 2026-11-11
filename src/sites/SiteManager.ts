@@ -7,7 +7,7 @@ import {
 } from "temporal-polyfill/fns/ZonedDateTime";
 import { instant } from "temporal-polyfill/fns/Now";
 import { fromFields as durationFromFields } from "temporal-polyfill/fns/Duration";
-import type { ShardMechanics, SiteManifestMetadata } from "../types/index.js";
+import type { ShardMechanics, HostSite } from "../types/index.js";
 import { PhaseDisplayNames, SitePhase } from "./Site.js";
 import type { Temporal } from "temporal-polyfill";
 import { formatDuration } from "../common/Date.js";
@@ -60,9 +60,9 @@ export const SiteManager = {
     /**
      * Calculates the total number of shards expected at a site based on metadata overrides and blueprint mechanics.
      */
-    getExpectedShardCount: (shardMechanics: ShardMechanics, metadata?: SiteManifestMetadata): number => {
-        if (metadata?.shardCounts && metadata.shardCounts.length > 0) {
-            return metadata.shardCounts.reduce((a, b) => a + b, 0);
+    getExpectedShardCount: (shardMechanics: ShardMechanics, hostSite?: HostSite): number => {
+        if (hostSite?.shardCounts && hostSite.shardCounts.length > 0) {
+            return hostSite.shardCounts.reduce((a, b) => a + b, 0);
         }
 
         const waves = shardMechanics.waves;

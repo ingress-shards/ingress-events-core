@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { EventConfigRegistry } from "./EventConfigRegistry.js";
+import { ConfigRegistry } from "./ConfigRegistry.js";
 import { DEFAULT_SITE_DURATION_MINUTES } from "./SiteConfig.js";
 import { parseZonedDateTime } from "../common/Date.js";
 import { findSiteByCoords } from "../common/Geo.js";
@@ -11,7 +11,7 @@ import realBlueprints from "../../conf/event_blueprints.json" with { type: "json
 import realManifest from "../../conf/season_manifest.json" with { type: "json" };
 import realGeocode from "../../gen/conf/season_geocode.json" with { type: "json" };
 
-describe("EventConfigRegistry", () => {
+describe("ConfigRegistry", () => {
     const mockBlueprints: EventBlueprints = {
         events: {
             "ANOMALY": { label: "Anomaly Event" },
@@ -59,7 +59,7 @@ describe("EventConfigRegistry", () => {
                 name: "Season One",
                 year: 2026,
                 overviewUrl: "",
-                components: [
+                events: [
                     {
                         eventType: "ANOMALY",
                         startTime: "12:00",
@@ -101,7 +101,7 @@ describe("EventConfigRegistry", () => {
     };
 
     it("should build season configs and calculate action schedules correctly", () => {
-        const registry = new EventConfigRegistry(
+        const registry = new ConfigRegistry(
             mockBlueprints,
             mockManifest,
             mockGeocode
@@ -154,7 +154,7 @@ describe("EventConfigRegistry", () => {
     });
 
     it("should find sites by coordinates chronologically using findSiteByCoords from Geo.ts", () => {
-        const registry = new EventConfigRegistry(
+        const registry = new ConfigRegistry(
             mockBlueprints,
             mockManifest,
             mockGeocode
@@ -210,7 +210,7 @@ describe("EventConfigRegistry", () => {
                     name: "Invalid Season",
                     year: 2026,
                     overviewUrl: "",
-                    components: [
+                    events: [
                         {
                             eventType: "ANOMALY",
                             startTime: "12:00",
@@ -246,13 +246,13 @@ describe("EventConfigRegistry", () => {
             ]
         };
 
-        expect(() => new EventConfigRegistry(invalidBlueprints, invalidManifest, invalidGeocode)).toThrow(
+        expect(() => new ConfigRegistry(invalidBlueprints, invalidManifest, invalidGeocode)).toThrow(
             /Invalid configuration: Missing shard quantity for wave 1 of 1 at site 'site-broken' \(Broken Site\) in season 'invalid-season'/
         );
     });
 
     it("should output the resulting registry for the Jersey City Orion anomaly config", () => {
-        const registry = new EventConfigRegistry(
+        const registry = new ConfigRegistry(
             realBlueprints as EventBlueprints,
             realManifest as SeasonManifest,
             realGeocode as SeasonGeocode
@@ -264,7 +264,7 @@ describe("EventConfigRegistry", () => {
     });
 
     it("should return configured site duration or default fallback duration", () => {
-        const registry = new EventConfigRegistry(
+        const registry = new ConfigRegistry(
             realBlueprints as EventBlueprints,
             realManifest as SeasonManifest,
             realGeocode as SeasonGeocode

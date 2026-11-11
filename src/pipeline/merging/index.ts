@@ -1,3 +1,3 @@
 export * from "./PortalMergeStrategy.js";
 export * from "./DefaultPortalMergeStrategy.js";
-export * from "./SiteRecordMerger.js";
+export * from "./SiteStateMerger.js";
