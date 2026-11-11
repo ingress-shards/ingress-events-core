@@ -30,7 +30,7 @@ const config = tseslint.config(
             "eslint.config.js",
             "release.config.cjs",
             "ts-to-zod.config.mjs",
-            "config/",
+            "conf/",
             "dist/",
             "gen/types/**/*.zod.ts",
         ],
