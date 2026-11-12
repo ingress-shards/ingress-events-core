@@ -26,7 +26,7 @@ export const TACTICAL_MARKER_SVG = `
         </defs>
         
         <!-- Main Shape Layer (Colored via CSS --pin-color) -->
-        <path class="marker-pin-body" d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="var(--pin-color, var(--shards-nodata-color, #777777))" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
+        <path class="marker-pin-body" d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="var(--pin-color, var(--color-nodata, #777777))" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
         
         <!-- Gloss/Satin Overlay -->
         <path d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="url(#pinSatin)" style="pointer-events: none;" />

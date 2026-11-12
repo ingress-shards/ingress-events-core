@@ -8,33 +8,33 @@
 
 /* --- Typography Standards --- */
 
-.shards-header-primary {
-    font-size: var(--shards-font-size-md);
+.header-primary {
+    font-size: var(--font-size-md);
     font-weight: 700;
     letter-spacing: 0.02em;
-    color: var(--shards-text-primary);
+    color: var(--text-primary);
     margin: 0;
 }
 
-.shards-header-secondary {
-    font-size: var(--shards-font-size-sm);
+.header-secondary {
+    font-size: var(--font-size-sm);
     font-weight: 600;
     letter-spacing: 0.01em;
-    color: var(--shards-text-secondary);
+    color: var(--text-secondary);
 }
 
-.shards-label-pair {
+.label-pair {
     display: flex;
     justify-content: space-between;
-    font-size: var(--shards-font-size-sm);
+    font-size: var(--font-size-sm);
 }
 
-.shards-label-key {
-    color: var(--shards-text-secondary);
+.label-key {
+    color: var(--text-secondary);
 }
 
-.shards-label-value {
-    color: var(--shards-text-primary);
+.label-value {
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -57,7 +57,7 @@
 }
 
 /* --- Radar Animation --- */
-@keyframes shards-radar-sweep {
+@keyframes radar-sweep {
     from {
         transform: translate(-50%, -50%) rotate(0deg);
     }
@@ -81,20 +81,20 @@
     z-index: -1;
     pointer-events: none;
     transform-origin: center;
-    animation: shards-radar-sweep var(--radar-speed, 2s) infinite linear;
+    animation: radar-sweep var(--radar-speed, 2s) infinite linear;
 }
 
 /* Export Icon Styling */
-.shards-svg-export {
+.svg-export {
     display: block;
 }
 
-.shards-export-arrow {
-    fill: var(--export-arrow-color, var(--shards-signal-color));
+.export-arrow {
+    fill: var(--export-arrow-color, var(--color-signal));
     transition: fill 0.3s ease;
 }
 
-.shards-export-box {
-    fill: var(--export-box-color, var(--shards-neu-color));
+.export-box {
+    fill: var(--export-box-color, var(--color-neu));
     transition: fill 0.3s ease;
 }
