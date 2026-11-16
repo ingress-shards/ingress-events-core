@@ -1,29 +1,90 @@
-import type { Temporal } from "temporal-polyfill";
-import type { Record as ZonedDateTimeRecord } from "temporal-polyfill/fns/ZonedDateTime";
-import type { Record as InstantRecord } from "temporal-polyfill/fns/Instant";
-import { fromString as instantFromString } from "temporal-polyfill/fns/Instant";
-import { fromString as zdtFromString } from "temporal-polyfill/fns/ZonedDateTime";
+import {
+    blank as durationBlank,
+    fromFields as durationFromFields,
+    round as durationRound,
+    toLocaleString as durationToLocaleString,
+} from "temporal-polyfill/fns/Duration";
+import {
+    fromEpochMilliseconds as instantFromEpochMilliseconds,
+    fromString as instantFromString,
+    toZonedDateTimeISO as instantToZonedDateTimeISO,
+} from "temporal-polyfill/fns/Instant";
+import {
+    fromString as zdtFromString,
+    toLocaleString as zdtToLocaleString,
+    withTimeZone as zdtWithTimeZone,
+    type Record as ZonedDateTimeRecord,
+} from "temporal-polyfill/fns/ZonedDateTime";
 import { getBasic } from "temporal-polyfill/fns/Calendar";
+import { resolveLocale } from "./Locale.js";
+
+export const MS_PER_SECOND = 1000;
+export const MS_PER_MINUTE = 60_000;
+export const MS_PER_DAY = 86_400_000;
 
 /**
- * Formats a Temporal.Duration into a human-readable string (e.g., 1d 4h 30m).
+ * Standard expected maximum duration of a shard jump window in milliseconds (1 minute).
+ * Jump windows exceeding this duration are classified as extended jump windows.
  */
-export const formatDuration = (d: Temporal.DurationLikeObject, shouldIncludeSeconds = false): string => {
-    const { days = 0, hours = 0, minutes = 0, seconds = 0 } = d;
+export const STANDARD_JUMP_WINDOW_DURATION_MS = MS_PER_MINUTE;
 
-    if (days === 0 && hours === 0 && minutes === 0 && (!shouldIncludeSeconds || seconds === 0)) {
-        return shouldIncludeSeconds ? "< 1s" : "< 1m";
+/**
+ * Normalizes an epoch millisecond timestamp or ISO 8601 string into a ZonedDateTimeRecord in the target timezone.
+ */
+export const toZonedDateTime = (input: number | string, timeZone = "UTC"): ZonedDateTimeRecord => {
+    if (typeof input === "number") {
+        return instantToZonedDateTimeISO(instantFromEpochMilliseconds(input), timeZone);
     }
+    return zdtWithTimeZone(zdtFromString(input, getBasic), timeZone);
+};
 
-    const parts: string[] = [];
-    if (days > 0) parts.push(`${days}d`);
-    if (hours > 0) parts.push(`${hours}h`);
-    if (minutes > 0) parts.push(`${minutes}m`);
-    if (shouldIncludeSeconds && (seconds > 0 || (days === 0 && hours === 0 && minutes === 0))) {
-        parts.push(`${seconds}s`);
-    }
+/**
+ * Formats an epoch millisecond timestamp or ISO string into a locale-aware short date.
+ */
+export const formatDate = (input: number | string, timeZone = "UTC", locale?: string): string => {
+    return zdtToLocaleString(toZonedDateTime(input, timeZone), resolveLocale(locale), {
+        dateStyle: "short",
+    });
+};
 
-    return parts.join(" ");
+/**
+ * Formats an epoch millisecond timestamp or ISO string into a locale-aware time string.
+ * When `includeMs` is true, includes seconds and milliseconds (HH:mm:ss.SSS).
+ */
+export const formatTime = (
+    input: number | string,
+    timeZone = "UTC",
+    shouldIncludeMs = false,
+    locale?: string,
+): string => {
+    const options: Intl.DateTimeFormatOptions = shouldIncludeMs
+        ? { hour: "numeric", minute: "2-digit", second: "2-digit", fractionalSecondDigits: 3 }
+        : { hour: "numeric", minute: "2-digit" };
+    return zdtToLocaleString(toZonedDateTime(input, timeZone), resolveLocale(locale), options);
+};
+
+/**
+ * Formats the duration between two epoch millisecond timestamps using Temporal Duration rounding and locale formatting.
+ */
+export const formatDuration = (
+    fromMs: number,
+    toMs: number,
+    style: "narrow" | "short" | "long" = "narrow",
+    smallestUnit: "minutes" | "seconds" = "minutes",
+    locale?: string,
+): string => {
+    const duration = durationRound(
+        durationFromFields({ milliseconds: Math.max(0, toMs - fromMs) }),
+        { largestUnit: "days", smallestUnit, roundingMode: "halfExpand" },
+    );
+    const displayOptions = durationBlank(duration)
+        ? { style, [`${smallestUnit}Display`]: "always" }
+        : { style };
+    return durationToLocaleString(
+        duration,
+        resolveLocale(locale),
+        displayOptions as Intl.DateTimeFormatOptions,
+    );
 };
 
 /**
@@ -34,7 +95,7 @@ export const parseTimestampFromFilename = (filename: string): number | undefined
     const epochMatch = /\b\d{10,13}\b/.exec(filename);
     if (epochMatch) {
         let value = Number(epochMatch[0]);
-        if (epochMatch[0].length === 10) value *= 1000;
+        if (epochMatch[0].length === 10) value *= MS_PER_SECOND;
         return value;
     }
 
@@ -51,32 +112,3 @@ export const parseTimestampFromFilename = (filename: string): number | undefined
 
     return undefined;
 };
-
-/**
- * Helper to parse ZonedDateTime using the tree-shakeable basic calendar resolver.
- */
-export const parseZonedDateTime = (dateStr: string): ZonedDateTimeRecord => {
-    return zdtFromString(dateStr, getBasic);
-};
-
-/**
- * Gets epoch seconds from ZonedDateTime or Instant records.
- */
-export const getEpochSeconds = (record: ZonedDateTimeRecord | InstantRecord): number => {
-    return Math.floor(record.epochMilliseconds / 1000);
-};
-
-const pad = (num: number): string => String(num).padStart(2, "0");
-
-/**
- * Formats a ZonedDateTime into YYYY.MM.DD.HH.mm.ss.
- */
-export const formatTimestamp = (zdt: ZonedDateTimeRecord): string => {
-    return `${zdt.year}.${pad(zdt.month)}.${pad(zdt.day)}.${pad(zdt.hour)}.${pad(zdt.minute)}.${pad(zdt.second)}`;
-};
-
-/**
- * Standard expected maximum duration of a shard jump window in milliseconds (1 minute).
- * Jump windows exceeding this duration are classified as extended jump windows.
- */
-export const STANDARD_JUMP_WINDOW_DURATION_MS = 60_000;

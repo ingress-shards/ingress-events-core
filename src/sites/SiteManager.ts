@@ -9,7 +9,6 @@ import { instant } from "temporal-polyfill/fns/Now";
 import { fromFields as durationFromFields } from "temporal-polyfill/fns/Duration";
 import type { ShardMechanics, HostSite } from "../types/index.js";
 import { PhaseDisplayNames, SitePhase } from "./Site.js";
-import type { Temporal } from "temporal-polyfill";
 import { formatDuration } from "../common/Date.js";
 
 export interface CalculateSitePhaseParameters {
@@ -98,31 +97,35 @@ export const SiteManager = {
      */
     formatStatus: ({
         phase,
-        timeRemaining,
+        fromMs,
+        toMs,
     }: {
         phase: SitePhase;
-        timeRemaining: Temporal.DurationLikeObject | undefined;
+        fromMs?: number;
+        toMs?: number;
     }): string => {
+        const hasRange = fromMs !== undefined && toMs !== undefined;
+
         // 1. Scheduled / Discovery
         if (phase === SitePhase.Scheduled || phase === SitePhase.Discovery) {
-            if (timeRemaining) {
-                return `Starts in ${formatDuration(timeRemaining)}`;
+            if (hasRange) {
+                return `Starts in ${formatDuration(fromMs, toMs)}`;
             }
             return "Starts soon";
         }
 
         // 2. Stand By
         if (phase === SitePhase.StandBy) {
-            if (timeRemaining) {
-                return `Stand By · ${formatDuration(timeRemaining)}`;
+            if (hasRange) {
+                return `Stand By · ${formatDuration(fromMs, toMs)}`;
             }
             return "Stand By";
         }
 
         // 3. Active
         if (phase === SitePhase.Active) {
-            if (timeRemaining) {
-                return `Active · ${formatDuration(timeRemaining)}`;
+            if (hasRange) {
+                return `Active · ${formatDuration(fromMs, toMs)}`;
             }
             return "Active";
         }

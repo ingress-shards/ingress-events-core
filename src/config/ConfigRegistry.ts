@@ -1,7 +1,8 @@
+import { fromString as zdtFromString } from "temporal-polyfill/fns/ZonedDateTime";
+import { getBasic } from "temporal-polyfill/fns/Calendar";
 import type { EventBlueprints, SeasonGeocode, SeasonManifest, SeasonMetadata, SeasonEvent, SiteGeocode, HostSite } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
 import { DEFAULT_SITE_DURATION_MINUTES, type SiteConfig, type SiteTimeline, type ShardWaveTimeline, type TargetWaveTimeline, type ScheduledShardAction } from "./SiteConfig.js";
-import { parseZonedDateTime } from "../common/Date.js";
 
 export class ConfigRegistry {
     private readonly sites = new Map<SiteId, SiteConfig>();
@@ -43,7 +44,7 @@ export class ConfigRegistry {
             ? this.blueprints.targetMechanics[event.mechanics.shards.targetMechanics]
             : undefined;
 
-        const startMs = parseZonedDateTime(site.startTime).epochMilliseconds;
+        const startMs = zdtFromString(site.startTime, getBasic).epochMilliseconds;
         const preEventCutoffMs = startMs - 2 * 60 * 60 * 1000;
 
         let maxEndOffsetMinutes = 240;

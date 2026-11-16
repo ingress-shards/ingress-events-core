@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ConfigRegistry } from "./ConfigRegistry.js";
 import { DEFAULT_SITE_DURATION_MINUTES } from "./SiteConfig.js";
-import { parseZonedDateTime } from "../common/Date.js";
 import { findSiteByCoords } from "../common/Geo.js";
 import type { EventBlueprints, SeasonGeocode, SeasonManifest } from "../types/index.js";
 import { fromString as zdtFromString } from "temporal-polyfill/fns/ZonedDateTime";
@@ -160,7 +159,7 @@ describe("ConfigRegistry", () => {
             mockGeocode
         );
 
-        const startMs = parseZonedDateTime("2026-06-01T12:00:00Z[UTC]").epochMilliseconds;
+        const startMs = zdtFromString("2026-06-01T12:00:00Z[UTC]", getBasic).epochMilliseconds;
         const endMs = startMs + 45 * 60 * 1000;
 
         // Coordinates within London range

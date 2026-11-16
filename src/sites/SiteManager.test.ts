@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { fromFields as durationFromFields } from "temporal-polyfill/fns/Duration";
-import { subtract as zdtSubtract, toInstant as zdtToInstant } from "temporal-polyfill/fns/ZonedDateTime";
-import { parseZonedDateTime } from "../common/Date.js";
+import { fromString as zdtFromString, subtract as zdtSubtract, toInstant as zdtToInstant } from "temporal-polyfill/fns/ZonedDateTime";
+import { getBasic } from "temporal-polyfill/fns/Calendar";
+import { MS_PER_MINUTE } from "../common/Date.js";
 import { SiteManager } from "./SiteManager.js";
 import { SitePhase } from "../sites/Site.js";
 import type { ShardMechanics, HostSite } from "../types/index.js";
@@ -46,32 +47,34 @@ describe("Site Manager", () => {
     });
 
     describe("formatSiteStatus", () => {
+        const now = 1_700_000_000_000;
+
         it("should format Scheduled status", () => {
-            const timeRemaining = durationFromFields({ hours: 1, minutes: 30 });
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Scheduled,
-                    timeRemaining,
+                    fromMs: now,
+                    toMs: now + 90 * MS_PER_MINUTE,
                 }),
             ).toBe("Starts in 1h 30m");
         });
 
         it("should format Stand By status", () => {
-            const timeRemaining = durationFromFields({ minutes: 12 });
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.StandBy,
-                    timeRemaining,
+                    fromMs: now,
+                    toMs: now + 12 * MS_PER_MINUTE,
                 }),
             ).toBe("Stand By · 12m");
         });
 
         it("should format Active status", () => {
-            const timeRemaining = durationFromFields({ minutes: 45 });
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Active,
-                    timeRemaining,
+                    fromMs: now,
+                    toMs: now + 45 * MS_PER_MINUTE,
                 }),
             ).toBe("Active · 45m");
         });
@@ -80,21 +83,18 @@ describe("Site Manager", () => {
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Scheduled,
-                    timeRemaining: undefined,
                 }),
             ).toBe("Starts soon");
 
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.StandBy,
-                    timeRemaining: undefined,
                 }),
             ).toBe("Stand By");
 
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Active,
-                    timeRemaining: undefined,
                 }),
             ).toBe("Active");
         });
@@ -103,28 +103,25 @@ describe("Site Manager", () => {
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Complete,
-                    timeRemaining: undefined,
                 }),
             ).toBe("Complete");
 
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.Processing,
-                    timeRemaining: undefined,
                 }),
             ).toBe("Processing");
 
             expect(
                 SiteManager.formatStatus({
                     phase: SitePhase.NoData,
-                    timeRemaining: undefined,
                 }),
             ).toBe("No Data");
         });
     });
 
     describe("calculatePhase", () => {
-        const startTime = parseZonedDateTime("2026-10-24T14:00:00Z[UTC]");
+        const startTime = zdtFromString("2026-10-24T14:00:00Z[UTC]", getBasic);
         const baseParameters = {
             startTime,
             eventDurationMins: 60,
