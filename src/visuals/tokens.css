@@ -6,8 +6,11 @@
 :root {
     /* Branding Colors */
     --color-res: #0088ff;
+    --color-res-bg: rgba(0, 136, 255, 0.24);
     --color-enl: #03dc03;
+    --color-enl-bg: rgba(3, 220, 3, 0.24);
     --color-mac: #FF0028;
+    --color-mac-bg: rgba(255, 0, 40, 0.24);
     --color-neu: #ff6600;
     --color-signal: #ffcc00;
     --color-nodata: #777777;

@@ -1,0 +1,109 @@
+/**
+ * Shared Display Styles for Shards Project (Scoring Tables & Tooltips).
+ * Uses semantic design tokens from tokens.css.
+ */
+
+.faction-enl {
+    color: var(--color-enl);
+}
+
+.faction-res {
+    color: var(--color-res);
+}
+
+.faction-mac {
+    color: var(--color-mac);
+}
+
+.faction-enl-bg {
+    background: var(--color-enl-bg) !important;
+}
+
+.faction-res-bg {
+    background: var(--color-res-bg) !important;
+}
+
+.faction-mac-bg {
+    background: var(--color-mac-bg) !important;
+}
+
+.font-bold {
+    font-weight: bold;
+}
+
+/* --- Scoring Table --- */
+.scoring-table {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid var(--color-border, #444444);
+}
+
+.scoring-table th,
+.scoring-table td {
+    border: 1px solid var(--color-border, #444444);
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.scoring-table thead tr:first-child th {
+    background: #222222;
+}
+
+.scoring-table thead th {
+    font-weight: bold;
+    color: var(--text-primary, #eeeeee);
+}
+
+.scoring-table tbody tr.scoring-total-row {
+    border-top: 1px solid var(--color-border, #555555);
+    font-weight: bold;
+}
+
+.scoring-clickable {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.scoring-clickable::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    width: 4px;
+    height: 4px;
+    background-color: var(--text-muted, #888888);
+    border-radius: 50%;
+    opacity: 0.6;
+    transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.scoring-table td:hover .scoring-clickable::after,
+.scoring-clickable:hover::after {
+    transform: scale(1.5);
+    opacity: 1;
+}
+
+.scoring-table td[data-faction="RES"]:hover .scoring-clickable::after {
+    background-color: var(--color-res, #0088ff);
+}
+
+.scoring-table td[data-faction="ENL"]:hover .scoring-clickable::after {
+    background-color: var(--color-enl, #03dc03);
+}
+
+.scoring-table td:not([data-faction]):hover .scoring-clickable::after {
+    background-color: var(--text-primary, #eeeeee);
+}
+
+.scoring-table td.scoring-contributor-res {
+    font-weight: bold !important;
+    box-shadow: inset 0 0 0 1.5px var(--color-res, #0088ff) !important;
+}
+
+.scoring-table td.scoring-contributor-enl {
+    font-weight: bold !important;
+    box-shadow: inset 0 0 0 1.5px var(--color-enl, #03dc03) !important;
+}
