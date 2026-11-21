@@ -23,14 +23,27 @@
     --color-border: #444444;
 
     /* Typography Scale */
-    --font-size-xs: 0.65rem;
-    --font-size-sm: 0.8rem;
-    --font-size-md: 1rem;
-    --font-size-lg: 1.2rem;
+    --font-size-xs: 0.75rem;   /* 12px */
+    --font-size-sm: 0.875rem;  /* 14px */
+    --font-size-md: 1rem;      /* 16px */
+    --font-size-lg: 1.125rem;  /* 18px */
 
     /* Spacing */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
     --spacing-md: 12px;
     --spacing-lg: 20px;
+
+    /* Tooltip Palette */
+    --tooltip-bg: #141622;
+    --tooltip-border: #8a96be;
+    --tooltip-bg-res: #0c203b;
+    --tooltip-bg-enl: #0c2a20;
+    --tooltip-text-strong: #f4f6fb;
+    --tooltip-text: #dce0ec;
+    --tooltip-text-muted: #9aa2be;
+    --tooltip-divider: rgba(255, 255, 255, 0.16);
+    --tooltip-row-divider: rgba(255, 255, 255, 0.07);
+    --tooltip-warn-bg: rgba(255, 193, 7, 0.14);
+    --tooltip-warn-text: #ffd24d;
 }
