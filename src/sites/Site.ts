@@ -1,3 +1,5 @@
+import { instant as nowInstant } from "temporal-polyfill/fns/Now";
+import { MS_PER_DAY, MS_PER_MINUTE } from "../common/Date.js";
 import type { FactionId } from "../common/Alignment.js";
 import type { Shard, ShardPath } from "./Shard.js";
 import type { PortalId, ShardId, SiteId, SeasonId } from "../common/Identifiers.js";
@@ -19,14 +21,50 @@ export enum SitePhase {
     NoData = 6, // No data available (can be used for error states too)
 }
 
-export const PhaseDisplayNames: Record<SitePhase, string> = {
-    [SitePhase.Scheduled]: "Scheduled",
-    [SitePhase.Discovery]: "Discovery",
-    [SitePhase.StandBy]: "Stand By",
-    [SitePhase.Active]: "Active",
-    [SitePhase.Processing]: "Processing",
-    [SitePhase.Complete]: "Complete",
-    [SitePhase.NoData]: "No Data",
+export interface CalculateSitePhaseParameters {
+    /** Event start time in epoch milliseconds */
+    startMs: number;
+    /** Active gameplay duration of the event in minutes */
+    activeDurationMinutes: number;
+    /** Shard collection counters */
+    shards: { actual: number; expected: number };
+    /** True if ornaments are present on map */
+    hasOrnaments: boolean;
+    /** Current time in epoch milliseconds (defaults to now) */
+    nowMs?: number | undefined;
+}
+
+/**
+ * Determines the lifecycle phase of a site based on timing and shard counts.
+ */
+export const calculateSitePhase = ({
+    startMs,
+    activeDurationMinutes,
+    shards,
+    hasOrnaments,
+    nowMs = nowInstant().epochMilliseconds,
+}: CalculateSitePhaseParameters): SitePhase => {
+    if (nowMs < startMs) {
+        const standbyMs = startMs - 15 * MS_PER_MINUTE;
+        if (nowMs >= standbyMs) {
+            return SitePhase.StandBy;
+        }
+        return hasOrnaments ? SitePhase.Discovery : SitePhase.Scheduled;
+    }
+
+    const endMs = startMs + activeDurationMinutes * MS_PER_MINUTE;
+    if (nowMs <= endMs) {
+        return SitePhase.Active;
+    }
+    if (shards.actual >= shards.expected) {
+        return SitePhase.Complete;
+    }
+
+    const staleMs = endMs + MS_PER_DAY;
+    if (shards.actual === 0 && nowMs >= staleMs) {
+        return SitePhase.NoData;
+    }
+    return SitePhase.Processing;
 };
 
 /**
