@@ -10,7 +10,7 @@ describe("LinkScoringEngine", () => {
         start: 1000,
         preEventCutoff: 500,
         end: 5000,
-        durationMinutes: 67,
+        activeDurationMinutes: 67,
         shards: [
             {
                 waveNumber: 1,

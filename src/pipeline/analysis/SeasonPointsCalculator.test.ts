@@ -49,7 +49,7 @@ describe("SeasonPointsCalculator", () => {
             start: 1000,
             preEventCutoff: 500,
             end: 5000,
-            durationMinutes: 60,
+            activeDurationMinutes: 60,
             shards: [
                 { waveNumber: 1, start: 1000, end: 2000, expectedShards: 5 },
                 { waveNumber: 2, start: 2000, end: 3000, expectedShards: 5 },

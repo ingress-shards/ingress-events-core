@@ -6,7 +6,7 @@ import type { SiteState } from "../../sites/Site.js";
 
 const startTimeMs = 1_780_315_200_000;
 
-const createSiteConfig = (durationMinutes = 180): SiteConfig => ({
+const createSiteConfig = (activeDurationMinutes = 180, totalEndMinutes = activeDurationMinutes): SiteConfig => ({
     seasonId: "season-1",
     geocode: {
         id: "site-london",
@@ -21,8 +21,8 @@ const createSiteConfig = (durationMinutes = 180): SiteConfig => ({
     timeline: {
         start: startTimeMs,
         preEventCutoff: startTimeMs - 2 * 60 * 60_000,
-        end: startTimeMs + durationMinutes * 60_000,
-        durationMinutes,
+        end: startTimeMs + totalEndMinutes * 60_000,
+        activeDurationMinutes,
         shards: [],
     },
 });
@@ -64,6 +64,27 @@ describe("renderSiteTooltip", () => {
             nowMs: startTimeMs + 48 * 60 * 60_000,
         });
         expect(html).toContain("<em>No data available</em>");
+    });
+
+    it("does not render Site Active during stationary post-jump window before despawn", () => {
+        const siteState: SiteState = {
+            metadata: { siteId: "site-london", seasonId: "season-1", lastUpdated: 0 },
+            telemetry: { portals: { 1: { title: "P1", latE6: 0, lngE6: 0 } } },
+            analysis: {
+                waves: {
+                    1: { points: { total: { RES: 10, ENL: 5 } }, shardJumpWindows: [{ jumpNumber: 1, scheduledStart: 1, actualEnd: 2, actionCount: 1 }] },
+                },
+            },
+        };
+        const html = renderSiteTooltip({
+            siteConfig: createSiteConfig(170, 420),
+            eventTypeLabel: "Shard Storm",
+            siteState,
+            nowMs: startTimeMs + 190 * 60_000,
+        });
+        expect(html).not.toContain("Site Active");
+        expect(html).toContain("RES: 10");
+        expect(html).toContain("ENL: 5");
     });
 });
 

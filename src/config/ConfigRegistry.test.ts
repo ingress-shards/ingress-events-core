@@ -124,6 +124,8 @@ describe("ConfigRegistry", () => {
         
         // Final wave endOffset is 45 mins (from target-mech, Math.max of 35 and 45)
         expect(schedule.end).toBe(startMs + 45 * 60 * 1000);
+        // Active gameplay duration is 33 mins (last wave start 30 + last jump 2 + 1)
+        expect(schedule.activeDurationMinutes).toBe(33);
 
         // Shard waves (2 waves):
         expect(schedule.shards.length).toBe(2);
@@ -262,21 +264,38 @@ describe("ConfigRegistry", () => {
         
     });
 
-    it("should return configured site duration or default fallback duration", () => {
+    it("should return configured active site duration or default fallback duration", () => {
         const registry = new ConfigRegistry(
             realBlueprints as EventBlueprints,
             realManifest as SeasonManifest,
             realGeocode as SeasonGeocode
         );
 
-        // Configured site
-        const configuredDuration = registry.getSiteDurationMinutes("2026-orion-jersey-city");
-        expect(configuredDuration).toBeGreaterThan(0);
-        expect(configuredDuration).toBe(registry.getSiteConfig("2026-orion-jersey-city")!.timeline.durationMinutes);
+        // Configured site (6w_30m_4j: lastWaveStart 152 + lastJumpOffset 23 + 1 = 176)
+        const configuredDuration = registry.getSiteActiveDurationMinutes("2026-orion-jersey-city");
+        expect(configuredDuration).toBe(176);
+        expect(configuredDuration).toBe(registry.getSiteConfig("2026-orion-jersey-city")!.timeline.activeDurationMinutes);
 
         // Unknown / unconfigured site fallback
-        const fallbackDuration = registry.getSiteDurationMinutes("unknown-site-id");
+        const fallbackDuration = registry.getSiteActiveDurationMinutes("unknown-site-id");
         expect(fallbackDuration).toBe(DEFAULT_SITE_DURATION_MINUTES);
         expect(fallbackDuration).toBe(240);
+    });
+
+    it("should compute activeDurationMinutes excluding stationary despawn period for Cygnus Shard Storm", () => {
+        const registry = new ConfigRegistry(
+            realBlueprints as EventBlueprints,
+            realManifest as SeasonManifest,
+            realGeocode as SeasonGeocode
+        );
+
+        const perthConfig = registry.getSiteConfig("2026-cygnus-perth");
+        expect(perthConfig).toBeDefined();
+        // 1w_420m_18j: wave starts at +0m, final jump at +169m -> active duration = 170 min (16:50 local)
+        expect(perthConfig!.timeline.activeDurationMinutes).toBe(170);
+        expect(registry.getSiteActiveDurationMinutes("2026-cygnus-perth")).toBe(170);
+        // Full lifecycle end and wave end remain at despawn (+420m / 21:00 local)
+        expect(perthConfig!.timeline.end).toBe(perthConfig!.timeline.start + 420 * 60 * 1000);
+        expect(perthConfig!.timeline.shards[0]!.end).toBe(perthConfig!.timeline.start + 420 * 60 * 1000);
     });
 });

@@ -2,6 +2,7 @@ import { fromString as zdtFromString } from "temporal-polyfill/fns/ZonedDateTime
 import { getBasic } from "temporal-polyfill/fns/Calendar";
 import type { EventBlueprints, SeasonGeocode, SeasonManifest, SeasonMetadata, SeasonEvent, SiteGeocode, HostSite } from "../types/index.js";
 import type { SeasonId, SiteId } from "../common/Identifiers.js";
+import { MS_PER_MINUTE } from "../common/Date.js";
 import { DEFAULT_SITE_DURATION_MINUTES, type SiteConfig, type SiteTimeline, type ShardWaveTimeline, type TargetWaveTimeline, type ScheduledShardAction } from "./SiteConfig.js";
 
 export class ConfigRegistry {
@@ -45,16 +46,15 @@ export class ConfigRegistry {
             : undefined;
 
         const startMs = zdtFromString(site.startTime, getBasic).epochMilliseconds;
-        const preEventCutoffMs = startMs - 2 * 60 * 60 * 1000;
+        const preEventCutoffMs = startMs - 2 * 60 * MS_PER_MINUTE;
 
-        let maxEndOffsetMinutes = 240;
         const shardWaves = shardMechanics?.waves ?? [];
         const targetWaves = targetMechanics?.waves ?? [];
         const allWaves = [...shardWaves, ...targetWaves];
-        if (allWaves.length > 0) {
-            maxEndOffsetMinutes = Math.max(...allWaves.map(w => w.endOffset));
-        }
-        const endMs = startMs + maxEndOffsetMinutes * 60 * 1000;
+        const maxEndOffsetMinutes = allWaves.length > 0
+            ? Math.max(...allWaves.map((w) => w.endOffset))
+            : DEFAULT_SITE_DURATION_MINUTES;
+        const endMs = startMs + maxEndOffsetMinutes * MS_PER_MINUTE;
 
         let hostSite: HostSite | undefined;
         if (event.schedule) {
@@ -65,12 +65,12 @@ export class ConfigRegistry {
         }
 
         const shards: ShardWaveTimeline[] = shardWaves.map((w, index) => {
-            const waveStart = startMs + w.startOffset * 60 * 1000;
-            const waveEnd = startMs + w.endOffset * 60 * 1000;
+            const waveStart = startMs + w.startOffset * MS_PER_MINUTE;
+            const waveEnd = startMs + w.endOffset * MS_PER_MINUTE;
 
             const shardsActions: ScheduledShardAction[] = (shardMechanics?.waveActions ?? []).map(action => ({
                 action: action.action,
-                time: waveStart + action.time * 60 * 1000
+                time: waveStart + action.time * MS_PER_MINUTE
             }));
 
             let expectedShards: number;
@@ -95,12 +95,12 @@ export class ConfigRegistry {
         });
 
         const targets: TargetWaveTimeline[] = targetWaves.map((w, index) => {
-            const waveStart = startMs + w.startOffset * 60 * 1000;
-            const waveEnd = startMs + w.endOffset * 60 * 1000;
+            const waveStart = startMs + w.startOffset * MS_PER_MINUTE;
+            const waveEnd = startMs + w.endOffset * MS_PER_MINUTE;
 
             const shardsActions: ScheduledShardAction[] = (targetMechanics?.waveActions ?? []).map(action => ({
                 action: action.action as any,
-                time: waveStart + action.time * 60 * 1000
+                time: waveStart + action.time * MS_PER_MINUTE
             }));
 
             return {
@@ -111,14 +111,19 @@ export class ConfigRegistry {
             };
         });
 
-        const durationMinutes = Math.round((endMs - startMs) / (60 * 1000));
+        const jumpOffsets = (shardMechanics?.waveActions ?? [])
+            .filter((a) => a.action === "jump")
+            .map((a) => a.time);
+        const activeDurationMinutes = shardWaves.length > 0 && jumpOffsets.length > 0
+            ? Math.max(...shardWaves.map((w) => w.startOffset)) + Math.max(...jumpOffsets) + 1
+            : maxEndOffsetMinutes;
         const jumpGroupSize = event.mechanics.shards?.jumpGroupSize;
 
         return {
             start: startMs,
             preEventCutoff: preEventCutoffMs,
             end: endMs,
-            durationMinutes,
+            activeDurationMinutes,
             ...(jumpGroupSize !== undefined && { jumpGroupSize }),
             shards,
             ...(targets.length > 0 && { targets })
@@ -130,11 +135,11 @@ export class ConfigRegistry {
     }
 
     /**
-     * Retrieves the duration of a site event in minutes.
-     * Returns the site's configured timeline duration if present, falling back to DEFAULT_SITE_DURATION_MINUTES (240).
+     * Retrieves the active gameplay duration of a site event in minutes.
+     * Returns the site's configured timeline active duration if present, falling back to DEFAULT_SITE_DURATION_MINUTES (240).
      */
-    public getSiteDurationMinutes(siteId: SiteId): number {
-        return this.getSiteConfig(siteId)?.timeline.durationMinutes ?? DEFAULT_SITE_DURATION_MINUTES;
+    public getSiteActiveDurationMinutes(siteId: SiteId): number {
+        return this.getSiteConfig(siteId)?.timeline.activeDurationMinutes ?? DEFAULT_SITE_DURATION_MINUTES;
     }
 
     public getAllSites(): SiteConfig[] {

@@ -38,7 +38,7 @@ describe("ShardJumpWindowBuilder", () => {
             }
         };
 
-        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, activeDurationMinutes: 17, shards: [wave] };
 
         const targetScorer = new TargetScoringEngine({}, timeline, shards, {});
         const builder = new ShardJumpWindowBuilder(targetScorer, shards, siteShardPaths);
@@ -82,7 +82,7 @@ describe("ShardJumpWindowBuilder", () => {
             ]}]
         ]);
 
-        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, activeDurationMinutes: 17, shards: [wave] };
 
         const targetScorer = new TargetScoringEngine({}, timeline, shards, {});
         const builder = new ShardJumpWindowBuilder(targetScorer, shards, {});
@@ -130,7 +130,7 @@ describe("ShardJumpWindowBuilder", () => {
             }
         };
 
-        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, durationMinutes: 17, shards: [wave] };
+        const timeline: SiteTimeline = { start: 1000, preEventCutoff: 500, end: 2000, activeDurationMinutes: 17, shards: [wave] };
 
         const targetScorer = new TargetScoringEngine({}, timeline, shards, {});
         const builder = new ShardJumpWindowBuilder(targetScorer, shards, siteShardPaths);
@@ -174,7 +174,7 @@ describe("ShardJumpWindowBuilder", () => {
             start: 1000,
             preEventCutoff: 500,
             end: 2000,
-            durationMinutes: 17,
+            activeDurationMinutes: 17,
             shards: [wave],
             targets: [{ waveNumber: 1, start: 1000, end: 2000 }]
         };

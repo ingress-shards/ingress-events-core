@@ -24,10 +24,10 @@ export interface SiteTimeline {
     start: number;
     /** Cutoff time for pre-event ornaments (2 hours before start) in epoch milliseconds */
     preEventCutoff: number;
-    /** Event end time (end of the final wave) in epoch milliseconds */
+    /** Full event lifecycle end time (end of the final wave / despawn) in epoch milliseconds */
     end: number;
-    /** Total duration of the event in minutes */
-    durationMinutes: number;
+    /** Active gameplay duration of the event in minutes (to 1 minute after the final jump, excluding stationary despawn periods) */
+    activeDurationMinutes: number;
     /** Number of consecutive jump windows to group together in presentation views */
     jumpGroupSize?: number;
     /** Ordered timeline of shard waves and their scheduled movements */

@@ -20,7 +20,7 @@ const createSiteConfig = (jumpGroupSize?: number): SiteConfig => ({
         start: 1_780_315_200_000,
         preEventCutoff: 1_780_308_000_000,
         end: 1_780_317_000_000,
-        durationMinutes: 30,
+        activeDurationMinutes: 30,
         ...(jumpGroupSize !== undefined && { jumpGroupSize }),
         shards: [
             {

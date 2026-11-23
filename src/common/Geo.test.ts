@@ -82,7 +82,7 @@ describe("geo utils", () => {
                 start: 1777723200000, // 12:00
                 preEventCutoff: 1777716000000, // 10:00
                 end: 1777725900000, // 12:45
-                durationMinutes: 45,
+                activeDurationMinutes: 45,
                 shards: [],
             },
         };

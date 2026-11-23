@@ -19,7 +19,7 @@ const createSiteConfig = (hasTargets = false): SiteConfig => ({
         start: 1_780_315_200_000,
         preEventCutoff: 1_780_308_000_000,
         end: 1_780_318_800_000,
-        durationMinutes: 60,
+        activeDurationMinutes: 60,
         shards: [
             { waveNumber: 1, start: 1_780_315_200_000, end: 1_780_317_000_000, expectedShards: 5 },
             { waveNumber: 2, start: 1_780_317_000_000, end: 1_780_318_800_000, expectedShards: 5 },

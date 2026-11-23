@@ -55,6 +55,13 @@ In Ingress shard events, the interaction between scheduled server behavior and o
 > [!NOTE]
 > Only **`jump`** actions contribute towards the score for a site (link traversals and goal arrivals). While **`spawn`** and **`despawn`** actions are recorded in shard history for complete lifecycle traceability, they generate zero points.
 
+### Active Duration vs. Full Lifecycle
+
+Because shards can remain stationary on the network after their final movement window before despawning, `SiteTimeline` distinguishes active gameplay from full lifecycle telemetry:
+
+- **`SiteTimeline.activeDurationMinutes`**: Measures active gameplay duration from event start until **1 minute after the final scheduled `jump` action** (`lastWaveStart + lastJumpOffset + 1`, calculated in `ConfigRegistry`), excluding post-jump stationary periods (e.g., `176` min vs. `180` min for Anomaly `6w_30m_4j`; `241` min vs. `480` min for +Beta Shard Storm `1w_480m_4j`; `170` min vs. `420` min for Cygnus Shard Storm `1w_420m_18j`). This drives live status and countdown UIs (`SitePhase.Active` → `Complete`).
+- **`SiteTimeline.end` & `ShardWaveTimeline.end`**: Preserve the full wave and event lifecycle through the final wave `endOffset` / despawn so observers still capture complete raw telemetry (including `despawn` actions) and coordinate matching stays active through event close.
+
 ## Scoring Logic
 
 Scoring is derived from two primary outcomes, with values specified in the [Scoring Mechanics](../ScoringMechanics.md) document:

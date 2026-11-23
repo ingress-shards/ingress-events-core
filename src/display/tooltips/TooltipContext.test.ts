@@ -12,7 +12,7 @@ const mockRegistry = {
                 geocode: { id: "site-1", name: "London", eventType: "SKIRMISH", timeZone: "Europe/London" },
                 timeline: {
                     start: 1_780_315_200_000,
-                    durationMinutes: 180,
+                    activeDurationMinutes: 180,
                     jumpGroupSize: 2,
                     shards: [{ waveNumber: 1, start: 1_780_315_200_000, end: 1_780_317_000_000, expectedShards: 3, shardsActions: [] }],
                 },

@@ -80,7 +80,7 @@ export const renderSiteTooltip = ({
     nowMs = nowInstant().epochMilliseconds,
 }: SiteTooltipOptions): string => {
     const siteName = siteConfig.geocode.name;
-    const { start: startTimeMs, durationMinutes } = siteConfig.timeline;
+    const { start: startTimeMs, activeDurationMinutes } = siteConfig.timeline;
     const timeZone = siteConfig.geocode.timeZone ?? "UTC";
     const { countryCode } = siteConfig.geocode;
 
@@ -88,7 +88,7 @@ export const renderSiteTooltip = ({
     const ornamentCount = countOrnamentedPortals(siteState);
     const hasTelemetry = hasSiteTelemetry(siteState);
 
-    const endTimeMs = startTimeMs + durationMinutes * MS_PER_MINUTE;
+    const endTimeMs = startTimeMs + activeDurationMinutes * MS_PER_MINUTE;
     const isBeforeStart = nowMs < startTimeMs;
     const isActive = nowMs >= startTimeMs && nowMs <= endTimeMs;
     const isWithinGrace = nowMs > endTimeMs && nowMs <= endTimeMs + MS_PER_DAY;

@@ -106,7 +106,7 @@ describe("SiteStateAnalyser", () => {
                         start: 1000,
                         preEventCutoff: 0,
                         end: 4000000,
-                        durationMinutes: 66,
+                        activeDurationMinutes: 66,
                         shards: [
                             {
                                 waveNumber: 1,
