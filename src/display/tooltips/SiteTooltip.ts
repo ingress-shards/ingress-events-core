@@ -5,6 +5,7 @@ import type { SiteConfig } from "../../config/SiteConfig.js";
 import type { FactionPoints } from "../../sites/Scoring.js";
 import type { SiteAnalysis, SiteState } from "../../sites/Site.js";
 import { ALIGNMENT_COLORS } from "../../visuals/Colors.js";
+import { renderFlagIcon } from "../../visuals/templates/FlagIcon.js";
 import { resolveSiteContext } from "./TooltipContext.js";
 import type { SiteStateLookup, TooltipContentResolver } from "./TooltipHost.js";
 
@@ -101,7 +102,7 @@ export const renderSiteTooltip = ({
         bannerHtml = `<strong>Site Complete</strong> - <em>compiling XM telemetry.</em><hr />`;
     }
 
-    const flagHtml = countryCode ? `<span class="fi fi-${countryCode.toLowerCase()}"></span> ` : "";
+    const flagHtml = renderFlagIcon(countryCode);
     const countdownSuffix = isBeforeStart ? ` (${formatDuration(nowMs, startTimeMs, "long")})` : "";
 
     let bodyHtml = "";

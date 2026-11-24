@@ -34,8 +34,7 @@ describe("renderSiteTooltip", () => {
             eventTypeLabel: "Anomaly",
             nowMs: startTimeMs - 2 * 60 * 60_000,
         });
-        expect(html).toContain('<span class="fi fi-gb"></span>');
-        expect(html).toContain("<strong>London</strong>");
+        expect(html).toContain('<span class="fi fi-gb"></span><strong>London</strong>');
         expect(html).toContain("(2 hours)");
         expect(html).toContain("Type: Anomaly");
     });
