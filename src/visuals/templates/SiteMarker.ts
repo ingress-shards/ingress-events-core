@@ -4,8 +4,11 @@
  * This SVG is designed to be styled via CSS variables:
  * --pin-color: The main body color of the pin.
  * --pin-inner-color: The color of the inner pearl/bead.
+ *
+ * @param color - Fallback body color for the pin (overridable via --pin-color).
+ * @returns A string containing the SVG HTML.
  */
-export const TACTICAL_MARKER_SVG = `
+export const renderSiteMarker = (color: string = "var(--color-nodata, #777777)"): string => `
     <svg class="marker-svg-pin" width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <!-- Satin Body Overlay: Smoother transitions to avoid "two-tone" harshness -->
@@ -26,10 +29,10 @@ export const TACTICAL_MARKER_SVG = `
         </defs>
         
         <!-- Main Shape Layer (Colored via CSS --pin-color) -->
-        <path class="marker-pin-body" d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="var(--pin-color, var(--color-nodata, #777777))" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
+        <path class="marker-pin-body" d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="var(--pin-color, ${color})" stroke="rgba(0,0,0,0.25)" stroke-width="0.5" />
         
         <!-- Gloss/Satin Overlay -->
-        <path d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="url(#pinSatin)" style="pointer-events: none;" />
+        <path class="marker-pin-satin" d="M 12.5 41 L 1.7 18.75 A 12.5 12.5 0 1 1 23.3 18.75 Z" fill="url(#pinSatin)" />
         
         <!-- Inner "Socket" Depth -->
         <circle cx="12.5" cy="12.5" r="5.5" fill="rgba(0,0,0,0.15)" stroke="none" />

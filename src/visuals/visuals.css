@@ -50,10 +50,50 @@
     transition: fill 0.3s ease;
 }
 
+.marker-pin-satin {
+    pointer-events: none;
+}
+
 .marker-pin-inner {
-    /* Inner bead color - usually white/pearl but overridable */
-    fill: var(--pin-inner-color, #ffffff);
+    /* Inner bead color - defaults to pearl gradient, overridable via --pin-inner-color */
+    fill: var(--pin-inner-color, url(#innerBead));
     transition: fill 0.3s ease;
+}
+
+/* --- Ornament & Target SVG Styling --- */
+.marker-svg-ornament {
+    display: block;
+}
+
+.marker-svg-ornament .ornament-hexagon {
+    fill-opacity: 0.1;
+    stroke-width: 2;
+    stroke-linejoin: round;
+}
+
+.marker-svg-ornament-portal {
+    display: block;
+    pointer-events: none;
+}
+
+.marker-svg-ornament-portal .ornament-hexagon {
+    fill-opacity: 0.05;
+    stroke-width: 2;
+    stroke-opacity: 0.5;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+.marker-svg-ornament-portal .ornament-portal-dot {
+    fill-opacity: 0.6;
+    stroke-width: 1;
+    stroke-opacity: 0.6;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.marker-svg-target {
+    display: block;
 }
 
 /* --- Radar Animation --- */

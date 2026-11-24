@@ -1,12 +1,12 @@
 /**
  * Target Portal SVG Template.
  *
- * @param color - The primary stroke and outline color.
+ * @param color - Fallback stroke and outline color (overridable via --target-color).
  * @returns A string containing the SVG HTML.
  */
-export const getTargetOrnamentSVG = (color: string): string => `
-    <svg class="marker-svg-target" version="1.0" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 500 500" style="display: block;">
-        <g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)" fill="${color}" stroke="none">
+export const renderTargetOrnament = (color: string = "var(--color-signal)"): string => `
+    <svg class="marker-svg-target" version="1.0" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 500 500">
+        <g transform="translate(0.000000,500.000000) scale(0.100000,-0.100000)" fill="var(--target-color, ${color})" stroke="none">
             <path d="M2320 4994 c-463 -43 -864 -184 -1234 -433 -489 -330 -858 -858
                 -1007 -1441 -54 -214 -73 -369 -73 -620 0 -256 19 -409 78 -635 204 -783 782
                 -1422 1541 -1705 391 -145 803 -191 1215 -136 294 40 597 139 846 277 471 261

@@ -32,6 +32,4 @@ export const UI_COLORS = {
     SIGNAL: "#FFCC00",
     /** Color for missing or incomplete data states */
     NO_DATA: "#777777",
-    /** Grayed out state for portals without current shard activity */
-    ORNAMENT_ONLY: "#BDBDBD",
 } as const;
