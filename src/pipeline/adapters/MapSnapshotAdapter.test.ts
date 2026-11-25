@@ -1,4 +1,5 @@
 import { describe, test, expect } from "vitest";
+import { fromString as instantFromString } from "temporal-polyfill/fns/Instant";
 import { MapSnapshotAdapter } from "./MapSnapshotAdapter.js";
 import type { MapSnapshot } from "../../types/observations/MapSnapshot.js";
 import type { Ornament } from "../../types/config/EventBlueprints.js";
@@ -14,7 +15,7 @@ describe("MapSnapshotAdapter", () => {
         }
     };
 
-    const eventTime = Date.parse("2026-06-18T12:00:00Z");
+    const eventTime = instantFromString("2026-06-18T12:00:00Z").epochMilliseconds;
     const snapshotTime = eventTime - 24 * 60 * 60 * 1000; // 1 day before
 
     const mockRegistry = createMockConfigRegistry();
