@@ -61,7 +61,7 @@
         "@eslint/js": "^10.0.1",
         "@semantic-release/exec": "^7.1.0",
         "@types/node": "^26.4.0",
-        "@vitest/coverage-v8": "^4.1.11",
+        "@vitest/coverage-v8": "5.1.2",
         "concurrently": "^10.0.6",
         "conventional-changelog-conventionalcommits": "~9.3.1",
         "eslint": "^10.9.1",
@@ -75,7 +75,8 @@
         "tsdown": "^0.23.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.68.0",
-        "vitest": "4.1.12"
+        "vite": "^8.4.0",
+        "vitest": "5.1.2"
     },
     "resolutions": {
         "ts-to-zod": "patch:ts-to-zod@npm%3A5.1.0#~/.yarn/patches/ts-to-zod-npm-5.1.0-8f81b27357.patch"
