@@ -49,7 +49,10 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - run: corepack enable
+      - name: Install and enable Corepack
+        run: |
+          npm install -g corepack
+          corepack enable
 
       - name: Install dependencies
         run: yarn install --immutable
